@@ -3,41 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OLRD STREAMS | LIVE</title>
+    <title>OLRD STREAMS</title>
     <style>
-        body { 
-            margin: 0; padding: 0; background-color: #000; color: white;
-            font-family: 'Segoe UI', sans-serif; text-align: center;
-        }
-        .bg {
+        * { box-sizing: border-box; }
+        body { margin: 0; background: #000; color: #fff; font-family: sans-serif; text-align: center; }
+        .bg-img {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: url('bg.jpg') no-repeat center center/cover;
-            opacity: 0.25; z-index: -1;
+            opacity: 0.3; z-index: -1;
         }
-        header { 
-            padding: 20px; background: rgba(0,0,0,0.9); 
-            border-bottom: 3px solid #ff0000; margin-bottom: 20px;
+        header { padding: 20px; background: #000; border-bottom: 3px solid #f00; margin-bottom: 20px; }
+        .logo-top { width: 90px; }
+        .title { font-size: 28px; font-weight: bold; margin: 10px 0; }
+        .red { color: #f00; }
+        
+        .main-grid { 
+            display: flex; flex-wrap: wrap; justify-content: center; 
+            gap: 20px; padding: 20px; max-width: 1200px; margin: 0 auto;
         }
-        .logo { width: 90px; }
-        .grid { 
-            display: grid; grid-template-columns: repeat(2, 1fr); 
-            gap: 20px; padding: 10px; max-width: 1200px; margin: 0 auto; 
+        .stream-box { 
+            width: calc(50% - 20px); min-width: 350px; 
+            background: rgba(10,10,10,0.9); border: 1px solid #333; 
+            border-radius: 10px; overflow: hidden;
         }
-        .card { background: #0a0a0a; border: 1px solid #222; border-radius: 12px; overflow: hidden; padding-bottom: 10px; }
-        .v-con { position: relative; padding-bottom: 56.25%; height: 0; background: #000; }
-        iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
-        .info { padding: 12px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
-        .refresh-btn { 
-            background: #222; color: #aaa; border: none; padding: 5px 10px; 
-            border-radius: 5px; cursor: pointer; font-size: 11px; 
-        }
-        .refresh-btn:hover { background: #ff0000; color: white; }
+        .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; }
+        .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+        .user-bar { padding: 12px; background: #000; font-weight: bold; display: flex; justify-content: space-between; }
 
-        .card:last-child:nth-child(odd) { grid-column: 1 / span 2; width: 50%; margin: 0 auto; }
-
-        @media (max-width: 800px) {
-            .grid { grid-template-columns: 1fr; }
-            .card:last-child:nth-child(odd) { width: 100%; }
-        }
+        @media (max-width: 768px) { .stream-box { width: 100%; } }
     </style>
-</
+</head>
+<body>
+    <div class="bg-img"></div>
+    <header>
+        <img src="logo.png" class="logo-top" onerror="this.style.display='none'">
+        <div class="title">OLRD <span class="red">STREAMS</span></div>
+    </header>
+
+    <div class="main-grid">
+        <div class="stream-box">
+            <div class="video-wrapper"><iframe src="https://player.kick.com/yzfk?muted=true&parent=olrd-streams.pages.dev"></iframe></div>
+            <div class="user-bar"><span>YZFK</span><span style="color:#0f0">● LIVE</span></div>
+        </div>
+        <div class="stream-box">
+            <div class="video-wrapper"><iframe src="https://player.kick.com/ngdi?muted=true&parent=olrd-streams.pages.dev"></iframe></div>
+            <div class="user-bar"><span>NGDI</span><span style="color:#0f0">● LIVE</span></div>
+        </div>
+        <div class="stream-box">
+            <div class="video-wrapper"><iframe src="https://player.kick.com/lkaiiser?muted=true&parent=olrd-streams.pages.dev"></iframe></div>
+            <div class="user-bar"><span>LKAIISER</span><span style="color:#0f0">● LIVE</span></div>
+        </div>
+        <div class="stream-box">
+            <div class="video-wrapper"><iframe src="https://player.kick.com/kurd1i?muted=true&parent=olrd-streams.pages.dev"></iframe></div>
+            <div class="user-bar"><span>KURD1I</span><span style="color:#0f0">● LIVE</span></div>
+        </div>
+        <div class="stream-box">
+            <div class="video-wrapper"><iframe src="https://player.kick.com/evely3?muted=true&parent=olrd-streams.pages.dev"></iframe></div>
+            <div class="user-bar"><span>EVELY3</span><span style="color:#0f0">● LIVE</span></div>
+        </div>
+    </div>
+</body>
+</html>
