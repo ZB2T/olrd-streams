@@ -77,7 +77,7 @@
     </div>
 
     <script>
-        // القائمة المحدثة بدون تكرار ومرتبة حسب الفولو
+        // القائمة الشاملة والمرتبة (بدون تكرار)
         const users = [
             "ii2a", "yzfk", "evely3", "lkaiiser", "ithanos", "ngdi", "kurd1i", "d7m1-s", "y_3li", 
             "elbulldozer", "iicloud", "alahmady03", "shanks_u", "d4t4xi", "ROMEO", "iwdd", "ialfa", "abo3th", "Zb2t", 
@@ -89,7 +89,8 @@
             "idew", "icq50", "iiw2le", "1nxe"
         ];
         
-        const parentHost = "olrd-streams.pages.dev";
+        // حل مشكلة كروم: جلب اسم النطاق الحالي تلقائياً
+        const currentHost = window.location.hostname || "olrd-streams.pages.dev";
         const grid = document.getElementById('main-grid');
 
         users.forEach(u => {
@@ -97,7 +98,11 @@
                 <a href="https://kick.com/${u}" target="_blank" class="card-link">
                     <div class="card">
                         <div class="v-wrap">
-                            <iframe src="https://player.kick.com/${u}?muted=true&parent=${parentHost}" allowfullscreen="true"></iframe>
+                            <iframe 
+                                src="https://player.kick.com/${u}?muted=true&parent=${currentHost}" 
+                                allowfullscreen="true"
+                                loading="lazy">
+                            </iframe>
                         </div>
                         <div class="card-info">
                             <div class="live-tag">LIVE</div>
