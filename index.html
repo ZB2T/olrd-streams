@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>OLRD STREAMS | LIVE CHECKER</title>
+    <title>OLRD STREAMS | LIVE</title>
     <style>
         body { margin: 0; background: #000; color: #fff; font-family: sans-serif; text-align: center; }
         .bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: url('bg.jpg') no-repeat center center/cover; opacity: 0.15; z-index: -1; }
@@ -10,37 +10,33 @@
         .container { width: 95%; max-width: 1400px; margin: 0 auto; padding: 20px; }
         .section-title { font-size: 24px; font-weight: bold; margin: 30px 0; color: red; text-align: right; border-right: 4px solid red; padding-right: 15px; }
         
-        /* شبكة المباشر */
-        .live-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 20px; }
-        .card { background: #0a0a0a; border: 1px solid #333; border-radius: 12px; overflow: hidden; animation: fadeIn 0.8s; }
+        /* شبكة المباشر (فوق) */
+        .live-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; margin-bottom: 40px; }
+        .card { background: #0a0a0a; border: 1px solid #333; border-radius: 12px; overflow: hidden; animation: fadeIn 0.5s; }
         .v-wrap { position: relative; padding-bottom: 56.25%; height: 0; }
         iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
         
-        /* شبكة الأوفلاين */
-        .ch-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
-        .ch-item { background: #111; padding: 12px; border-radius: 8px; text-decoration: none; color: #fff; border: 1px solid #222; font-size: 13px; font-weight: bold; transition: 0.2s; }
-        .ch-item:hover { background: red; }
-        
-        #status-msg { color: #888; margin-bottom: 20px; font-size: 14px; }
+        /* شبكة كل القنوات (تحت) */
+        .ch-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
+        .ch-item { background: #111; padding: 12px; border-radius: 8px; text-decoration: none; color: #fff; border: 1px solid #222; font-size: 11px; font-weight: bold; transition: 0.3s; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .ch-item:hover { background: #222; border-color: #444; }
+        .is-live-btn { border-color: red !important; color: red !important; box-shadow: 0 0 8px rgba(255,0,0,0.2); }
+
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
     <div class="bg"></div>
-    <header>
-        <h1 style="margin:0; font-size: 22px;">OLRD <span style="color:red">COMMUNITY</span></h1>
-    </header>
+    <header><h1 style="margin:0; font-size: 20px;">OLRD <span style="color:red">COMMUNITY</span></h1></header>
 
     <div class="container">
-        <div id="status-msg">جاري تحديث حالة المجتمع...</div>
-
         <div class="section-title">المباشر الآن 🔴</div>
         <div id="live-area" class="live-grid"></div>
 
-        <hr style="margin: 50px 0; border: 0; border-top: 1px solid #222;">
+        <hr style="margin: 40px 0; border: 0; border-top: 1px solid #222;">
 
-        <div class="section-title">قائمة القنوات 📋</div>
-        <div id="offline-area" class="ch-grid"></div>
+        <div class="section-title">قائمة أعضاء المجتمع 📋</div>
+        <div id="full-list" class="ch-grid"></div>
     </div>
 
     <script>
@@ -55,49 +51,46 @@
             "mr20s", "ii2a", "lkaiiser", "evely3", "kurd1i", "yzfk", "ngdi"
         ];
 
-        async function checkAll() {
-            const liveArea = document.getElementById('live-area');
-            const offlineArea = document.getElementById('offline-area');
-            const statusMsg = document.getElementById('status-msg');
-            
-            liveArea.innerHTML = "";
-            offlineArea.innerHTML = "";
-            let liveFound = false;
+        // 1. إنشاء القائمة الكاملة تحت فوراً
+        const fullListArea = document.getElementById('full-list');
+        users.sort().forEach(u => {
+            fullListArea.innerHTML += `<a href="https://kick.com/${u}" target="_blank" id="btn-${u}" class="ch-item">${u.toUpperCase()}</a>`;
+        });
 
-            // نمر على كل اليوزرات ونفحصهم
-            for (const user of users) {
-                try {
-                    // استخدام بروكسي لتخطي حماية كيك
-                    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent('https://kick.com/api/v1/channels/' + user)}`;
-                    const res = await fetch(proxyUrl);
-                    const wrapper = await res.json();
-                    const data = JSON.parse(wrapper.contents);
+        // 2. فحص ذكي لكل قناة
+        async function checkUser(user) {
+            try {
+                const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('https://kick.com/api/v1/channels/' + user)}`);
+                const out = await res.json();
+                const data = JSON.parse(out.contents);
 
-                    if (data.livestream) {
-                        // لو لايف يروح فوق
+                const liveArea = document.getElementById('live-area');
+                const btn = document.getElementById(`btn-${user}`);
+
+                if (data.livestream) {
+                    // إضافة الفيديو فوق
+                    if (!document.getElementById(`vid-${user}`)) {
                         liveArea.innerHTML += `
-                            <div class="card">
+                            <div class="card" id="vid-${user}">
                                 <div class="v-wrap"><iframe src="https://player.kick.com/${user}?muted=true&parent=${domain}"></iframe></div>
-                                <div style="padding:10px; font-weight:bold;">${user.toUpperCase()}</div>
+                                <div style="padding:10px; font-weight:bold; font-size:13px;">${user.toUpperCase()}</div>
                             </div>`;
-                        liveFound = true;
-                    } else {
-                        // لو أوفلاين يروح تحت
-                        offlineArea.innerHTML += `<a href="https://kick.com/${user}" target="_blank" class="ch-item">${user.toUpperCase()}</a>`;
                     }
-                } catch (err) {
-                    // إذا فشل الفحص ينزل تحت احتياطاً
-                    offlineArea.innerHTML += `<a href="https://kick.com/${user}" target="_blank" class="ch-item">${user.toUpperCase()}</a>`;
+                    if (btn) btn.classList.add('is-live-btn');
+                } else {
+                    // إذا قفل البث، نحذف الفيديو من فوق
+                    const vid = document.getElementById(`vid-${user}`);
+                    if (vid) vid.remove();
+                    if (btn) btn.classList.remove('is-live-btn');
                 }
-            }
-
-            statusMsg.innerText = "آخر تحديث: " + new Date().toLocaleTimeString();
-            if (!liveFound) liveArea.innerHTML = "<p>لا يوجد بثوث مباشرة حالياً.</p>";
+            } catch (e) {}
         }
 
-        checkAll();
-        // يفتح ويفحص كل 5 دقائق تلقائياً
-        setInterval(checkAll, 300000);
+        // تشغيل الفحص فوراً للكل
+        users.forEach(u => checkUser(u));
+
+        // تحديث الحالة كل دقيقتين عشان يظل "ذكي"
+        setInterval(() => users.forEach(u => checkUser(u)), 120000);
     </script>
 </body>
 </html>
