@@ -2,26 +2,41 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>OLRD LIVE | مباشر</title>
+    <title>OLRD STREAMS | LIVE</title>
     <style>
         body { margin: 0; background: #000; color: #fff; font-family: sans-serif; text-align: center; }
-        .bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: url('bg.jpg') no-repeat center center/cover; opacity: 0.1; z-index: -1; }
-        header { padding: 15px; background: #000; border-bottom: 2px solid red; position: sticky; top: 0; z-index: 100; }
-        .container { padding: 20px; max-width: 1200px; margin: 0 auto; }
-        .live-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; }
-        .card { background: #0a0a0a; border: 1px solid #333; border-radius: 8px; overflow: hidden; position: relative; }
-        .card.active { border-color: red; box-shadow: 0 0 10px red; }
-        iframe { width: 100%; aspect-ratio: 16/9; border: 0; }
-        .status-tag { position: absolute; top: 10px; right: 10px; background: red; color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
-        .loading { font-size: 18px; color: #666; margin: 50px; }
+        .bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: url('bg.jpg') no-repeat center center/cover; opacity: 0.15; z-index: -1; }
+        header { padding: 30px; background: rgba(0,0,0,0.9); border-bottom: 2px solid red; margin-bottom: 30px; }
+        .logo { width: 80px; margin-bottom: 10px; }
+        .container { width: 95%; max-width: 1400px; margin: 0 auto; padding-bottom: 50px; }
+        
+        /* تصميم الشبكة مثل الصورة الأولى */
+        .live-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 25px; }
+        .card { background: #0a0a0a; border: 2px solid #222; border-radius: 12px; overflow: hidden; position: relative; transition: 0.3s; }
+        .card.is-live { border-color: red; box-shadow: 0 0 15px rgba(255,0,0,0.3); }
+        
+        .v-wrap { position: relative; padding-bottom: 56.25%; height: 0; background: #111; }
+        iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+        
+        .card-info { padding: 15px; display: flex; justify-content: space-between; align-items: center; background: #050505; }
+        .user-name { font-weight: bold; font-size: 16px; text-transform: uppercase; }
+        .live-tag { color: #00ff00; font-size: 12px; font-weight: bold; display: flex; align-items: center; gap: 5px; }
+        .live-tag::before { content: ''; width: 8px; height: 8px; background: #00ff00; border-radius: 50%; }
+
+        h2 { border-right: 5px solid red; padding-right: 15px; text-align: right; font-size: 22px; margin-bottom: 25px; }
     </style>
 </head>
 <body>
     <div class="bg"></div>
-    <header><h1>OLRD <span style="color:red">LIVE</span></h1></header>
+    <header>
+        <img src="logo.png" class="logo">
+        <h1 style="margin:0; font-size: 24px; letter-spacing: 2px;">OLRD <span style="color:red">STREAMS</span></h1>
+    </header>
+
     <div class="container">
-        <div id="loading-msg" class="loading">جاري الفحص السريع لـ 48 قناة...</div>
-        <div id="live-area" class="live-grid"></div>
+        <h2>المباشر الآن 🔴</h2>
+        <div id="live-area" class="live-grid">
+            </div>
     </div>
 
     <script>
@@ -30,30 +45,31 @@
 
         async function checkChannel(u) {
             try {
-                // نستخدم بروكسي عالي السرعة
-                const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('https://kick.com/api/v1/channels/'+u)}&t=${Date.now()}`);
+                // الفحص السريع عبر البروكسي
+                const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('https://kick.com/api/v1/channels/'+u)}&_=${Date.now()}`);
                 const data = JSON.parse((await res.json()).contents);
                 
                 if (data.livestream) {
-                    document.getElementById('loading-msg').style.display = 'none';
                     const area = document.getElementById('live-area');
                     area.innerHTML += `
-                        <div class="card active">
-                            <span class="status-tag">مباشر الآن</span>
-                            <iframe src="https://player.kick.com/${u}?muted=true&parent=${domain}"></iframe>
-                            <div style="padding:10px; font-weight:bold;">${u.toUpperCase()}</div>
+                        <div class="card is-live">
+                            <div class="v-wrap">
+                                <iframe src="https://player.kick.com/${u}?muted=true&parent=${domain}"></iframe>
+                            </div>
+                            <div class="card-info">
+                                <div class="live-tag">LIVE</div>
+                                <div class="user-name">${u}</div>
+                            </div>
                         </div>`;
                 }
             } catch (e) {}
         }
 
-        // السرعة هنا: نشغل الفحص لـ 48 قناة في نفس الثانية
-        Promise.all(users.map(u => checkChannel(u))).then(() => {
-            const area = document.getElementById('live-area');
-            if (area.innerHTML === "") {
-                document.getElementById('loading-msg').innerHTML = "لا يوجد أحد مباشر حالياً 😴";
-            }
-        });
+        // تشغيل الفحص الجماعي لضمان السرعة
+        users.forEach(u => checkChannel(u));
+
+        // تحديث الصفحة كل دقيقتين للتأكد من القنوات الجديدة
+        setInterval(() => location.reload(), 120000);
     </script>
 </body>
 </html>
