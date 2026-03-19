@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OLRD STREAMS | LIVE</title>
     <style>
-        body { margin: 0; background: #000; color: #fff; font-family: sans-serif; text-align: center; position: relative; min-height: 100vh; }
+        body { margin: 0; background: #000; color: #fff; font-family: sans-serif; text-align: center; }
         .bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: url('bg.jpg') no-repeat center center/cover; opacity: 0.15; z-index: -1; }
         header { padding: 30px; background: #000; border-bottom: 3px solid red; margin-bottom: 30px; }
         .logo { width: 80px; margin-bottom: 10px; }
-        .container { width: 95%; max-width: 1600px; margin: 0 auto; padding-bottom: 100px; }
+        .container { width: 95%; max-width: 1600px; margin: 0 auto; padding-bottom: 50px; }
         .live-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
         .card-link { text-decoration: none; color: inherit; display: block; }
-        .card { background: #0a0a0a; border: 1px solid #222; border-radius: 10px; overflow: hidden; transition: 0.3s; cursor: pointer; }
+        .card { background: #0a0a0a; border: 1px solid #222; border-radius: 10px; overflow: hidden; transition: 0.3s; cursor: pointer; position: relative; }
         .card:hover { border-color: red; transform: scale(1.02); }
         .v-wrap { position: relative; padding-bottom: 56.25%; height: 0; background: #111; pointer-events: none; }
         iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
@@ -21,7 +21,27 @@
         .live-tag { color: #00ff00; font-size: 11px; font-weight: bold; display: flex; align-items: center; gap: 5px; }
         .live-tag::before { content: ''; width: 8px; height: 8px; background: #00ff00; border-radius: 50%; box-shadow: 0 0 5px #00ff00; }
 
-        /* مستطيل ZB2T الأساسي */
+        /* ستايل التوقيع تحت اسمك */
+        .zidan-badge {
+            background: rgba(255, 0, 0, 0.1);
+            border: 1px solid rgba(255, 0, 0, 0.5);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 10px;
+            color: #ccc;
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .sig-z {
+            font-family: 'Brush Script MT', cursive, serif;
+            font-size: 18px;
+            color: red;
+            line-height: 1;
+        }
+
         .footer-credit {
             margin: 40px auto;
             width: fit-content;
@@ -35,31 +55,6 @@
             letter-spacing: 2px;
             text-transform: uppercase;
             color: #fff;
-            box-shadow: 0 0 15px rgba(255, 0, 0, 0.2);
-        }
-
-        /* توقيع زيدان في الزاوية يمين */
-        .zidan-sig {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: rgba(0, 0, 0, 0.8);
-            border: 1px solid #444;
-            padding: 8px 15px;
-            border-radius: 5px;
-            font-size: 11px;
-            color: #888;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            z-index: 100;
-        }
-        .sig-z {
-            font-family: 'Brush Script MT', cursive, serif;
-            font-size: 24px;
-            color: red;
-            border-bottom: 1px solid red;
-            line-height: 1;
         }
     </style>
 </head>
@@ -75,12 +70,7 @@
         <div class="footer-credit">CREATED BY ZB2T</div>
     </div>
 
-    <div class="zidan-sig">
-        Zidan's signature: <span class="sig-z">Z</span>
-    </div>
-
     <script>
-        // الترتيب الصحيح حسب طلبك الأخير
         const users = [
             "ii2a", "yzfk", "evely3", "lkaiiser", "ngdi", "kurd1i", "d7m1-s", "y_3li", 
             "shanks_u", "d4t4xi", "ROMEO", "iwdd", "ialfa", "abo3th", "Zb2t", 
@@ -95,15 +85,28 @@
         const grid = document.getElementById('main-grid');
 
         users.forEach(u => {
+            // كود التوقيع يظهر فقط تحت اسمك
+            let signatureHtml = "";
+            if(u === "lkaiiser") {
+                signatureHtml = `
+                    <div class="zidan-badge">
+                        Zidan's signature: <span class="sig-z">Z</span>
+                    </div>
+                `;
+            }
+
             grid.innerHTML += `
                 <a href="https://kick.com/${u}" target="_blank" class="card-link">
                     <div class="card">
                         <div class="v-wrap">
                             <iframe src="https://player.kick.com/${u}?muted=true&parent=${parentHost}" allowfullscreen="true"></iframe>
                         </div>
-                        <div class="card-info">
-                            <div class="live-tag">LIVE</div>
-                            <div class="user-name">${u}</div>
+                        <div style="display: flex; flex-direction: column; background: #050505; padding: 12px; border-top: 1px solid #1a1a1a;">
+                            <div class="card-info" style="padding:0; border:0; background:transparent;">
+                                <div class="live-tag">LIVE</div>
+                                <div class="user-name">${u}</div>
+                            </div>
+                            ${signatureHtml}
                         </div>
                     </div>
                 </a>`;
