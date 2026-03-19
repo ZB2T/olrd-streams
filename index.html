@@ -10,16 +10,18 @@
         .container { width: 95%; max-width: 1400px; margin: 0 auto; padding: 20px; }
         .section-title { font-size: 24px; font-weight: bold; margin: 30px 0; color: red; text-align: right; border-right: 4px solid red; padding-right: 15px; }
         
+        /* قسم المباشر */
         .live-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; margin-bottom: 40px; }
-        .card { background: #0a0a0a; border: 1px solid #333; border-radius: 12px; overflow: hidden; animation: fadeIn 0.5s; }
+        .card { background: #0a0a0a; border: 1px solid #333; border-radius: 12px; overflow: hidden; animation: slideIn 0.5s ease; }
         .v-wrap { position: relative; padding-bottom: 56.25%; height: 0; }
         iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
         
+        /* القائمة السفلية */
         .ch-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
         .ch-item { background: #111; padding: 12px; border-radius: 8px; text-decoration: none; color: #fff; border: 1px solid #222; font-size: 11px; font-weight: bold; transition: 0.3s; }
-        .is-live-btn { border-color: red !important; color: red !important; box-shadow: 0 0 10px rgba(255,0,0,0.4); }
+        .is-live-btn { border-color: #ff0000 !important; color: #ff0000 !important; box-shadow: 0 0 15px rgba(255,0,0,0.5); background: #200 !important; }
 
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideIn { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     </style>
 </head>
 <body>
@@ -38,28 +40,29 @@
 
     <script>
         const domain = "olrd-streams.pages.dev";
-        const users = ["lkaiiser", "evely3", "kurd1i", "yzfk", "ngdi", "d7m1-s", "iwdd", "y_3l", "ialfa", "ROMEO", "abo3th", "shanks_u", "Zb2t", "z7lion", "alarwilii", "teek0", "d4t4xi", "kr0m", "mrfarosyy", "irust", "omutx", "lunedee", "saraalnamlah", "abosaloum", "qyem", "0xcharlie", "ykoy", "fed0tb", "hitanchi", "itsenemyy", "yaasoky", "imsh4", "9lb6h", "seba0z", "nas_24", "25sniperksa", "22rahaf", "xlive1", "berlin26x", "v0lka", "qtrm7md", "gyg2", "bnshddad", "0md1", "nolizr", "aizen56", "mr20s", "ii2a"];
+        const users = ["lkaiiser", "ngdi", "evely3", "kurd1i", "yzfk", "d7m1-s", "iwdd", "y_3l", "ialfa", "ROMEO", "abo3th", "shanks_u", "Zb2t", "z7lion", "alarwilii", "teek0", "d4t4xi", "kr0m", "mrfarosyy", "irust", "omutx", "lunedee", "saraalnamlah", "abosaloum", "qyem", "0xcharlie", "ykoy", "fed0tb", "hitanchi", "itsenemyy", "yaasoky", "imsh4", "9lb6h", "seba0z", "nas_24", "25sniperksa", "22rahaf", "xlive1", "berlin26x", "v0lka", "qtrm7md", "gyg2", "bnshddad", "0md1", "nolizr", "aizen56", "mr20s", "ii2a"];
 
-        const fullListArea = document.getElementById('full-list');
+        // عرض القائمة السفلية فوراً
+        const listArea = document.getElementById('full-list');
         users.sort().forEach(u => {
-            fullListArea.innerHTML += `<a href="https://kick.com/${u}" target="_blank" id="btn-${u}" class="ch-item">${u.toUpperCase()}</a>`;
+            listArea.innerHTML += `<a href="https://kick.com/${u}" target="_blank" id="btn-${u}" class="ch-item">${u.toUpperCase()}</a>`;
         });
 
-        async function checkStatus(user) {
+        async function checkChannel(user) {
             try {
-                // إضافة طابع زمني لضمان جلب البيانات الحية فوراً
-                const cacheBuster = new Date().getTime();
-                const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('https://kick.com/api/v1/channels/' + user)}&_=${cacheBuster}`);
-                const out = await res.json();
-                const data = JSON.parse(out.contents);
+                // استخدام وسيط AllOrigins مع كسر الكاش
+                const api = `https://api.allorigins.win/get?url=${encodeURIComponent('https://kick.com/api/v1/channels/' + user)}&_=${new Date().getTime()}`;
+                const res = await fetch(api);
+                const json = await res.json();
+                const data = JSON.parse(json.contents);
 
                 const liveArea = document.getElementById('live-area');
                 const btn = document.getElementById(`btn-${user}`);
-                const existingVid = document.getElementById(`vid-${user}`);
+                const exists = document.getElementById(`vid-${user}`);
 
                 if (data.livestream) {
-                    if (!existingVid) {
-                        // رفع القناة لقسم المباشر
+                    if (!exists) {
+                        // رفع الشخص فوق فوراً
                         liveArea.insertAdjacentHTML('beforeend', `
                             <div class="card" id="vid-${user}">
                                 <div class="v-wrap"><iframe src="https://player.kick.com/${user}?muted=true&parent=${domain}"></iframe></div>
@@ -68,20 +71,20 @@
                     }
                     if (btn) btn.classList.add('is-live-btn');
                 } else {
-                    // تنزيل القناة إذا انتهى البث
-                    if (existingVid) existingVid.remove();
+                    // حذفه من فوق لو قفل
+                    if (exists) exists.remove();
                     if (btn) btn.classList.remove('is-live-btn');
                 }
-            } catch (e) {}
+            } catch (e) { console.log("Skip: " + user); }
         }
 
-        function runUpdate() {
-            users.forEach(u => checkStatus(u));
+        function run() {
+            users.forEach(u => checkChannel(u));
         }
 
-        runUpdate();
-        // فحص سريع كل 20 ثانية ليكون التحديث فورياً
-        setInterval(runUpdate, 20000);
+        run();
+        // فحص كل 30 ثانية ليكون التحديث سريعاً
+        setInterval(run, 30000);
     </script>
 </body>
 </html>
