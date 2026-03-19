@@ -5,70 +5,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OLRD STREAMS | LIVE</title>
     <style>
-        :root { --main-red: #ff0000; --card-bg: rgba(20, 20, 20, 0.95); }
+        :root { --main-red: #ff0000; --card-bg: rgba(15, 15, 15, 0.95); }
         
         body { 
             margin: 0; padding: 0; min-height: 100vh;
             background-color: #000; color: white;
-            font-family: 'Segoe UI', Tahoma, sans-serif;
-            text-align: center;
+            font-family: 'Segoe UI', sans-serif; text-align: center;
         }
 
-        /* تثبيت خلفية التنين السوداء */
+        /* خلفية التنين السوداء */
         .bg-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-image: url('bg.jpg'); 
             background-size: cover; background-position: center;
-            opacity: 0.3; /* خففنا الشفافية عشان المربعات تبين */
-            z-index: -1;
+            opacity: 0.35; filter: blur(2px); z-index: -1;
         }
         
         header { 
-            width: 100%; padding: 20px 0; background: #000; 
-            border-bottom: 3px solid var(--main-red); margin-bottom: 30px;
+            width: 100%; padding: 25px 0; background: rgba(0,0,0,0.9); 
+            border-bottom: 3px solid var(--main-red); margin-bottom: 40px;
         }
-        .logo { width: 100px; height: auto; }
-        .brand { font-size: 30px; font-weight: 900; margin-top: 10px; }
+        .logo { width: 110px; height: auto; }
+        .brand { font-size: 35px; font-weight: 900; margin-top: 10px; }
         .brand span { color: var(--main-red); }
 
         .container { width: 95%; max-width: 1200px; margin: 0 auto; }
         
-        /* نظام المربعين في كل صف */
+        /* نظام الشبكة: 2 في كل صف */
         .streams-grid { 
             display: grid; 
             grid-template-columns: repeat(2, 1fr); 
-            gap: 20px; padding-bottom: 50px;
+            gap: 25px; padding-bottom: 60px;
         }
         
         .video-card { 
             background: var(--card-bg); border: 2px solid #333; 
-            border-radius: 12px; overflow: hidden; transition: 0.3s;
+            border-radius: 15px; overflow: hidden; transition: 0.4s;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
-        .video-card:hover { border-color: var(--main-red); }
+        .video-card:hover { border-color: var(--main-red); transform: translateY(-5px); }
         
-        .video-container { position: relative; padding-bottom: 56.25%; height: 0; background: #000; }
-        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
-        
-        .channel-info { 
-            padding: 15px; background: #000; 
-            display: flex; justify-content: space-between; align-items: center; font-weight: bold;
-        }
-        .live-tag { color: #00ff00; font-size: 14px; }
-
-        @media (max-width: 768px) { .streams-grid { grid-template-columns: 1fr; } }
-    </style>
-</head>
-<body>
-
-<div class="bg-overlay"></div>
-
-<header>
-    <img src="logo.png" alt="OLRD" class="logo" onerror="this.style.display='none'">
-    <div class="brand">OLRD <span>STREAMS</span></div>
-</header>
-
-<div class="container">
-    <div class="streams-grid">
-        <div class="video-card">
-            <div class="video-container">
-                <iframe src="
+        .video-container { position: relative; padding-bottom: 5
