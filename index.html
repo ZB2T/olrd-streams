@@ -5,21 +5,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OLRD STREAMS | LIVE</title>
     <style>
-        :root { --main-red: #ff0000; --bg-grey: #0a0a0a; --card-bg: #1a1a1a; }
+        :root { --main-red: #ff0000; --bg-grey: #0d0d0d; --card-bg: #151515; }
         body { background-color: var(--bg-grey); color: white; font-family: sans-serif; margin: 0; padding-bottom: 50px; }
-        header { width: 100%; padding: 25px 0; text-align: center; background: #000; border-bottom: 2px solid var(--main-red); }
-        .logo { width: 130px; height: auto; filter: drop-shadow(0 0 15px rgba(255,0,0,0.6)); margin-bottom: 10px; }
-        .brand { font-size: 38px; font-weight: 900; text-transform: uppercase; margin: 0; }
+        
+        header { width: 100%; padding: 20px 0; text-align: center; background: #000; border-bottom: 2px solid var(--main-red); margin-bottom: 30px; }
+        .logo { width: 110px; height: auto; filter: drop-shadow(0 0 10px rgba(255,0,0,0.5)); }
+        .brand { font-size: 32px; font-weight: 900; margin-top: 5px; text-transform: uppercase; }
         .brand span { color: var(--main-red); }
-        .container { width: 95%; max-width: 1100px; margin: 0 auto; }
-        .featured-section { margin-top: 30px; text-align: center; }
-        .main-stream { background: #000; border: 2px solid var(--main-red); border-radius: 15px; overflow: hidden; }
+
+        .container { width: 95%; max-width: 1300px; margin: 0 auto; }
+
+        /* نظام الشبكة: 2 في كل صف */
+        .streams-grid { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); /* تجعلهم 2 جنب بعض */
+            gap: 20px; 
+        }
+
+        .video-card { background: var(--card-bg); border: 2px solid #222; border-radius: 12px; overflow: hidden; transition: 0.3s; }
+        .video-card:hover { border-color: var(--main-red); }
+        
         .video-container { position: relative; padding-bottom: 56.25%; height: 0; }
         .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
-        .grid-section { margin-top: 50px; }
-        .channels-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
-        .channel-card { background: var(--card-bg); border-radius: 10px; padding: 15px; border: 1px solid #333; display: flex; justify-content: space-between; }
-        .status-online { color: #00ff00; }
+        
+        .channel-info { padding: 12px; font-weight: bold; background: #000; display: flex; justify-content: space-between; align-items: center; }
+        .live-tag { color: #00ff00; font-size: 14px; }
+
+        /* للجوال: يخليهم واحد تحت الثاني عشان الرؤية أوضح */
+        @media (max-width: 768px) {
+            .streams-grid { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
@@ -30,18 +45,38 @@
 </header>
 
 <div class="container">
-    <div class="featured-section">
-        <div class="main-stream">
+    <div class="streams-grid">
+
+        <div class="video-card">
             <div class="video-container">
-                <iframe src="https://player.kick.com/yzfk?muted=true&autoplay=true&parent=olrd-streams.pages.dev" allowfullscreen="true"></iframe>
+                <iframe src="https://player.kick.com/yzfk?muted=true&parent=olrd-streams.pages.dev" allowfullscreen="true"></iframe>
+            </div>
+            <div class="channel-info">
+                <span>YZFK</span>
+                <span class="live-tag">● LIVE</span>
             </div>
         </div>
-    </div>
-    <div class="grid-section">
-        <div class="channels-grid">
-            <div class="channel-card"><span>YZFK</span><span class="status-online">LIVE</span></div>
-            <div class="channel-card"><span>NGDI</span><span class="status-online">LIVE</span></div>
+
+        <div class="video-card">
+            <div class="video-container">
+                <iframe src="https://player.kick.com/ngdi?muted=true&parent=olrd-streams.pages.dev" allowfullscreen="true"></iframe>
+            </div>
+            <div class="channel-info">
+                <span>NGDI</span>
+                <span class="live-tag">● LIVE</span>
+            </div>
         </div>
+
+        <div class="video-card">
+            <div class="video-container">
+                <iframe src="https://player.kick.com/romeo?muted=true&parent=olrd-streams.pages.dev" allowfullscreen="true"></iframe>
+            </div>
+            <div class="channel-info">
+                <span>ROMEO</span>
+                <span class="live-tag">● LIVE</span>
+            </div>
+        </div>
+
     </div>
 </div>
 
