@@ -5,20 +5,20 @@
     <title>OLRD STREAMRS | LIVE</title>
     <style>
         body { margin: 0; background: #000; color: #fff; font-family: sans-serif; text-align: center; }
-        .bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: url('bg.jpg') no-repeat center center/cover; opacity: 0.2; z-index: -1; }
-        header { padding: 20px; background: rgba(0,0,0,0.9); border-bottom: 3px solid red; position: sticky; top: 0; z-index: 100; }
-        .logo { width: 80px; margin-bottom: 5px; }
+        .bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: url('bg.jpg') no-repeat center center/cover; opacity: 0.15; z-index: -1; }
+        header { padding: 20px; background: rgba(0,0,0,0.9); border-bottom: 2px solid red; position: sticky; top: 0; z-index: 100; }
+        .logo { width: 60px; margin-bottom: 5px; }
         .container { width: 95%; max-width: 1400px; margin: 0 auto; padding: 20px; }
-        .section-title { font-size: 24px; font-weight: bold; margin: 30px 0; color: red; text-align: right; border-right: 4px solid red; padding-right: 15px; }
+        .section-title { font-size: 22px; font-weight: bold; margin: 25px 0; color: red; text-align: right; border-right: 4px solid red; padding-right: 12px; }
         
-        .live-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; margin-bottom: 40px; }
-        .card { background: #0a0a0a; border: 1px solid #333; border-radius: 12px; overflow: hidden; animation: fadeIn 0.5s; }
+        .live-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; margin-bottom: 40px; }
+        .card { background: #0a0a0a; border: 1px solid #222; border-radius: 10px; overflow: hidden; animation: fadeIn 0.4s; }
         .v-wrap { position: relative; padding-bottom: 56.25%; height: 0; }
         iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
         
-        .ch-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
-        .ch-item { background: #111; padding: 12px; border-radius: 8px; text-decoration: none; color: #fff; border: 1px solid #222; font-size: 11px; font-weight: bold; }
-        .is-live { border-color: red !important; color: red !important; box-shadow: 0 0 10px rgba(255,0,0,0.5); }
+        .ch-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px; }
+        .ch-item { background: #111; padding: 10px; border-radius: 6px; text-decoration: none; color: #fff; border: 1px solid #222; font-size: 11px; font-weight: bold; transition: 0.2s; }
+        .is-live { border-color: red !important; color: red !important; box-shadow: 0 0 8px rgba(255,0,0,0.3); }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
@@ -26,13 +26,13 @@
     <div class="bg"></div>
     <header>
         <img src="logo.png" class="logo">
-        <h1 style="margin:0; font-size: 20px;">OLRD <span style="color:red">STREAMRS</span></h1>
+        <h1 style="margin:0; font-size: 18px;">OLRD <span style="color:red">STREAMRS</span></h1>
     </header>
 
     <div class="container">
         <div class="section-title">المباشر الآن 🔴</div>
         <div id="live-area" class="live-grid"></div>
-        <hr style="margin: 40px 0; border: 0; border-top: 1px solid #222;">
+        <hr style="margin: 30px 0; border: 0; border-top: 1px solid #222;">
         <div class="section-title">قائمة القنوات 📋</div>
         <div id="full-list" class="ch-grid"></div>
     </div>
@@ -41,46 +41,49 @@
         const domain = "olrd-streams.pages.dev";
         const users = ["lkaiiser", "evely3", "kurd1i", "yzfk", "ngdi", "d7m1-s", "iwdd", "y_3l", "ialfa", "ROMEO", "abo3th", "shanks_u", "Zb2t", "z7lion", "alarwilii", "teek0", "d4t4xi", "kr0m", "mrfarosyy", "irust", "omutx", "lunedee", "saraalnamlah", "abosaloum", "qyem", "0xcharlie", "ykoy", "fed0tb", "hitanchi", "itsenemyy", "yaasoky", "imsh4", "9lb6h", "seba0z", "nas_24", "25sniperksa", "22rahaf", "xlive1", "berlin26x", "v0lka", "qtrm7md", "gyg2", "bnshddad", "0md1", "nolizr", "aizen56", "mr20s", "ii2a"];
 
-        // بناء القائمة السفلية فوراً
+        // بناء القائمة فوراً
         const listArea = document.getElementById('full-list');
         users.sort().forEach(u => {
             listArea.innerHTML += `<a href="https://kick.com/${u}" target="_blank" id="btn-${u}" class="ch-item">${u.toUpperCase()}</a>`;
         });
 
-        async function checkFast(user) {
-            try {
-                // استخدام وسيط AllOrigins مع كسر الكاش لسرعة الاستجابة
-                const response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('https://kick.com/api/v1/channels/' + user)}&_=${Date.now()}`);
-                const json = await response.json();
-                const data = JSON.parse(json.contents);
+        // وظيفة الفحص المتسلسل (أسرع وأضمن ضد الحظر)
+        async function checkSequential() {
+            for (const user of users) {
+                try {
+                    const ts = new Date().getTime();
+                    // استخدام وسيط AllOrigins مع كسر الكاش
+                    const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('https://kick.com/api/v1/channels/' + user)}&_=${ts}`);
+                    const out = await res.json();
+                    if(!out.contents) continue;
+                    const data = JSON.parse(out.contents);
 
-                const liveArea = document.getElementById('live-area');
-                const btn = document.getElementById(`btn-${user}`);
-                const exists = document.getElementById(`vid-${user}`);
+                    const liveArea = document.getElementById('live-area');
+                    const btn = document.getElementById(`btn-${user}`);
+                    const exists = document.getElementById(`vid-${user}`);
 
-                if (data.livestream) {
-                    if (!exists) {
-                        liveArea.insertAdjacentHTML('beforeend', `
-                            <div class="card" id="vid-${user}">
-                                <div class="v-wrap"><iframe src="https://player.kick.com/${user}?muted=true&parent=${domain}"></iframe></div>
-                                <div style="padding:10px; font-weight:bold;">${user.toUpperCase()}</div>
-                            </div>`);
+                    if (data.livestream) {
+                        if (!exists) {
+                            liveArea.insertAdjacentHTML('beforeend', `
+                                <div class="card" id="vid-${user}">
+                                    <div class="v-wrap"><iframe src="https://player.kick.com/${user}?muted=true&parent=${domain}"></iframe></div>
+                                    <div style="padding:8px; font-weight:bold; font-size:12px;">${user.toUpperCase()}</div>
+                                </div>`);
+                        }
+                        if (btn) btn.classList.add('is-live');
+                    } else {
+                        if (exists) exists.remove();
+                        if (btn) btn.classList.remove('is-live');
                     }
-                    if (btn) btn.classList.add('is-live');
-                } else {
-                    if (exists) exists.remove();
-                    if (btn) btn.classList.remove('is-live');
-                }
-            } catch (e) {}
+                    // انتظار بسيط جداً بين كل فحص لضمان الاستمرارية
+                    await new Promise(r => setTimeout(r, 200)); 
+                } catch (e) {}
+            }
         }
 
-        // فحص دوري كل 15 ثانية (سرعة جنونية)
-        function startUpdating() {
-            users.forEach(u => checkFast(u));
-        }
-
-        startUpdating();
-        setInterval(startUpdating, 15000); 
+        // تشغيل الفحص فوراً وتكراره كل 40 ثانية
+        checkSequential();
+        setInterval(checkSequential, 40000);
     </script>
 </body>
 </html>
