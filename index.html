@@ -9,43 +9,44 @@
         .bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: url('bg.jpg') no-repeat center center/cover; opacity: 0.15; z-index: -1; }
         header { padding: 30px; background: #000; border-bottom: 3px solid red; margin-bottom: 30px; }
         .logo { width: 80px; margin-bottom: 10px; }
-        h1 { margin: 0; font-size: 24px; }
         .container { width: 95%; max-width: 1600px; margin: 0 auto; padding-bottom: 50px; }
-        .live-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 25px; }
+        .live-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
         .card-link { text-decoration: none; color: inherit; display: block; }
-        .card { background: #0a0a0a; border: 1px solid #222; border-radius: 12px; overflow: hidden; transition: 0.3s; }
-        .card:hover { border-color: red; }
+        .card { background: #0a0a0a; border: 1px solid #222; border-radius: 10px; overflow: hidden; transition: 0.3s; }
+        .card:hover { border-color: red; transform: scale(1.01); }
         .v-wrap { position: relative; padding-bottom: 56.25%; height: 0; background: #111; pointer-events: none; }
         iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
-        .card-info { padding: 15px; display: flex; justify-content: space-between; align-items: center; background: #050505; }
-        .user-name { font-weight: bold; text-transform: uppercase; }
-        .live-tag { color: #00ff00; font-size: 12px; font-weight: bold; display: flex; align-items: center; gap: 5px; }
-        .live-tag::before { content: ''; width: 8px; height: 8px; background: #00ff00; border-radius: 50%; }
+        .card-info { padding: 12px; display: flex; justify-content: space-between; align-items: center; background: #050505; }
+        .user-name { font-weight: bold; font-size: 14px; text-transform: uppercase; }
+        .live-tag { color: #00ff00; font-size: 11px; font-weight: bold; display: flex; align-items: center; gap: 5px; }
+        .live-tag::before { content: ''; width: 8px; height: 8px; background: #00ff00; border-radius: 50%; box-shadow: 0 0 5px #00ff00; }
     </style>
 </head>
 <body>
     <div class="bg"></div>
     <header>
         <img src="logo.png" class="logo">
-        <h1>OLRD <span style="color:red">STREAMS</span></h1>
+        <h1 style="margin:0;">OLRD <span style="color:red">STREAMS</span></h1>
     </header>
     <div class="container">
         <div id="main-grid" class="live-grid"></div>
     </div>
 
     <script>
-        // تم تعديل y_3l إلى y_3li وتعديل lkaiiser ليكون الأول
+        // القائمة المحدثة مع تصحيح y_3li
         const users = ["lkaiiser", "evely3", "kurd1i", "yzfk", "ngdi", "d7m1-s", "iwdd", "y_3li", "ialfa", "ROMEO", "abo3th", "shanks_u", "Zb2t", "z7lion", "alarwilii", "teek0", "d4t4xi", "kr0m", "mrfarosyy", "irust", "omutx", "lunedee", "saraalnamlah", "abosaloum", "qyem", "0xcharlie", "ykoy", "fed0tb", "hitanchi", "itsenemyy", "yaasoky", "imsh4", "9lb6h", "seba0z", "nas_24", "25sniperksa", "22rahaf", "xlive1", "berlin26x", "v0lka", "qtrm7md", "gyg2", "bnshddad", "0md1", "nolizr", "aizen56", "mr20s", "ii2a"];
         
-        const p = "olrd-streams.pages.dev"; 
-        const g = document.getElementById('main-grid');
+        const grid = document.getElementById('main-grid');
 
         users.forEach(u => {
-            g.innerHTML += `
+            // استخدام الرابط المباشر مع parent كمتغير مرن
+            const playerUrl = `https://player.kick.com/${u}?muted=true&parent=${window.location.hostname}`;
+            
+            grid.innerHTML += `
                 <a href="https://kick.com/${u}" target="_blank" class="card-link">
                     <div class="card">
                         <div class="v-wrap">
-                            <iframe src="https://player.kick.com/${u}?muted=true&parent=${p}" allowfullscreen="true"></iframe>
+                            <iframe src="${playerUrl}" allowfullscreen="true"></iframe>
                         </div>
                         <div class="card-info">
                             <div class="live-tag">LIVE</div>
