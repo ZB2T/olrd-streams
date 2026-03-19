@@ -77,19 +77,18 @@
     </div>
 
     <script>
-        // القائمة الشاملة والمرتبة (بدون تكرار)
+        // الترتيب النهائي والشامل لجميع الأعضاء (بدون تكرار)
         const users = [
-            "ii2a", "yzfk", "evely3", "lkaiiser", "ithanos", "ngdi", "kurd1i", "d7m1-s", "y_3li", 
-            "elbulldozer", "iicloud", "alahmady03", "shanks_u", "d4t4xi", "ROMEO", "iwdd", "ialfa", "abo3th", "Zb2t", 
-            "z7lion", "alarwilii", "teek0", "kr0m", "mrfarosyy", "irust", "omutx", 
-            "lunedee", "saraalnamlah", "abosaloum", "qyem", "0xcharlie", "ykoy", 
-            "fed0tb", "hitanchi", "itsenemyy", "yaasoky", "imsh4", "9lb6h", "seba0z", 
-            "nas_24", "25sniperksa", "22rahaf", "xlive1", "berlin26x", "v0lka", 
-            "qtrm7md", "gyg2", "bnshddad", "0md1", "nolizr", "aizen56", "mr20s", 
-            "idew", "icq50", "iiw2le", "1nxe"
+            "ii2a", "qyem", "fed0tb", "shanks_u", "evely3", "lkaiiser", "d4t4xi", "kurd1i", 
+            "ialfa", "irust", "lunedee", "ROMEO", "z7lion", "saraalnamlah", "mrfarosyy", "yzfk", 
+            "Zb2t", "abosaloum", "ngdi", "abo3th", "nolizr", "kr0m", "seba0z", "teek0", 
+            "iwdd", "y_3li", "d7m1-s", "yaasoky", "imsh4", "0xcharlie", "25sniperksa", "22rahaf", 
+            "0md1", "hitanchi", "9lb6h", "elbulldozer", "berlin26x", "gyg2", "mr20s", "aizen56", 
+            "iicloud", "alarwilii", "icq50", "xlive1", "nas_24", "ithanos", "alahmady03", "ykoy", 
+            "itsenemyy", "iiw2le", "omutx", "v0lka", "qtrm7md", "1nxe", "bnshddad"
         ];
         
-        // حل مشكلة كروم: جلب اسم النطاق الحالي تلقائياً
+        // حل مشكلة كروم بالتعرف التلقائي على الدومين
         const currentHost = window.location.hostname || "olrd-streams.pages.dev";
         const grid = document.getElementById('main-grid');
 
