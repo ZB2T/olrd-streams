@@ -2,53 +2,76 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OLRD STREAMS | LIVE</title>
     <style>
-        body { margin: 0; background: #000; color: #fff; font-family: sans-serif; text-align: center; }
+        body { margin: 0; background: #000; color: #fff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; overflow-x: hidden; }
+        
+        /* الخلفية المخصصة للمجتمع */
         .bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: url('bg.jpg') no-repeat center center/cover; opacity: 0.15; z-index: -1; }
-        header { padding: 30px; background: rgba(0,0,0,0.9); border-bottom: 2px solid red; margin-bottom: 30px; }
-        .logo { width: 80px; margin-bottom: 10px; }
-        .container { width: 95%; max-width: 1600px; margin: 0 auto; padding-bottom: 50px; }
         
-        /* شبكة عرض القنوات كاملة */
-        .live-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
-        .card { background: #0a0a0a; border: 1px solid #333; border-radius: 8px; overflow: hidden; position: relative; }
+        /* الهيدر والشعار */
+        header { padding: 40px 20px; background: linear-gradient(to bottom, rgba(0,0,0,1), rgba(0,0,0,0.8)); border-bottom: 3px solid red; margin-bottom: 40px; }
+        .logo { width: 100px; margin-bottom: 15px; filter: drop-shadow(0 0 10px rgba(255,0,0,0.5)); }
+        h1 { margin: 0; font-size: 28px; letter-spacing: 3px; font-weight: 900; text-transform: uppercase; }
         
-        /* إطار الفيديو */
-        .v-wrap { position: relative; padding-bottom: 56.25%; height: 0; background: #111; }
+        .container { width: 95%; max-width: 1600px; margin: 0 auto; padding-bottom: 100px; }
+        
+        /* تصميم الشبكة الاحترافية */
+        .live-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px; }
+        
+        /* تصميم البطاقة */
+        .card { background: #0a0a0a; border: 1px solid #222; border-radius: 15px; overflow: hidden; position: relative; transition: transform 0.3s, border-color 0.3s; }
+        .card:hover { transform: translateY(-5px); border-color: red; }
+        
+        .v-wrap { position: relative; padding-bottom: 56.25%; height: 0; background: #000; }
         iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
         
-        /* معلومات القناة أسفل الفيديو */
-        .card-info { padding: 12px; display: flex; justify-content: space-between; align-items: center; background: #050505; }
-        .user-name { font-weight: bold; font-size: 14px; text-transform: uppercase; color: #ccc; }
-        .live-status { color: #00ff00; font-size: 11px; font-weight: bold; display: flex; align-items: center; gap: 5px; }
-        .live-status::before { content: ''; width: 8px; height: 8px; background: #00ff00; border-radius: 50%; }
+        /* تفاصيل القناة */
+        .card-info { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; background: #050505; border-top: 1px solid #1a1a1a; }
+        .user-name { font-weight: bold; font-size: 16px; text-transform: uppercase; color: #fff; letter-spacing: 1px; }
+        
+        .live-status { color: #00ff00; font-size: 12px; font-weight: bold; display: flex; align-items: center; gap: 8px; background: rgba(0,255,0,0.1); padding: 5px 12px; border-radius: 20px; border: 1px solid rgba(0,255,0,0.2); }
+        .live-status::before { content: ''; width: 8px; height: 8px; background: #00ff00; border-radius: 50%; box-shadow: 0 0 8px #00ff00; }
+
+        h2 { border-right: 6px solid red; padding-right: 15px; text-align: right; font-size: 24px; margin-bottom: 35px; color: #fff; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
+        
+        /* تخصيص السكرول بار ليكون متناسق مع التصميم */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #000; }
+        ::-webkit-scrollbar-thumb { background: red; border-radius: 10px; }
     </style>
 </head>
 <body>
     <div class="bg"></div>
     <header>
-        <img src="logo.png" class="logo">
-        <h1 style="margin:0; font-size: 22px;">OLRD <span style="color:red">STREAMS</span></h1>
+        <img src="logo.png" class="logo" alt="OLRD Logo">
+        <h1>OLRD <span style="color:red">STREAMS</span></h1>
     </header>
 
     <div class="container">
+        <h2>شبكة البث المباشر 🔴</h2>
         <div id="main-grid" class="live-grid">
             </div>
     </div>
 
     <script>
-        // قائمة الـ 48 قناة كاملة
+        // وضع حسابك في البداية ثم بقية الشباب
         const users = ["lkaiiser", "evely3", "kurd1i", "yzfk", "ngdi", "d7m1-s", "iwdd", "y_3l", "ialfa", "ROMEO", "abo3th", "shanks_u", "Zb2t", "z7lion", "alarwilii", "teek0", "d4t4xi", "kr0m", "mrfarosyy", "irust", "omutx", "lunedee", "saraalnamlah", "abosaloum", "qyem", "0xcharlie", "ykoy", "fed0tb", "hitanchi", "itsenemyy", "yaasoky", "imsh4", "9lb6h", "seba0z", "nas_24", "25sniperksa", "22rahaf", "xlive1", "berlin26x", "v0lka", "qtrm7md", "gyg2", "bnshddad", "0md1", "nolizr", "aizen56", "mr20s", "ii2a"];
-        const domain = "olrd-streams.pages.dev";
+        
+        // النطاق الصحيح ليعمل المشغل بدون مشاكل
+        const parentDomain = "olrd-streams.pages.dev";
         const grid = document.getElementById('main-grid');
 
-        // توليد البطاقات لجميع القنوات دفعة واحدة
-        users.sort().forEach(u => {
+        // بناء الشبكة كاملة
+        users.forEach(u => {
             grid.innerHTML += `
                 <div class="card" id="card-${u}">
                     <div class="v-wrap">
-                        <iframe src="https://player.kick.com/${u}?muted=true&parent=${domain}"></iframe>
+                        <iframe 
+                            src="https://player.kick.com/${u}?muted=true&parent=${parentDomain}" 
+                            allowfullscreen="true">
+                        </iframe>
                     </div>
                     <div class="card-info">
                         <div class="live-status">LIVE</div>
