@@ -5,23 +5,22 @@
     <title>OLRD COMMUNITY</title>
     <style>
         body { margin: 0; background: #000; color: #fff; font-family: sans-serif; text-align: center; }
-        /* الخلفية (التنين) */
         .bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: url('bg.jpg') no-repeat center center/cover; opacity: 0.15; z-index: -1; }
-        header { padding: 20px; background: rgba(0,0,0,0.9); border-bottom: 3px solid red; }
+        header { padding: 20px; background: rgba(0,0,0,0.9); border-bottom: 3px solid red; position: sticky; top: 0; z-index: 100; }
         .logo { width: 70px; }
         .container { width: 95%; max-width: 1400px; margin: 0 auto; padding: 20px; }
         .section-title { font-size: 24px; font-weight: bold; margin: 30px 0; color: red; text-align: right; border-right: 4px solid red; padding-right: 15px; }
         
-        /* شبكة المباشر (فيديو) */
+        /* قسم المباشر */
         .live-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 20px; }
         .card { background: #0a0a0a; border: 1px solid #333; border-radius: 12px; overflow: hidden; }
         .v-wrap { position: relative; padding-bottom: 56.25%; height: 0; }
         iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
         
-        /* شبكة القنوات (أزرار خفيفة) */
-        .ch-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
-        .ch-item { background: #111; padding: 12px; border-radius: 8px; text-decoration: none; color: #fff; border: 1px solid #222; font-weight: bold; transition: 0.2s; }
-        .ch-item:hover { background: red; }
+        /* قسم كل القنوات (أزرار خفيفة) */
+        .ch-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+        .ch-item { background: #111; padding: 12px; border-radius: 8px; text-decoration: none; color: #fff; border: 1px solid #222; font-size: 13px; font-weight: bold; transition: 0.2s; }
+        .ch-item:hover { background: red; border-color: red; transform: scale(1.05); }
     </style>
 </head>
 <body>
@@ -33,7 +32,7 @@
 
     <div class="container">
         <div class="section-title">المباشر الآن 🔴</div>
-        <div class="live-grid">
+        <div class="live-grid" id="live-area">
             <div class="card">
                 <div class="v-wrap"><iframe src="https://player.kick.com/ngdi?muted=true&parent=olrd-streams.pages.dev"></iframe></div>
                 <div style="padding:10px;">NGDI</div>
@@ -47,15 +46,26 @@
         <hr style="margin: 50px 0; border: 0; border-top: 1px solid #222;">
 
         <div class="section-title">قائمة القنوات 📋</div>
-        <div class="ch-grid">
-            <a href="https://kick.com/lkaiiser" target="_blank" class="ch-item">LKAIISER</a>
-            <a href="https://kick.com/evely3" target="_blank" class="ch-item">EVELY3</a>
-            <a href="https://kick.com/kurd1i" target="_blank" class="ch-item">KURD1I</a>
-            <a href="https://kick.com/d7m1-s" target="_blank" class="ch-item">D7M1-S</a>
-            <a href="https://kick.com/iwdd" target="_blank" class="ch-item">IWDD</a>
-            <a href="https://kick.com/y_3l" target="_blank" class="ch-item">Y_3L</a>
-            <a href="https://kick.com/ROMEO" target="_blank" class="ch-item">ROMEO</a>
+        <div class="ch-grid" id="ch-area">
             </div>
     </div>
+
+    <script>
+        // القائمة الكاملة بدون تكرار
+        const channels = [
+            "d7m1-s", "iwdd", "y_3l", "ialfa", "ROMEO", "abo3th", "shanks_u", "Zb2t", 
+            "z7lion", "alarwilii", "teek0", "d4t4xi", "kr0m", "mrfarosyy", "irust", 
+            "omutx", "lunedee", "saraalnamlah", "abosaloum", "qyem", "0xcharlie", 
+            "ykoy", "fed0tb", "hitanchi", "itsenemyy", "yaasoky", "imsh4", "9lb6h", 
+            "seba0z", "nas_24", "25sniperksa", "22rahaf", "xlive1", "berlin26x", 
+            "v0lka", "qtrm7md", "gyg2", "bnshddad", "0md1", "nolizr", "aizen56", 
+            "mr20s", "ii2a", "lkaiiser", "evely3", "kurd1i"
+        ];
+
+        const area = document.getElementById('ch-area');
+        channels.forEach(user => {
+            area.innerHTML += `<a href="https://kick.com/${user}" target="_blank" class="ch-item">${user.toUpperCase()}</a>`;
+        });
+    </script>
 </body>
 </html>
