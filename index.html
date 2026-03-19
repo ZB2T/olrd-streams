@@ -2,70 +2,102 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>OLRD COMMUNITY</title>
+    <title>OLRD STREAMS | LIVE CHECKER</title>
     <style>
         body { margin: 0; background: #000; color: #fff; font-family: sans-serif; text-align: center; }
         .bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: url('bg.jpg') no-repeat center center/cover; opacity: 0.15; z-index: -1; }
         header { padding: 20px; background: rgba(0,0,0,0.9); border-bottom: 3px solid red; position: sticky; top: 0; z-index: 100; }
-        .logo { width: 70px; }
         .container { width: 95%; max-width: 1400px; margin: 0 auto; padding: 20px; }
         .section-title { font-size: 24px; font-weight: bold; margin: 30px 0; color: red; text-align: right; border-right: 4px solid red; padding-right: 15px; }
         
-        /* قسم المباشر */
+        /* شبكة المباشر */
         .live-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 20px; }
-        .card { background: #0a0a0a; border: 1px solid #333; border-radius: 12px; overflow: hidden; }
+        .card { background: #0a0a0a; border: 1px solid #333; border-radius: 12px; overflow: hidden; animation: fadeIn 0.8s; }
         .v-wrap { position: relative; padding-bottom: 56.25%; height: 0; }
         iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
         
-        /* قسم كل القنوات (أزرار خفيفة) */
+        /* شبكة الأوفلاين */
         .ch-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
         .ch-item { background: #111; padding: 12px; border-radius: 8px; text-decoration: none; color: #fff; border: 1px solid #222; font-size: 13px; font-weight: bold; transition: 0.2s; }
-        .ch-item:hover { background: red; border-color: red; transform: scale(1.05); }
+        .ch-item:hover { background: red; }
+        
+        #status-msg { color: #888; margin-bottom: 20px; font-size: 14px; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
     <div class="bg"></div>
     <header>
-        <img src="logo.png" class="logo" onerror="this.style.display='none'">
-        <h1 style="margin:5px 0; font-size: 22px;">OLRD <span style="color:red">COMMUNITY</span></h1>
+        <h1 style="margin:0; font-size: 22px;">OLRD <span style="color:red">COMMUNITY</span></h1>
     </header>
 
     <div class="container">
+        <div id="status-msg">جاري تحديث حالة المجتمع...</div>
+
         <div class="section-title">المباشر الآن 🔴</div>
-        <div class="live-grid" id="live-area">
-            <div class="card">
-                <div class="v-wrap"><iframe src="https://player.kick.com/ngdi?muted=true&parent=olrd-streams.pages.dev"></iframe></div>
-                <div style="padding:10px;">NGDI</div>
-            </div>
-            <div class="card">
-                <div class="v-wrap"><iframe src="https://player.kick.com/yzfk?muted=true&parent=olrd-streams.pages.dev"></iframe></div>
-                <div style="padding:10px;">YZFK</div>
-            </div>
-        </div>
+        <div id="live-area" class="live-grid"></div>
 
         <hr style="margin: 50px 0; border: 0; border-top: 1px solid #222;">
 
         <div class="section-title">قائمة القنوات 📋</div>
-        <div class="ch-grid" id="ch-area">
-            </div>
+        <div id="offline-area" class="ch-grid"></div>
     </div>
 
     <script>
-        // القائمة الكاملة بدون تكرار
-        const channels = [
+        const domain = "olrd-streams.pages.dev";
+        const users = [
             "d7m1-s", "iwdd", "y_3l", "ialfa", "ROMEO", "abo3th", "shanks_u", "Zb2t", 
             "z7lion", "alarwilii", "teek0", "d4t4xi", "kr0m", "mrfarosyy", "irust", 
             "omutx", "lunedee", "saraalnamlah", "abosaloum", "qyem", "0xcharlie", 
             "ykoy", "fed0tb", "hitanchi", "itsenemyy", "yaasoky", "imsh4", "9lb6h", 
             "seba0z", "nas_24", "25sniperksa", "22rahaf", "xlive1", "berlin26x", 
             "v0lka", "qtrm7md", "gyg2", "bnshddad", "0md1", "nolizr", "aizen56", 
-            "mr20s", "ii2a", "lkaiiser", "evely3", "kurd1i"
+            "mr20s", "ii2a", "lkaiiser", "evely3", "kurd1i", "yzfk", "ngdi"
         ];
 
-        const area = document.getElementById('ch-area');
-        channels.forEach(user => {
-            area.innerHTML += `<a href="https://kick.com/${user}" target="_blank" class="ch-item">${user.toUpperCase()}</a>`;
-        });
+        async function checkAll() {
+            const liveArea = document.getElementById('live-area');
+            const offlineArea = document.getElementById('offline-area');
+            const statusMsg = document.getElementById('status-msg');
+            
+            liveArea.innerHTML = "";
+            offlineArea.innerHTML = "";
+            let liveFound = false;
+
+            // نمر على كل اليوزرات ونفحصهم
+            for (const user of users) {
+                try {
+                    // استخدام بروكسي لتخطي حماية كيك
+                    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent('https://kick.com/api/v1/channels/' + user)}`;
+                    const res = await fetch(proxyUrl);
+                    const wrapper = await res.json();
+                    const data = JSON.parse(wrapper.contents);
+
+                    if (data.livestream) {
+                        // لو لايف يروح فوق
+                        liveArea.innerHTML += `
+                            <div class="card">
+                                <div class="v-wrap"><iframe src="https://player.kick.com/${user}?muted=true&parent=${domain}"></iframe></div>
+                                <div style="padding:10px; font-weight:bold;">${user.toUpperCase()}</div>
+                            </div>`;
+                        liveFound = true;
+                    } else {
+                        // لو أوفلاين يروح تحت
+                        offlineArea.innerHTML += `<a href="https://kick.com/${user}" target="_blank" class="ch-item">${user.toUpperCase()}</a>`;
+                    }
+                } catch (err) {
+                    // إذا فشل الفحص ينزل تحت احتياطاً
+                    offlineArea.innerHTML += `<a href="https://kick.com/${user}" target="_blank" class="ch-item">${user.toUpperCase()}</a>`;
+                }
+            }
+
+            statusMsg.innerText = "آخر تحديث: " + new Date().toLocaleTimeString();
+            if (!liveFound) liveArea.innerHTML = "<p>لا يوجد بثوث مباشرة حالياً.</p>";
+        }
+
+        checkAll();
+        // يفتح ويفحص كل 5 دقائق تلقائياً
+        setInterval(checkAll, 300000);
     </script>
 </body>
 </html>
