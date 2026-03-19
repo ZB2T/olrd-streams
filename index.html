@@ -11,12 +11,13 @@
         .container { width: 95%; max-width: 1400px; margin: 0 auto; padding: 20px; }
         .section-title { font-size: 22px; font-weight: bold; margin: 25px 0; color: red; text-align: right; border-right: 4px solid red; padding-right: 12px; }
         .live-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
-        .card { background: #0a0a0a; border: 1px solid #222; border-radius: 10px; overflow: hidden; }
+        .card { background: #0a0a0a; border: 1px solid #222; border-radius: 10px; overflow: hidden; animation: fadeIn 0.5s; }
         .v-wrap { position: relative; padding-bottom: 56.25%; height: 0; }
         iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
         .ch-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px; }
-        .ch-item { background: #111; padding: 10px; border-radius: 6px; text-decoration: none; color: #fff; border: 1px solid #222; font-size: 11px; }
-        .is-live { border-color: red !important; color: red !important; box-shadow: 0 0 8px red; }
+        .ch-item { background: #111; padding: 10px; border-radius: 6px; text-decoration: none; color: #fff; border: 1px solid #222; font-size: 11px; font-weight: bold; }
+        .is-live { border-color: red !important; color: red !important; box-shadow: 0 0 10px red; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
@@ -30,27 +31,41 @@
         <div id="full-list" class="ch-grid"></div>
     </div>
     <script>
-        // رابط الموظف حقك
-        const workerUrl = "https://kick-check.aaqsivb1232.workers.dev/";
         const users = ["lkaiiser", "evely3", "kurd1i", "yzfk", "ngdi", "d7m1-s", "iwdd", "y_3l", "ialfa", "ROMEO", "abo3th", "shanks_u", "Zb2t", "z7lion", "alarwilii", "teek0", "d4t4xi", "kr0m", "mrfarosyy", "irust", "omutx", "lunedee", "saraalnamlah", "abosaloum", "qyem", "0xcharlie", "ykoy", "fed0tb", "hitanchi", "itsenemyy", "yaasoky", "imsh4", "9lb6h", "seba0z", "nas_24", "25sniperksa", "22rahaf", "xlive1", "berlin26x", "v0lka", "qtrm7md", "gyg2", "bnshddad", "0md1", "nolizr", "aizen56", "mr20s", "ii2a"];
+        const domain = "olrd-streams.pages.dev";
 
-        async function update() {
+        async function checkFast(user) {
             try {
-                const res = await fetch(workerUrl);
-                const liveNow = await res.json();
-                const area = document.getElementById('live-area');
-                area.innerHTML = "";
-                users.forEach(u => document.getElementById(`btn-${u}`).classList.remove('is-live'));
-                liveNow.forEach(u => {
-                    area.innerHTML += `<div class="card"><div class="v-wrap"><iframe src="https://player.kick.com/${u}?muted=true&parent=olrd-streams.pages.dev"></iframe></div><div style="padding:10px;">${u.toUpperCase()}</div></div>`;
-                    document.getElementById(`btn-${u}`).classList.add('is-live');
-                });
-            } catch(e) {}
+                // استخدام بروكسي مباشر وسريع جداً لتخطي الانتظار
+                const response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('https://kick.com/api/v1/channels/' + user)}&_=${Date.now()}`);
+                const out = await response.json();
+                const data = JSON.parse(out.contents);
+
+                if (data.livestream) {
+                    const area = document.getElementById('live-area');
+                    if (!document.getElementById(`vid-${user}`)) {
+                        area.insertAdjacentHTML('afterbegin', `
+                            <div class="card" id="vid-${user}">
+                                <div class="v-wrap"><iframe src="https://player.kick.com/${user}?muted=true&parent=${domain}"></iframe></div>
+                                <div style="padding:10px; font-weight:bold;">${user.toUpperCase()}</div>
+                            </div>`);
+                    }
+                    document.getElementById(`btn-${user}`).classList.add('is-live');
+                }
+            } catch (e) {}
         }
+
+        // إنشاء القائمة
         const list = document.getElementById('full-list');
         users.sort().forEach(u => list.innerHTML += `<a href="https://kick.com/${u}" target="_blank" id="btn-${u}" class="ch-item">${u.toUpperCase()}</a>`);
-        update();
-        setInterval(update, 20000);
+
+        // تشغيل الفحص للكل في نفس الثانية
+        function runAll() {
+            users.forEach(u => checkFast(u));
+        }
+
+        runAll();
+        setInterval(runAll, 30000);
     </script>
 </body>
 </html>
