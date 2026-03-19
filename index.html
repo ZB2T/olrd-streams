@@ -8,28 +8,29 @@
         :root { --main-red: #ff0000; --bg-grey: #0a0a0a; --card-bg: #1a1a1a; }
         body { background-color: var(--bg-grey); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding-bottom: 50px; }
         
-        header { width: 100%; padding: 20px 0; text-align: center; background: #000; border-bottom: 2px solid var(--main-red); }
-        /* تعديل حجم الصورة وجعلها واضحة */
-        .logo { width: 120px; height: auto; filter: drop-shadow(0 0 10px rgba(255,0,0,0.5)); margin-bottom: 5px; }
-        .brand { font-size: 35px; font-weight: 900; text-transform: uppercase; margin: 0; letter-spacing: 2px; }
+        header { width: 100%; padding: 25px 0; text-align: center; background: #000; border-bottom: 2px solid var(--main-red); }
+        /* الشعار برابط خارجي لضمان الظهور */
+        .logo { width: 130px; height: auto; filter: drop-shadow(0 0 15px rgba(255,0,0,0.6)); margin-bottom: 10px; }
+        .brand { font-size: 38px; font-weight: 900; text-transform: uppercase; margin: 0; letter-spacing: 2px; }
         .brand span { color: var(--main-red); }
         
         .container { width: 95%; max-width: 1100px; margin: 0 auto; }
-        .featured-section { margin-top: 25px; text-align: center; }
-        .section-title { font-size: 20px; font-weight: bold; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; gap: 10px; color: #eee; }
-        .live-dot { width: 10px; height: 10px; background: red; border-radius: 50%; animation: blink 1s infinite; }
+        .featured-section { margin-top: 30px; text-align: center; }
+        .section-title { font-size: 22px; font-weight: bold; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; gap: 10px; color: #fff; }
+        .live-dot { width: 12px; height: 12px; background: red; border-radius: 50%; animation: blink 1s infinite; }
         
-        .main-stream { background: #000; border: 2px solid var(--main-red); border-radius: 12px; overflow: hidden; box-shadow: 0 0 20px rgba(255,0,0,0.2); }
+        .main-stream { background: #000; border: 2px solid var(--main-red); border-radius: 15px; overflow: hidden; box-shadow: 0 0 25px rgba(255,0,0,0.3); }
         .video-container { position: relative; padding-bottom: 56.25%; height: 0; }
         .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
 
-        .grid-section { margin-top: 40px; }
-        .channels-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 15px; }
-        .channel-card { background: var(--card-bg); border-radius: 8px; padding: 12px; border: 1px solid #333; display: flex; align-items: center; justify-content: space-between; }
-        .channel-name { font-size: 16px; font-weight: bold; }
-        .status-badge { padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; }
+        .grid-section { margin-top: 50px; }
+        .channels-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; margin-top: 20px; }
+        .channel-card { background: var(--card-bg); border-radius: 10px; padding: 15px; border: 1px solid #333; display: flex; align-items: center; justify-content: space-between; transition: 0.3s; }
+        .channel-card:hover { border-color: var(--main-red); transform: scale(1.02); }
+        .channel-name { font-size: 18px; font-weight: bold; }
+        .status-badge { padding: 5px 12px; border-radius: 15px; font-size: 12px; font-weight: bold; }
         .status-online { background: rgba(0, 255, 0, 0.1); color: #00ff00; border: 1px solid #00ff00; }
-        .status-offline { background: rgba(255, 255, 255, 0.05); color: #777; border: 1px solid #444; }
+        .status-offline { background: rgba(255, 255, 255, 0.05); color: #888; border: 1px solid #444; }
 
         @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
     </style>
@@ -37,7 +38,7 @@
 <body>
 
 <header>
-    <img src="2ku5yLC_2026-03-19T05-49-12-110Z.png" alt="OLRD Logo" class="logo">
+    <img src="https://i.ibb.co/C3m00Ysh/2ku5y-LC-2026-03-19-T05-49-12-110-Z.png" alt="OLRD Logo" class="logo">
     <div class="brand">OLRD <span>STREAMS</span></div>
 </header>
 
