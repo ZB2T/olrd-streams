@@ -8,12 +8,12 @@
         :root { --main-red: #ff0000; --bg-grey: #121212; --card-bg: #1e1e1e; }
         body { background-color: var(--bg-grey); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding-bottom: 50px; }
         
-        header { width: 100%; padding: 20px 0; text-align: center; background: #000; border-bottom: 2px solid var(--main-red); }
-        .logo { width: 100px; filter: drop-shadow(0 0 8px rgba(255,0,0,0.4)); }
+        header { width: 100%; padding: 25px 0; text-align: center; background: #000; border-bottom: 2px solid var(--main-red); }
+        .logo { width: 100px; filter: drop-shadow(0 0 8px rgba(255,0,0,0.4)); margin-bottom: 10px; }
+        .brand { font-size: 32px; font-weight: 900; text-transform: uppercase; margin: 0; }
+        .brand span { color: var(--main-red); }
         
         .container { width: 95%; max-width: 1200px; margin: 0 auto; }
-
-        /* القسم الأول: البث المباشر الحالي (المميز) */
         .featured-section { margin-top: 30px; text-align: center; }
         .section-title { font-size: 22px; font-weight: bold; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; gap: 10px; }
         .live-dot { width: 12px; height: 12px; background: red; border-radius: 50%; animation: blink 1s infinite; }
@@ -22,13 +22,9 @@
         .video-container { position: relative; padding-bottom: 56.25%; height: 0; }
         .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
 
-        /* القسم الثاني: شبكة القنوات */
         .grid-section { margin-top: 50px; }
         .channels-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 20px; }
-        
-        .channel-card { background: var(--card-bg); border-radius: 10px; padding: 15px; border: 1px solid #333; transition: 0.3s; display: flex; align-items: center; justify-content: space-between; }
-        .channel-card:hover { border-color: var(--main-red); transform: translateY(-3px); }
-        
+        .channel-card { background: var(--card-bg); border-radius: 10px; padding: 15px; border: 1px solid #333; display: flex; align-items: center; justify-content: space-between; }
         .channel-name { font-size: 18px; font-weight: bold; }
         .status-badge { padding: 5px 12px; border-radius: 15px; font-size: 12px; font-weight: bold; }
         .status-online { background: rgba(0, 255, 0, 0.1); color: #00ff00; border: 1px solid #00ff00; }
@@ -41,10 +37,10 @@
 
 <header>
     <img src="2ku5yLC_2026-03-19T05-49-12-110Z.png" alt="OLRD Logo" class="logo">
+    <div class="brand">OLRD <span>STREAMS</span></div>
 </header>
 
 <div class="container">
-    
     <div class="featured-section">
         <div class="section-title"><span class="live-dot"></span> البث المباشر الحالي</div>
         <div class="main-stream">
@@ -57,30 +53,12 @@
     <div class="grid-section">
         <div class="section-title">جميع القنوات</div>
         <div class="channels-grid">
-            
-            <div class="channel-card">
-                <span class="channel-name">YZFK</span>
-                <span class="status-badge status-online">ON LIVE</span>
-            </div>
-
-            <div class="channel-card">
-                <span class="channel-name">NGDI</span>
-                <span class="status-badge status-online">ON LIVE</span>
-            </div>
-
-            <div class="channel-card">
-                <span class="channel-name">ROMEO</span>
-                <span class="status-badge status-offline">OFFLINE</span>
-            </div>
-
-            <div class="channel-card">
-                <span class="channel-name">LKAIISER</span>
-                <span class="status-badge status-offline">OFFLINE</span>
-            </div>
-
+            <div class="channel-card"><span class="channel-name">YZFK</span><span class="status-badge status-online">ON LIVE</span></div>
+            <div class="channel-card"><span class="channel-name">NGDI</span><span class="status-badge status-online">ON LIVE</span></div>
+            <div class="channel-card"><span class="channel-name">ROMEO</span><span class="status-badge status-offline">OFFLINE</span></div>
+            <div class="channel-card"><span class="channel-name">LKAIISER</span><span class="status-badge status-offline">OFFLINE</span></div>
         </div>
     </div>
-
 </div>
 
 </body>
