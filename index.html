@@ -7,74 +7,34 @@
     <style>
         :root { --main-red: #ff0000; }
         body { margin: 0; background: #000; color: #fff; font-family: sans-serif; text-align: center; }
-        .bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: url('bg.jpg') no-repeat center center/cover; opacity: 0.2; z-index: -1; }
-        header { padding: 20px; background: rgba(0,0,0,0.9); border-bottom: 3px solid var(--main-red); }
-        .logo { width: 80px; }
+        .bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: url('bg.jpg') no-repeat center center/cover; opacity: 0.15; z-index: -1; }
+        header { padding: 25px; background: rgba(0,0,0,0.9); border-bottom: 3px solid var(--main-red); position: sticky; top: 0; z-index: 100; }
+        .logo { width: 70px; }
         
-        .section-title { font-size: 24px; font-weight: bold; margin: 40px 0 20px; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .live-dot { width: 12px; height: 12px; background: #f00; border-radius: 50%; animation: blink 1s infinite; }
+        .section-title { font-size: 26px; font-weight: bold; margin: 40px 0 20px; color: #fff; border-right: 5px solid var(--main-red); padding-right: 15px; display: inline-block; }
         
-        .container { width: 95%; max-width: 1400px; margin: 0 auto; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 20px; }
-        .card { background: #111; border: 1px solid #333; border-radius: 10px; overflow: hidden; }
+        .container { width: 95%; max-width: 1500px; margin: 0 auto; padding-bottom: 80px; }
+        
+        /* شبكة البث المباشر (فيديوهات) */
+        .live-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px; }
+        .live-card { background: #0a0a0a; border: 1px solid #333; border-radius: 12px; overflow: hidden; box-shadow: 0 0 20px rgba(255,0,0,0.15); }
         .v-wrap { position: relative; padding-bottom: 56.25%; height: 0; }
         iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
-        .footer { padding: 10px; font-weight: bold; background: #000; }
 
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
-        @media (max-width: 500px) { .grid { grid-template-columns: 1fr; } }
+        /* شبكة القنوات (بطاقات خفيفة) */
+        .channels-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 20px; }
+        .channel-item { 
+            background: rgba(20,20,20,0.8); border: 1px solid #222; padding: 15px; 
+            border-radius: 10px; text-decoration: none; color: white; transition: 0.3s;
+            display: flex; flex-direction: column; align-items: center;
+        }
+        .channel-item:hover { background: var(--main-red); transform: translateY(-5px); }
+        .avatar { width: 60px; height: 60px; background: #333; border-radius: 50%; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; }
+
+        @media (max-width: 500px) { .live-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
     <div class="bg"></div>
     <header>
-        <img src="logo.png" class="logo" onerror="this.style.display='none'">
-        <h1 style="margin:5px 0;">OLRD <span style="color:red">COMMUNITY</span></h1>
-    </header>
-
-    <div class="container">
-        <div class="section-title"><span class="live-dot"></span> البث المباشر الحالي</div>
-        <div class="grid" id="live-grid">
-            </div>
-
-        <hr style="margin: 50px 0; border: 0; border-top: 1px solid #333;">
-
-        <div class="section-title">قائمة القنوات</div>
-        <div class="grid" id="all-grid">
-            </div>
-    </div>
-
-    <script>
-        const parent = "olrd-streams.pages.dev";
-        
-        // القائمة الأولى (المباشر)
-        const liveUsers = ["yzfk", "ngdi", "lkaiiser", "kurd1i", "evely3"];
-        
-        // القائمة الثانية (بقية القنوات بدون تكرار)
-        const otherUsers = [
-            "d7m1-s", "iwdd", "y_3l", "ialfa", "ROMEO", "abo3th", "shanks_u", "Zb2t", 
-            "z7lion", "alarwilii", "teek0", "d4t4xi", "kr0m", "mrfarosyy", "irust", 
-            "omutx", "lunedee", "saraalnamlah", "abosaloum", "qyem", "0xcharlie", 
-            "ykoy", "fed0tb", "hitanchi", "itsenemyy", "yaasoky", "imsh4", 
-            "9lb6h", "seba0z", "nas_24", "25sniperksa", "22rahaf", "xlive1", 
-            "berlin26x", "v0lka", "qtrm7md", "gyg2", "bnshddad", "0md1", "nolizr", 
-            "aizen56", "mr20s", "ii2a"
-        ];
-
-        function createCard(user, targetId) {
-            const card = document.createElement('div');
-            card.className = 'card';
-            card.innerHTML = `
-                <div class="v-wrap">
-                    <iframe src="https://player.kick.com/${user}?muted=true&parent=${parent}"></iframe>
-                </div>
-                <div class="footer">${user.toUpperCase()}</div>
-            `;
-            document.getElementById(targetId).appendChild(card);
-        }
-
-        liveUsers.forEach(u => createCard(u, 'live-grid'));
-        otherUsers.forEach(u => createCard(u, 'all-grid'));
-    </script>
-</body>
-</html>
+        <img src="logo.png" class="logo" onerror="this.style.display
