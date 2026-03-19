@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OLRD STREAMS | LIVE</title>
     <style>
-        body { margin: 0; background: #000; color: #fff; font-family: sans-serif; text-align: center; }
+        body { margin: 0; background: #000; color: #fff; font-family: sans-serif; text-align: center; position: relative; min-height: 100vh; }
         .bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: url('bg.jpg') no-repeat center center/cover; opacity: 0.15; z-index: -1; }
         header { padding: 30px; background: #000; border-bottom: 3px solid red; margin-bottom: 30px; }
         .logo { width: 80px; margin-bottom: 10px; }
-        .container { width: 95%; max-width: 1600px; margin: 0 auto; padding-bottom: 30px; }
+        .container { width: 95%; max-width: 1600px; margin: 0 auto; padding-bottom: 100px; }
         .live-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
         .card-link { text-decoration: none; color: inherit; display: block; }
         .card { background: #0a0a0a; border: 1px solid #222; border-radius: 10px; overflow: hidden; transition: 0.3s; cursor: pointer; }
@@ -21,6 +21,7 @@
         .live-tag { color: #00ff00; font-size: 11px; font-weight: bold; display: flex; align-items: center; gap: 5px; }
         .live-tag::before { content: ''; width: 8px; height: 8px; background: #00ff00; border-radius: 50%; box-shadow: 0 0 5px #00ff00; }
 
+        /* مستطيل ZB2T الأساسي */
         .footer-credit {
             margin: 40px auto;
             width: fit-content;
@@ -36,6 +37,30 @@
             color: #fff;
             box-shadow: 0 0 15px rgba(255, 0, 0, 0.2);
         }
+
+        /* توقيع زيدان في الزاوية يمين */
+        .zidan-sig {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #444;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 11px;
+            color: #888;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 100;
+        }
+        .sig-z {
+            font-family: 'Brush Script MT', cursive, serif;
+            font-size: 24px;
+            color: red;
+            border-bottom: 1px solid red;
+            line-height: 1;
+        }
     </style>
 </head>
 <body>
@@ -50,16 +75,20 @@
         <div class="footer-credit">CREATED BY ZB2T</div>
     </div>
 
+    <div class="zidan-sig">
+        Zidan's signature: <span class="sig-z">Z</span>
+    </div>
+
     <script>
-        // الترتيب بناءً على عدد المتابعين (من الأعلى للأقل)
+        // الترتيب الصحيح حسب طلبك الأخير
         const users = [
-            "lkaiiser", "yzfk", "evely3", "ngdi", "kurd1i", "d7m1-s", "y_3li", 
-            "d4t4xi", "ROMEO", "shanks_u", "iwdd", "ialfa", "abo3th", "Zb2t", 
+            "ii2a", "yzfk", "evely3", "lkaiiser", "ngdi", "kurd1i", "d7m1-s", "y_3li", 
+            "shanks_u", "d4t4xi", "ROMEO", "iwdd", "ialfa", "abo3th", "Zb2t", 
             "z7lion", "alarwilii", "teek0", "kr0m", "mrfarosyy", "irust", "omutx", 
             "lunedee", "saraalnamlah", "abosaloum", "qyem", "0xcharlie", "ykoy", 
             "fed0tb", "hitanchi", "itsenemyy", "yaasoky", "imsh4", "9lb6h", "seba0z", 
             "nas_24", "25sniperksa", "22rahaf", "xlive1", "berlin26x", "v0lka", 
-            "qtrm7md", "gyg2", "bnshddad", "0md1", "nolizr", "aizen56", "mr20s", "ii2a"
+            "qtrm7md", "gyg2", "bnshddad", "0md1", "nolizr", "aizen56", "mr20s"
         ];
         
         const parentHost = "olrd-streams.pages.dev";
