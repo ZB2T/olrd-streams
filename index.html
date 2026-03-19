@@ -13,12 +13,12 @@
         .container { width: 95%; max-width: 1600px; margin: 0 auto; padding-bottom: 100px; }
         .live-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px; }
         
-        /* جعل البطاقة رابطاً قابلاً للضغط */
         .card-link { text-decoration: none; color: inherit; display: block; }
         .card { background: #0a0a0a; border: 1px solid #222; border-radius: 15px; overflow: hidden; position: relative; transition: 0.3s; cursor: pointer; }
         .card:hover { border-color: red; transform: scale(1.02); }
         
-        .v-wrap { position: relative; padding-bottom: 56.25%; height: 0; background: #000; pointer-events: none; } /* منع التفاعل مع iframe للسماح بضغط البطاقة */
+        /* تعديل: السماح بمرور الضغط عبر الفيديو لضمان عمل الرابط */
+        .v-wrap { position: relative; padding-bottom: 56.25%; height: 0; background: #111; pointer-events: none; } 
         iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
         
         .card-info { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; background: #050505; border-top: 1px solid #1a1a1a; }
@@ -44,8 +44,8 @@
     <script>
         const users = ["lkaiiser", "evely3", "kurd1i", "yzfk", "ngdi", "d7m1-s", "iwdd", "y_3l", "ialfa", "ROMEO", "abo3th", "shanks_u", "Zb2t", "z7lion", "alarwilii", "teek0", "d4t4xi", "kr0m", "mrfarosyy", "irust", "omutx", "lunedee", "saraalnamlah", "abosaloum", "qyem", "0xcharlie", "ykoy", "fed0tb", "hitanchi", "itsenemyy", "yaasoky", "imsh4", "9lb6h", "seba0z", "nas_24", "25sniperksa", "22rahaf", "xlive1", "berlin26x", "v0lka", "qtrm7md", "gyg2", "bnshddad", "0md1", "nolizr", "aizen56", "mr20s", "ii2a"];
         
-        // تعديل الرابط ليتناسب مع النطاق الحالي تلقائياً
-        const parentDomain = window.location.hostname;
+        // جلب النطاق الحالي للمتصفح تلقائياً (مثل olrd-streams.pages.dev)
+        const currentHost = window.location.hostname;
         const grid = document.getElementById('main-grid');
 
         users.forEach(u => {
@@ -54,7 +54,9 @@
                     <div class="card">
                         <div class="v-wrap">
                             <iframe 
-                                src="https://player.kick.com/${u}?muted=true&parent=${parentDomain}" 
+                                src="https://player.kick.com/${u}?muted=true&parent=${currentHost}" 
+                                frameborder="0" 
+                                scrolling="no" 
                                 allowfullscreen="true">
                             </iframe>
                         </div>
