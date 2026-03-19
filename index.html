@@ -5,84 +5,82 @@
     <title>OLRD STREAMRS | LIVE</title>
     <style>
         body { margin: 0; background: #000; color: #fff; font-family: sans-serif; text-align: center; }
-        /* وضعنا خلفية بديلة لضمان عدم اختفائها */
-        .bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0a0a0a url('https://rdr2.org/wp-content/uploads/2018/10/rdr2-map.jpg') no-repeat center center/cover; opacity: 0.1; z-index: -1; }
+        .bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: url('bg.jpg') no-repeat center center/cover; opacity: 0.2; z-index: -1; }
         header { padding: 20px; background: rgba(0,0,0,0.9); border-bottom: 3px solid red; position: sticky; top: 0; z-index: 100; }
+        .logo { width: 80px; margin-bottom: 5px; }
         .container { width: 95%; max-width: 1400px; margin: 0 auto; padding: 20px; }
         .section-title { font-size: 24px; font-weight: bold; margin: 30px 0; color: red; text-align: right; border-right: 4px solid red; padding-right: 15px; }
         
-        .live-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; min-height: 50px; }
-        .card { background: #111; border: 1px solid red; border-radius: 12px; overflow: hidden; animation: fadeIn 0.8s; }
+        .live-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; margin-bottom: 40px; }
+        .card { background: #0a0a0a; border: 1px solid #333; border-radius: 12px; overflow: hidden; animation: fadeIn 0.5s; }
         .v-wrap { position: relative; padding-bottom: 56.25%; height: 0; }
         iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
         
         .ch-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
-        .ch-item { background: #1a1a1a; padding: 12px; border-radius: 8px; text-decoration: none; color: #ccc; border: 1px solid #333; font-size: 11px; transition: 0.3s; }
-        .is-live-btn { border-color: red !important; color: white !important; background: #300 !important; font-weight: bold; box-shadow: 0 0 10px red; }
-
+        .ch-item { background: #111; padding: 12px; border-radius: 8px; text-decoration: none; color: #fff; border: 1px solid #222; font-size: 11px; font-weight: bold; }
+        .is-live { border-color: red !important; color: red !important; box-shadow: 0 0 10px rgba(255,0,0,0.5); }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
     <div class="bg"></div>
-    <header><h1 style="margin:0; font-size: 22px;">OLRD <span style="color:red">STREAMRS</span></h1></header>
+    <header>
+        <img src="logo.png" class="logo">
+        <h1 style="margin:0; font-size: 20px;">OLRD <span style="color:red">STREAMRS</span></h1>
+    </header>
 
     <div class="container">
         <div class="section-title">المباشر الآن 🔴</div>
-        <div id="live-area" class="live-grid">
-            </div>
-
-        <hr style="margin: 40px 0; border: 0; border-top: 1px solid #333;">
-
+        <div id="live-area" class="live-grid"></div>
+        <hr style="margin: 40px 0; border: 0; border-top: 1px solid #222;">
         <div class="section-title">قائمة القنوات 📋</div>
         <div id="full-list" class="ch-grid"></div>
     </div>
 
     <script>
         const domain = "olrd-streams.pages.dev";
-        const users = ["lkaiiser", "ngdi", "evely3", "kurd1i", "yzfk", "d7m1-s", "iwdd", "y_3l", "ialfa", "ROMEO", "abo3th", "shanks_u", "Zb2t", "z7lion", "alarwilii", "teek0", "d4t4xi", "kr0m", "mrfarosyy", "irust", "omutx", "lunedee", "saraalnamlah", "abosaloum", "qyem", "0xcharlie", "ykoy", "fed0tb", "hitanchi", "itsenemyy", "yaasoky", "imsh4", "9lb6h", "seba0z", "nas_24", "25sniperksa", "22rahaf", "xlive1", "berlin26x", "v0lka", "qtrm7md", "gyg2", "bnshddad", "0md1", "nolizr", "aizen56", "mr20s", "ii2a"];
+        const users = ["lkaiiser", "evely3", "kurd1i", "yzfk", "ngdi", "d7m1-s", "iwdd", "y_3l", "ialfa", "ROMEO", "abo3th", "shanks_u", "Zb2t", "z7lion", "alarwilii", "teek0", "d4t4xi", "kr0m", "mrfarosyy", "irust", "omutx", "lunedee", "saraalnamlah", "abosaloum", "qyem", "0xcharlie", "ykoy", "fed0tb", "hitanchi", "itsenemyy", "yaasoky", "imsh4", "9lb6h", "seba0z", "nas_24", "25sniperksa", "22rahaf", "xlive1", "berlin26x", "v0lka", "qtrm7md", "gyg2", "bnshddad", "0md1", "nolizr", "aizen56", "mr20s", "ii2a"];
 
-        function init() {
-            const listArea = document.getElementById('full-list');
-            listArea.innerHTML = "";
-            users.sort().forEach(u => {
-                listArea.innerHTML += `<a href="https://kick.com/${u}" target="_blank" id="btn-${u}" class="ch-item">${u.toUpperCase()}</a>`;
-            });
-        }
+        // بناء القائمة السفلية فوراً
+        const listArea = document.getElementById('full-list');
+        users.sort().forEach(u => {
+            listArea.innerHTML += `<a href="https://kick.com/${u}" target="_blank" id="btn-${u}" class="ch-item">${u.toUpperCase()}</a>`;
+        });
 
-        async function updateStatus() {
-            for (const user of users) {
-                try {
-                    // استخدام وسيط AllOrigins مع كسر الكاش لضمان السرعة
-                    const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('https://kick.com/api/v1/channels/' + user)}&_=${Date.now()}`);
-                    const json = await res.json();
-                    const data = JSON.parse(json.contents);
+        async function checkFast(user) {
+            try {
+                // استخدام وسيط AllOrigins مع كسر الكاش لسرعة الاستجابة
+                const response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('https://kick.com/api/v1/channels/' + user)}&_=${Date.now()}`);
+                const json = await response.json();
+                const data = JSON.parse(json.contents);
 
-                    const liveArea = document.getElementById('live-area');
-                    const btn = document.getElementById(`btn-${user}`);
-                    const exists = document.getElementById(`vid-${user}`);
+                const liveArea = document.getElementById('live-area');
+                const btn = document.getElementById(`btn-${user}`);
+                const exists = document.getElementById(`vid-${user}`);
 
-                    if (data.livestream) {
-                        if (!exists) {
-                            liveArea.insertAdjacentHTML('beforeend', `
-                                <div class="card" id="vid-${user}">
-                                    <div class="v-wrap"><iframe src="https://player.kick.com/${user}?muted=true&parent=${domain}"></iframe></div>
-                                    <div style="padding:10px; font-weight:bold;">${user.toUpperCase()}</div>
-                                </div>`);
-                        }
-                        if (btn) btn.classList.add('is-live-btn');
-                    } else {
-                        if (exists) exists.remove();
-                        if (btn) btn.classList.remove('is-live-btn');
+                if (data.livestream) {
+                    if (!exists) {
+                        liveArea.insertAdjacentHTML('beforeend', `
+                            <div class="card" id="vid-${user}">
+                                <div class="v-wrap"><iframe src="https://player.kick.com/${user}?muted=true&parent=${domain}"></iframe></div>
+                                <div style="padding:10px; font-weight:bold;">${user.toUpperCase()}</div>
+                            </div>`);
                     }
-                } catch (e) {}
-            }
+                    if (btn) btn.classList.add('is-live');
+                } else {
+                    if (exists) exists.remove();
+                    if (btn) btn.classList.remove('is-live');
+                }
+            } catch (e) {}
         }
 
-        init();
-        updateStatus();
-        // تحديث كل دقيقة لضمان عدم حظر البروكسي
-        setInterval(updateStatus, 60000);
+        // فحص دوري كل 15 ثانية (سرعة جنونية)
+        function startUpdating() {
+            users.forEach(u => checkFast(u));
+        }
+
+        startUpdating();
+        setInterval(startUpdating, 15000); 
     </script>
 </body>
 </html>
