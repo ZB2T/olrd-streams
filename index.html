@@ -3,54 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OLRD STREAMS</title>
+    <title>OLRD COMMUNITY | LIVE</title>
     <style>
-        body { margin: 0; background: #000; color: #fff; font-family: sans-serif; }
-        .bg { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: url('bg.jpg') no-repeat center center/cover; 
-            opacity: 0.2; z-index: -1; 
+        :root { --main-red: #ff0000; --bg-dark: #050505; }
+        body { 
+            margin: 0; padding: 0; background-color: #000; color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, sans-serif; text-align: center;
         }
-        header { padding: 20px; text-align: center; border-bottom: 2px solid red; background: rgba(0,0,0,0.8); }
-        .logo { width: 80px; display: block; margin: 0 auto 10px; }
-        .grid { 
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); 
-            gap: 20px; padding: 20px; max-width: 1300px; margin: 0 auto; 
+        .bg-fixed {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: url('bg.jpg') no-repeat center center/cover;
+            opacity: 0.15; z-index: -1;
         }
-        .card { background: #111; border: 1px solid #333; border-radius: 8px; overflow: hidden; }
-        .v-container { position: relative; padding-bottom: 56.25%; height: 0; }
-        iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
-        .footer { padding: 10px; font-weight: bold; background: #000; display: flex; justify-content: space-between; }
+        header { 
+            padding: 30px 0; background: rgba(0,0,0,0.9); 
+            border-bottom: 3px solid var(--main-red); position: sticky; top: 0; z-index: 100;
+        }
+        .logo { width: 80px; transition: 0.3s; }
+        .logo:hover { transform: scale(1.1); }
+        .brand { font-size: 28px; font-weight: 900; margin-top: 10px; text-transform: uppercase; }
+        .brand span { color: var(--main-red); }
+
+        .container { width: 98%; max-width: 1600px; margin: 20px auto; }
+        
+        .streams-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); 
+            gap: 20px; padding-bottom: 50px;
+        }
+        
+        .card { 
+            background: rgba(15, 15, 15, 0.9); border: 1px solid #222; 
+            border-radius: 10px; overflow: hidden; transition: 0.3s;
+        }
+        .card:hover { border-color: var(--main-red); box-shadow: 0 0 15px rgba(255,0,0,0.2); }
+        
+        .v-wrap { position: relative; padding-bottom: 56.25%; height: 0; background: #000; }
+        iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+        
+        .footer { 
+            padding: 12px 15px; background: #000; 
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 14px; font-weight: bold;
+        }
+        .live-dot { color: #00ff00; display: flex; align-items: center; gap: 5px; }
+        .dot { width: 8px; height: 8px; background: #00ff00; border-radius: 50%; animation: blink 1s infinite; }
+
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        @media (max-width: 480px) { .streams-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
-    <div class="bg"></div>
-    <header>
-        <img src="logo.png" class="logo" onerror="this.style.display='none'">
-        <div style="font-size: 24px;">OLRD <span style="color:red">STREAMS</span></div>
-    </header>
 
-    <div class="grid">
-        <div class="card">
-            <div class="v-container"><iframe src="https://player.kick.com/yzfk?parent=olrd-streams.pages.dev"></iframe></div>
-            <div class="footer"><span>YZFK</span><span style="color:lime">● LIVE</span></div>
+<div class="bg-fixed"></div>
+
+<header>
+    <img src="logo.png" alt="OLRD" class="logo" onerror="this.style.display='none'">
+    <div class="brand">OLRD <span>Community</span></div>
+</header>
+
+<div class="container">
+    <div class="streams-grid" id="grid">
         </div>
-        <div class="card">
-            <div class="v-container"><iframe src="https://player.kick.com/ngdi?parent=olrd-streams.pages.dev"></iframe></div>
-            <div class="footer"><span>NGDI</span><span style="color:lime">● LIVE</span></div>
-        </div>
-        <div class="card">
-            <div class="v-container"><iframe src="https://player.kick.com/lkaiiser?parent=olrd-streams.pages.dev"></iframe></div>
-            <div class="footer"><span>LKAIISER</span><span style="color:lime">● LIVE</span></div>
-        </div>
-        <div class="card">
-            <div class="v-container"><iframe src="https://player.kick.com/kurd1i?parent=olrd-streams.pages.dev"></iframe></div>
-            <div class="footer"><span>KURD1I</span><span style="color:lime">● LIVE</span></div>
-        </div>
-        <div class="card">
-            <div class="v-container"><iframe src="https://player.kick.com/evely3?parent=olrd-streams.pages.dev"></iframe></div>
-            <div class="footer"><span>EVELY3</span><span style="color:lime">● LIVE</span></div>
-        </div>
-    </div>
+</div>
+
+<script>
+    const users = [
+        "d7m1-s", "iwdd", "y_3l", "ialfa", "ROMEO", "abo3th", "shanks_u", "Zb2t", 
+        "z7lion", "alarwilii", "teek0", "d4t4xi", "kr0m", "mrfarosyy", "irust", 
+        "omutx", "lunedee", "saraalnamlah", "abosaloum", "qyem", "0xcharlie", 
+        "ykoy", "fed0tb", "hitanchi", "itsenemyy", "kurd1i", "yaasoky", "imsh4", 
+        "9lb6h", "seba0z", "nas_24", "25sniperksa", "22rahaf", "xlive1", 
+        "berlin26x", "v0lka", "qtrm7md", "gyg2", "bnshddad", "0md1", "nolizr", 
+        "aizen56", "mr20s", "ii2a"
+    ];
+
+    const grid = document.getElementById('grid');
+    const parentDomain = "olrd-streams.pages.dev";
+
+    users.forEach(user => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+            <div class="v-wrap">
+                <iframe src="https://player.kick.com/${user}?muted=true&parent=${parentDomain}" allowfullscreen="true"></iframe>
+            </div>
+            <div class="footer">
+                <span>${user.toUpperCase()}</span>
+                <span class="live-dot"><span class="dot"></span> LIVE</span>
+            </div>
+        `;
+        grid.appendChild(card);
+    });
+</script>
+
 </body>
 </html>
