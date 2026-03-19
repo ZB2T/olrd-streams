@@ -7,42 +7,37 @@
     <style>
         body { 
             margin: 0; padding: 0; background-color: #000; color: white;
-            font-family: sans-serif; text-align: center;
+            font-family: 'Segoe UI', sans-serif; text-align: center;
         }
-        /* الخلفية المخصصة */
         .bg {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: url('bg.jpg') no-repeat center center/cover;
-            opacity: 0.3; z-index: -1;
+            opacity: 0.25; z-index: -1;
         }
         header { 
             padding: 20px; background: rgba(0,0,0,0.9); 
             border-bottom: 3px solid #ff0000; margin-bottom: 20px;
         }
-        .logo { width: 80px; }
+        .logo { width: 90px; }
         .grid { 
             display: grid; grid-template-columns: repeat(2, 1fr); 
-            gap: 15px; padding: 10px; max-width: 1200px; margin: 0 auto; 
+            gap: 20px; padding: 10px; max-width: 1200px; margin: 0 auto; 
         }
-        .card { background: #111; border: 1px solid #333; border-radius: 10px; overflow: hidden; }
-        .v-con { position: relative; padding-bottom: 56.25%; height: 0; }
+        .card { background: #0a0a0a; border: 1px solid #222; border-radius: 12px; overflow: hidden; padding-bottom: 10px; }
+        .v-con { position: relative; padding-bottom: 56.25%; height: 0; background: #000; }
         iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
-        .info { padding: 10px; font-weight: bold; font-size: 14px; display: flex; justify-content: space-between; }
-        
-        /* جعل القناة الأخيرة فردية في المنتصف */
+        .info { padding: 12px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+        .refresh-btn { 
+            background: #222; color: #aaa; border: none; padding: 5px 10px; 
+            border-radius: 5px; cursor: pointer; font-size: 11px; 
+        }
+        .refresh-btn:hover { background: #ff0000; color: white; }
+
         .card:last-child:nth-child(odd) { grid-column: 1 / span 2; width: 50%; margin: 0 auto; }
 
-        @media (max-width: 768px) {
+        @media (max-width: 800px) {
             .grid { grid-template-columns: 1fr; }
             .card:last-child:nth-child(odd) { width: 100%; }
         }
     </style>
-</head>
-<body>
-    <div class="bg"></div>
-    <header>
-        <img src="logo.png" alt="OLRD" class="logo" onerror="this.style.display='none'">
-        <h1 style="margin:10px 0; font-size: 24px;">OLRD <span style="color:#ff0000">STREAMS</span></h1>
-    </header>
-
-    <div class="grid">
+</
