@@ -6,17 +6,13 @@
     <title>OLRD STREAMS | LIVE</title>
     <style>
         :root { --main-red: #ff0000; --bg-black: #080808; }
-        body { background-color: var(--bg-black); color: white; font-family: sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; }
-        header { width: 100%; padding: 30px 0; text-align: center; border-bottom: 3px solid var(--main-red); background: #000; }
-        .brand { font-size: 35px; font-weight: 900; letter-spacing: 2px; }
+        body { background-color: var(--bg-black); color: white; font-family: sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; }
+        header { width: 100%; position: absolute; top: 0; padding: 20px 0; text-align: center; border-bottom: 2px solid var(--main-red); background: #000; }
+        .brand { font-size: 28px; font-weight: 900; }
         .brand span { color: var(--main-red); }
-        .container { width: 90%; max-width: 1000px; margin-top: 30px; }
-        /* حاوية الفيديو */
-        .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px; border: 1px solid #333; background: #000; }
-        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
-        .btn-list { display: flex; gap: 10px; margin-top: 20px; justify-content: center; }
-        .btn { background: transparent; border: 2px solid var(--main-red); color: white; padding: 10px 20px; cursor: pointer; border-radius: 5px; font-weight: bold; }
-        .btn:hover { background: var(--main-red); color: black; }
+        .video-wrapper { width: 90%; max-width: 900px; border: 2px solid #222; border-radius: 15px; overflow: hidden; box-shadow: 0 0 30px rgba(255, 0, 0, 0.2); }
+        .video-container { position: relative; padding-bottom: 56.25%; height: 0; }
+        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
     </style>
 </head>
 <body>
@@ -25,16 +21,12 @@
     <div class="brand">OLRD <span>STREAMS</span></div>
 </header>
 
-<div class="container">
+<div class="video-wrapper">
     <div class="video-container">
         <iframe 
-            src="https://player.kick.com/yzfk?muted=true&autoplay=true&parent=olrd-streams.pages.dev" 
+            src="https://player.kick.com/yzfk?muted=false&autoplay=true&parent=olrd-streams.pages.dev" 
             allowfullscreen="true">
         </iframe>
-    </div>
-
-    <div class="btn-list">
-        <button class="btn" onclick="document.querySelector('iframe').src='https://player.kick.com/yzfk?parent=olrd-streams.pages.dev'">تحديث البث</button>
     </div>
 </div>
 
