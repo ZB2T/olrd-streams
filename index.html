@@ -11,13 +11,23 @@
         .logo { width: 80px; margin-bottom: 10px; }
         .container { width: 95%; max-width: 1600px; margin: 0 auto; }
         .live-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; margin-bottom: 40px; }
-        .card-link { text-decoration: none; color: inherit; display: block; }
+        .card-link { text-decoration: none; display: block; }
         .card { background: #0a0a0a; border: 1px solid #222; border-radius: 10px; overflow: hidden; transition: 0.3s; cursor: pointer; }
         .card:hover { border-color: red; transform: scale(1.02); }
         .v-wrap { position: relative; padding-bottom: 56.25%; height: 0; background: #111; }
         iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+        
         .card-info { padding: 12px; display: flex; justify-content: space-between; align-items: center; background: #050505; }
-        .user-name { font-weight: bold; font-size: 14px; text-transform: uppercase; }
+
+        /* تعديل اللون للأبيض الناصع مع إضافة !important لضمان التغيير */
+        .user-name { 
+            font-weight: bold; 
+            font-size: 14px; 
+            text-transform: uppercase; 
+            color: #ffffff !important; 
+            text-decoration: none !important;
+        }
+
         .live-tag { color: #00ff00; font-size: 11px; font-weight: bold; display: flex; align-items: center; gap: 5px; }
         .live-tag::before { content: ''; width: 8px; height: 8px; background: #00ff00; border-radius: 50%; box-shadow: 0 0 5px #00ff00; }
 
@@ -76,7 +86,6 @@
     </div>
 
     <script>
-        // القائمة النهائية مع العضو الجديد iitalal7
         const users = [
             "ii2a", "qyem", "fed0tb", "shanks_u", "evely3", "lkaiiser", "d4t4xi", "kurd1i", 
             "ialfa", "irust", "lunedee", "ROMEO", "z7lion", "saraalnamlah", "mrfarosyy", "yzfk", 
