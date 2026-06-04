@@ -4,11 +4,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OLRD STREAMS | OFFICIAL PLATFORM</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    
     <style>
-        /* الإعدادات العامة */
-        body { margin: 0; background: #000; color: #fff; font-family: sans-serif; text-align: center; overflow-x: hidden; }
-        .bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: url('bg.jpg') no-repeat center center/cover; opacity: 0.15; z-index: -1; }
+        /* الإعدادات العامة والخطوط الجديدة */
+        body { 
+            margin: 0; 
+            background: #000; 
+            color: #fff; 
+            font-family: 'Montserrat', sans-serif; 
+            text-align: center; 
+            overflow-x: hidden; 
+        }
+
+        /* تأثير دوران الخلفية المتوازن والمستمر */
+        .bg { 
+            position: fixed; 
+            top: -50%; 
+            left: -50%; 
+            width: 200%; 
+            height: 200%; 
+            background: url('bg.jpg') no-repeat center center/contain; 
+            opacity: 0.15; 
+            z-index: -1; 
+            animation: rotateBg 40s linear infinite; /* دوران مستمر ومتوسط السرعة */
+        }
+
+        @keyframes rotateBg {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
         
+        /* عناوين الستايل الفخم (شاشة الترحيب والهيدر) */
+        h1, .splash-text, .selection-title, .category-box {
+            font-family: 'Cinzel', serif;
+        }
+
         /* 1. شاشة الترحيب السلسة */
         #splash-screen {
             position: fixed;
@@ -22,16 +55,16 @@
             transition: opacity 1s ease-in-out;
         }
         .splash-text {
-            font-size: 3rem;
-            font-weight: bold;
-            letter-spacing: 4px;
+            font-size: 3.5rem;
+            font-weight: 900;
+            letter-spacing: 6px;
             color: #fff;
             animation: fadeIn 1.5s ease-in-out forwards;
         }
         .splash-text span { color: red; }
 
         @keyframes fadeIn {
-            0% { opacity: 0; transform: scale(0.9); }
+            0% { opacity: 0; transform: scale(0.95); }
             100% { opacity: 1; transform: scale(1); }
         }
 
@@ -45,7 +78,7 @@
             opacity: 0;
             transition: opacity 1s ease-in-out;
         }
-        .selection-title { font-size: 24px; margin-bottom: 40px; letter-spacing: 2px; color: #aaa; text-transform: uppercase; }
+        .selection-title { font-size: 28px; margin-bottom: 40px; letter-spacing: 4px; color: #aaa; font-weight: 700; }
         
         .categories-container {
             display: flex;
@@ -58,20 +91,20 @@
             flex: 1;
             aspect-ratio: 1 / 1;
             max-width: 400px;
-            background: rgba(10, 10, 10, 0.8);
+            background: rgba(10, 10, 10, 0.85);
             border: 2px solid #222;
             border-radius: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 2rem;
-            font-weight: bold;
-            letter-spacing: 2px;
+            font-size: 2.2rem;
+            font-weight: 900;
+            letter-spacing: 3px;
             cursor: pointer;
             transition: 0.4s ease;
             text-decoration: none;
             color: #fff;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.7);
         }
         .category-box:hover {
             border-color: red;
@@ -86,7 +119,12 @@
         
         header { padding: 30px; background: #000; border-bottom: 3px solid red; margin-bottom: 30px; position: relative; }
         .logo { width: 80px; margin-bottom: 10px; }
-        .back-btn { position: absolute; top: 35px; right: 5%; background: #111; border: 1px solid #333; color: #fff; padding: 10px 20px; border-radius: 5px; cursor: pointer; transition: 0.3s; }
+        .back-btn { 
+            position: absolute; top: 35px; right: 5%; 
+            background: #111; border: 1px solid #333; color: #fff; 
+            padding: 10px 20px; border-radius: 5px; cursor: pointer; 
+            transition: 0.3s; font-family: 'Montserrat', sans-serif; font-weight: bold;
+        }
         .back-btn:hover { background: red; border-color: red; }
         
         .container { width: 95%; max-width: 1600px; margin: 0 auto; }
@@ -98,7 +136,8 @@
         iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
         .card-info { padding: 12px; display: flex; justify-content: space-between; align-items: center; background: #050505; }
         
-        .user-name { font-weight: bold; font-size: 14px; text-transform: uppercase; color: #ffffff !important; text-decoration: none !important; }
+        /* لون الاسم الأبيض الناصع المعتمد مع الخط الجديد */
+        .user-name { font-weight: 700; font-size: 14px; text-transform: uppercase; color: #ffffff !important; text-decoration: none !important; letter-spacing: 1px; }
         .live-tag { color: #00ff00; font-size: 11px; font-weight: bold; display: flex; align-items: center; gap: 5px; }
         .live-tag::before { content: ''; width: 8px; height: 8px; background: #00ff00; border-radius: 50%; box-shadow: 0 0 5px #00ff00; }
 
@@ -144,7 +183,7 @@
             <h1 style="margin:0;">STORY <span style="color:red">BOOK</span></h1>
         </header>
         <div class="container" style="padding-top: 100px;">
-            <h2 style="font-size: 2.5rem; letter-spacing: 2px;">STORY BOOK SECTION</h2>
+            <h2 style="font-size: 2.5rem; letter-spacing: 2px; font-family: 'Cinzel', serif;">STORY BOOK SECTION</h2>
             <p style="color: #666; font-size: 1.2rem;">قريباً.. هنا بنرتب أحداث وقصص السيرفر الفخمة.</p>
         </div>
     </div>
