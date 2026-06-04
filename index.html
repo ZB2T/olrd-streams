@@ -18,18 +18,18 @@
             overflow-x: hidden; 
         }
 
-        /* تعديل الخلفية: جعل النقش أصغر ومتكرر لتبان تفاصيله كاملة أثناء الدوران */
+        /* الخلفية الموزونة */
         .bg { 
             position: fixed; 
             top: -100%; 
             left: -100%; 
             width: 300%; 
             height: 300%; 
-            background: url('bg.jpg') repeat; /* جعل النقش يتكرر بنسق متناسق */
-            background-size: 350px; /* هذا الحجم يخلي النقش صغير والتفاصيل واضحة كاملة */
-            opacity: 0.12; /* تقليل الشفافية قليلاً ليعطي فخامة بدون إزعاج العين */
+            background: url('bg.jpg') repeat; 
+            background-size: 350px; 
+            opacity: 0.12; 
             z-index: -1; 
-            animation: rotateBg 60s linear infinite; /* جعل الدوران أهدأ وأنعم ليتناسب مع التفاصيل الصغيرة */
+            animation: rotateBg 60s linear infinite; 
         }
 
         @keyframes rotateBg {
@@ -127,15 +127,42 @@
         .back-btn:hover { background: red; border-color: red; }
         
         .container { width: 95%; max-width: 1600px; margin: 0 auto; }
-        .live-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; margin-bottom: 40px; }
+        .live-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; margin-bottom: 40px; }
         .card-link { text-decoration: none; display: block; }
-        .card { background: #0a0a0a; border: 1px solid #222; border-radius: 10px; overflow: hidden; transition: 0.3s; cursor: pointer; }
+        
+        /* الكرت الجديد المتكامل بدون شريط سفلي مقطوع */
+        .card { 
+            position: relative;
+            background: #000; 
+            border: 1px solid #222; 
+            border-radius: 12px; 
+            overflow: hidden; 
+            transition: 0.3s; 
+            cursor: pointer; 
+        }
         .card:hover { border-color: red; transform: scale(1.02); }
         .v-wrap { position: relative; padding-bottom: 56.25%; height: 0; background: #111; }
         iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
-        .card-info { padding: 12px; display: flex; justify-content: space-between; align-items: center; background: #050505; }
         
-        .user-name { font-weight: 700; font-size: 14px; text-transform: uppercase; color: #ffffff !important; text-decoration: none !important; letter-spacing: 1px; }
+        /* الطبقة الزجاجية الشفافة المدمجة داخل الكرت الأسطوري */
+        .card-info { 
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            box-sizing: border-box;
+            padding: 10px 15px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            background: rgba(0, 0, 0, 0.65); /* خلفية سوداء شبه شفافة */
+            backdrop-filter: blur(8px); /* تأثير التغبيش الزجاجي الفخم */
+            -webkit-backdrop-filter: blur(8px);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            z-index: 10;
+        }
+        
+        .user-name { font-weight: 700; font-size: 13px; text-transform: uppercase; color: #ffffff !important; text-decoration: none !important; letter-spacing: 1px; }
         .live-tag { color: #00ff00; font-size: 11px; font-weight: bold; display: flex; align-items: center; gap: 5px; }
         .live-tag::before { content: ''; width: 8px; height: 8px; background: #00ff00; border-radius: 50%; box-shadow: 0 0 5px #00ff00; }
 
