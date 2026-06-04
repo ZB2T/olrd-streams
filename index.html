@@ -9,7 +9,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     
     <style>
-        /* الإعدادات العامة والخطوط الجديدة */
         body { 
             margin: 0; 
             background: #000; 
@@ -19,17 +18,18 @@
             overflow-x: hidden; 
         }
 
-        /* تأثير دوران الخلفية المتوازن والمستمر */
+        /* تعديل الخلفية: جعل النقش أصغر ومتكرر لتبان تفاصيله كاملة أثناء الدوران */
         .bg { 
             position: fixed; 
-            top: -50%; 
-            left: -50%; 
-            width: 200%; 
-            height: 200%; 
-            background: url('bg.jpg') no-repeat center center/contain; 
-            opacity: 0.15; 
+            top: -100%; 
+            left: -100%; 
+            width: 300%; 
+            height: 300%; 
+            background: url('bg.jpg') repeat; /* جعل النقش يتكرر بنسق متناسق */
+            background-size: 350px; /* هذا الحجم يخلي النقش صغير والتفاصيل واضحة كاملة */
+            opacity: 0.12; /* تقليل الشفافية قليلاً ليعطي فخامة بدون إزعاج العين */
             z-index: -1; 
-            animation: rotateBg 40s linear infinite; /* دوران مستمر ومتوسط السرعة */
+            animation: rotateBg 60s linear infinite; /* جعل الدوران أهدأ وأنعم ليتناسب مع التفاصيل الصغيرة */
         }
 
         @keyframes rotateBg {
@@ -37,12 +37,11 @@
             100% { transform: rotate(360deg); }
         }
         
-        /* عناوين الستايل الفخم (شاشة الترحيب والهيدر) */
         h1, .splash-text, .selection-title, .category-box {
             font-family: 'Cinzel', serif;
         }
 
-        /* 1. شاشة الترحيب السلسة */
+        /* 1. شاشة الترحيب */
         #splash-screen {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -114,7 +113,7 @@
         }
         .category-box span { color: red; margin-left: 5px; }
 
-        /* 3. واجهات الأقسام الداخليّة */
+        /* 3. واجهات الأقسام الداخلية */
         #streamers-section, #story-section { display: none; padding-bottom: 50px; }
         
         header { padding: 30px; background: #000; border-bottom: 3px solid red; margin-bottom: 30px; position: relative; }
@@ -136,7 +135,6 @@
         iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
         .card-info { padding: 12px; display: flex; justify-content: space-between; align-items: center; background: #050505; }
         
-        /* لون الاسم الأبيض الناصع المعتمد مع الخط الجديد */
         .user-name { font-weight: 700; font-size: 14px; text-transform: uppercase; color: #ffffff !important; text-decoration: none !important; letter-spacing: 1px; }
         .live-tag { color: #00ff00; font-size: 11px; font-weight: bold; display: flex; align-items: center; gap: 5px; }
         .live-tag::before { content: ''; width: 8px; height: 8px; background: #00ff00; border-radius: 50%; box-shadow: 0 0 5px #00ff00; }
