@@ -3,12 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OLRD STREAMS | LIVE</title>
+    <title>OLRD STREAMS | OFFICIAL PLATFORM</title>
     <style>
-        body { margin: 0; background: #000; color: #fff; font-family: sans-serif; text-align: center; padding-bottom: 50px; }
+        /* الإعدادات العامة */
+        body { margin: 0; background: #000; color: #fff; font-family: sans-serif; text-align: center; overflow-x: hidden; }
         .bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: url('bg.jpg') no-repeat center center/cover; opacity: 0.15; z-index: -1; }
-        header { padding: 30px; background: #000; border-bottom: 3px solid red; margin-bottom: 30px; }
+        
+        /* 1. شاشة الترحيب السلسة */
+        #splash-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 1s ease-in-out;
+        }
+        .splash-text {
+            font-size: 3rem;
+            font-weight: bold;
+            letter-spacing: 4px;
+            color: #fff;
+            animation: fadeIn 1.5s ease-in-out forwards;
+        }
+        .splash-text span { color: red; }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: scale(0.9); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        /* 2. شاشة اختيار الأقسام (الرئيسية) */
+        #main-selection {
+            display: none;
+            height: 100vh;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+        .selection-title { font-size: 24px; margin-bottom: 40px; letter-spacing: 2px; color: #aaa; text-transform: uppercase; }
+        
+        .categories-container {
+            display: flex;
+            gap: 40px;
+            width: 90%;
+            max-width: 1200px;
+            justify-content: center;
+        }
+        .category-box {
+            flex: 1;
+            aspect-ratio: 1 / 1;
+            max-width: 400px;
+            background: rgba(10, 10, 10, 0.8);
+            border: 2px solid #222;
+            border-radius: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: 0.4s ease;
+            text-decoration: none;
+            color: #fff;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .category-box:hover {
+            border-color: red;
+            transform: translateY(-10px) scale(1.03);
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.3);
+            background: rgba(20, 5, 5, 0.9);
+        }
+        .category-box span { color: red; margin-left: 5px; }
+
+        /* 3. واجهات الأقسام الداخليّة */
+        #streamers-section, #story-section { display: none; padding-bottom: 50px; }
+        
+        header { padding: 30px; background: #000; border-bottom: 3px solid red; margin-bottom: 30px; position: relative; }
         .logo { width: 80px; margin-bottom: 10px; }
+        .back-btn { position: absolute; top: 35px; right: 5%; background: #111; border: 1px solid #333; color: #fff; padding: 10px 20px; border-radius: 5px; cursor: pointer; transition: 0.3s; }
+        .back-btn:hover { background: red; border-color: red; }
+        
         .container { width: 95%; max-width: 1600px; margin: 0 auto; }
         .live-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; margin-bottom: 40px; }
         .card-link { text-decoration: none; display: block; }
@@ -16,72 +96,56 @@
         .card:hover { border-color: red; transform: scale(1.02); }
         .v-wrap { position: relative; padding-bottom: 56.25%; height: 0; background: #111; }
         iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
-        
         .card-info { padding: 12px; display: flex; justify-content: space-between; align-items: center; background: #050505; }
-
-        /* تعديل اللون للأبيض الناصع مع إضافة !important لضمان التغيير */
-        .user-name { 
-            font-weight: bold; 
-            font-size: 14px; 
-            text-transform: uppercase; 
-            color: #ffffff !important; 
-            text-decoration: none !important;
-        }
-
+        
+        .user-name { font-weight: bold; font-size: 14px; text-transform: uppercase; color: #ffffff !important; text-decoration: none !important; }
         .live-tag { color: #00ff00; font-size: 11px; font-weight: bold; display: flex; align-items: center; gap: 5px; }
         .live-tag::before { content: ''; width: 8px; height: 8px; background: #00ff00; border-radius: 50%; box-shadow: 0 0 5px #00ff00; }
 
-        .footer-credit {
-            margin: 40px auto 10px auto;
-            width: fit-content;
-            min-width: 250px;
-            padding: 15px 40px;
-            background: rgba(255, 0, 0, 0.1);
-            border: 1px solid red;
-            border-radius: 8px;
-            font-weight: bold;
-            font-size: 14px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            color: #fff;
-        }
-
-        .zidan-signature-wrap {
-            width: fit-content;
-            margin: 0 auto;
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid #333;
-            padding: 5px 15px;
-            border-radius: 5px;
-            font-size: 11px;
-            color: #888;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .sig-z {
-            font-family: 'Brush Script MT', cursive, serif;
-            font-size: 22px;
-            color: red;
-            line-height: 1;
-        }
+        .footer-credit { margin: 40px auto 10px auto; width: fit-content; min-width: 250px; padding: 15px 40px; background: rgba(255, 0, 0, 0.1); border: 1px solid red; border-radius: 8px; font-weight: bold; font-size: 14px; letter-spacing: 2px; text-transform: uppercase; color: #fff; }
+        .zidan-signature-wrap { width: fit-content; margin: 0 auto; background: rgba(0, 0, 0, 0.5); border: 1px solid #333; padding: 5px 15px; border-radius: 5px; font-size: 11px; color: #888; display: flex; align-items: center; gap: 10px; }
+        .sig-z { font-family: 'Brush Script MT', cursive, serif; font-size: 22px; color: red; line-height: 1; }
     </style>
 </head>
 <body>
     <div class="bg"></div>
-    <header>
-        <img src="logo.png" class="logo">
-        <h1 style="margin:0;">OLRD <span style="color:red">STREAMS</span></h1>
-    </header>
 
-    <div class="container">
-        <div id="main-grid" class="live-grid"></div>
-        
-        <div class="footer-section">
-            <div class="footer-credit">CREATED BY ZB2T</div>
-            <div class="zidan-signature-wrap">
-                Zidan's signature: <span class="sig-z">Z</span>
+    <div id="splash-screen">
+        <div class="splash-text">WELCOME TO <span>OLRD STREAMS</span></div>
+    </div>
+
+    <div id="main-selection">
+        <div class="selection-title">SELECT CATEGORY</div>
+        <div class="categories-container">
+            <div class="category-box" onclick="showSection('streamers')">STREAMERS</div>
+            <div class="category-box" onclick="showSection('story')">STORY <span>BOOK</span></div>
+        </div>
+    </div>
+
+    <div id="streamers-section">
+        <header>
+            <button class="back-btn" onclick="showSelectionPage()">رجوع</button>
+            <img src="logo.png" class="logo">
+            <h1 style="margin:0;">OLRD <span style="color:red">STREAMS</span></h1>
+        </header>
+        <div class="container">
+            <div id="main-grid" class="live-grid"></div>
+            <div class="footer-section">
+                <div class="footer-credit">CREATED BY ZB2T</div>
+                <div class="zidan-signature-wrap">Zidan's signature: <span class="sig-z">Z</span></div>
             </div>
+        </div>
+    </div>
+
+    <div id="story-section">
+        <header>
+            <button class="back-btn" onclick="showSelectionPage()">رجوع</button>
+            <img src="logo.png" class="logo">
+            <h1 style="margin:0;">STORY <span style="color:red">BOOK</span></h1>
+        </header>
+        <div class="container" style="padding-top: 100px;">
+            <h2 style="font-size: 2.5rem; letter-spacing: 2px;">STORY BOOK SECTION</h2>
+            <p style="color: #666; font-size: 1.2rem;">قريباً.. هنا بنرتب أحداث وقصص السيرفر الفخمة.</p>
         </div>
     </div>
 
@@ -104,12 +168,7 @@
                 <div class="card-link">
                     <div class="card">
                         <div class="v-wrap">
-                            <iframe 
-                                src="https://player.kick.com/${u}?muted=true&parent=${host}" 
-                                allowfullscreen="true"
-                                scrolling="no"
-                                loading="lazy">
-                            </iframe>
+                            <iframe src="https://player.kick.com/${u}?muted=true&parent=${host}" allowfullscreen="true" scrolling="no" loading="lazy"></iframe>
                         </div>
                         <a href="https://kick.com/${u}" target="_blank" style="text-decoration:none;">
                             <div class="card-info">
@@ -120,6 +179,38 @@
                     </div>
                 </div>`;
         });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const splash = document.getElementById('splash-screen');
+                const selection = document.getElementById('main-selection');
+                
+                splash.style.opacity = '0';
+                
+                setTimeout(() => {
+                    splash.style.display = 'none';
+                    selection.style.display = 'flex';
+                    setTimeout(() => { selection.style.opacity = '1'; }, 50);
+                }, 1000);
+            }, 3000);
+        });
+
+        function showSection(section) {
+            document.getElementById('main-selection').style.display = 'none';
+            if(section === 'streamers') {
+                document.getElementById('streamers-section').style.display = 'block';
+            } else if(section === 'story') {
+                document.getElementById('story-section').style.display = 'block';
+            }
+        }
+
+        function showSelectionPage() {
+            document.getElementById('streamers-section').style.display = 'none';
+            document.getElementById('story-section').style.display = 'none';
+            const selection = document.getElementById('main-selection');
+            selection.style.display = 'flex';
+            selection.style.opacity = '1';
+        }
     </script>
 </body>
 </html>
