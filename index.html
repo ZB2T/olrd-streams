@@ -13,7 +13,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     <style>
         html, body, *, a, button {
-            cursor: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNNC41IDIuMjV2MTcuMjE4bDQuNDkzLTQuMzIxIDMuMjMyIDcuMTAzIDMuMDEyLTEuMzcxLTMuMjYyLTcuMDQyIDUuNTI1LjAxM3ptMS41IDIuNjUxbDExLjAxIDEwLjMzNC0zLjc5MS0uMDEgMy4yNDIgNi45OTYtMS41MDMuNjg0LTMuMjEzLTcuMDYtMi43NDUgMi42Mzd6IiBmaWxsPSIjYjMyNDI0Ii8+PC9zdmc+') 0 0, auto !important;
+            cursor: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNNC41IDIuMjV2MTcuMjE4bDQuNDkzLTQuMzIxIDMuMjMyIDcuMTAzIDMuMDEyLTEuMzcxLTMuMjYyLTcuMDQyIDUuNTI1LjAxM3ptMS41IDIuNjUxbDExLjAxIDEwLjMzNC0zLjc5MS0uMDEgMy4yNDIgNi45OTYtMS41MDMuNjg0LTMuMjIxLTcuMDYtMi43NDUgMi42Mzd6IiBmaWxsPSIjYjMyNDI0Ii8+PC9zdmc+') 0 0, auto !important;
         }
 
         body { 
@@ -77,30 +77,42 @@
         
         .v-wrap { position: relative; padding-bottom: 56.25%; height: 0; background: #111; }
         
-        /* تجميل وتثبيت صندوق الانتظار المبدئي */
-        .loading-placeholder {
+        .red-offline-placeholder {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: #0a0a0a;
+            background: linear-gradient(135deg, #120202 0%, #2b0505 100%);
+            border: 1px solid rgba(179, 36, 36, 0.3);
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            color: #555;
-            font-size: 12px;
-            font-weight: bold;
-            letter-spacing: 2px;
+            box-sizing: border-box;
             z-index: 2;
+        }
+
+        .red-offline-box {
+            background: rgba(179, 36, 36, 0.15);
+            border: 1px solid #b32424;
+            padding: 10px 20px;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 13px;
+            font-weight: bold;
+            letter-spacing: 1.5px;
+            box-shadow: 0 0 15px rgba(179, 36, 36, 0.2);
         }
 
         iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; pointer-events: none; z-index: 1; }
         
         .card-info { position: absolute; bottom: 0; left: 0; width: 100%; box-sizing: border-box; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; background: rgba(0, 0, 0, 0.65); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-top: 1px solid rgba(255, 255, 255, 0.05); z-index: 10; }
         .user-name { font-weight: 700; font-size: 13px; text-transform: uppercase; color: #ffffff !important; text-decoration: none !important; letter-spacing: 1px; }
-        .live-tag { color: #00ff00; font-size: 11px; font-weight: bold; display: flex; align-items: center; gap: 5px; }
-        .live-tag::before { content: ''; width: 8px; height: 8px; background: #00ff00; border-radius: 50%; box-shadow: 0 0 5px #00ff00; }
+        
+        .live-tag { color: #b32424; font-size: 11px; font-weight: bold; display: flex; align-items: center; gap: 5px; letter-spacing: 1px; }
+        .live-tag::before { content: ''; width: 8px; height: 8px; background: #b32424; border-radius: 50%; box-shadow: 0 0 8px #b32424; }
+        
         .footer-credit { margin: 40px auto 15px auto; width: fit-content; min-width: 250px; padding: 12px 35px; background: rgba(179, 36, 36, 0.06); border: 1px solid rgba(179, 36, 36, 0.35); border-radius: 8px; font-weight: bold; font-size: 13px; letter-spacing: 2px; text-transform: uppercase; color: #fff; }
         
         #admin-panel { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 95%; max-width: 1400px; height: 85vh; background: #0a0a0a; border: 2px solid #b32424; border-radius: 20px; z-index: 10000; padding: 30px; box-shadow: 0 0 50px rgba(0,0,0,0.95); overflow-y: auto; box-sizing: border-box; }
@@ -183,7 +195,7 @@
         const streamersRef = database.ref('streamers_list');
 
         let users = [];
-        let isFullyLoaded = false; // Flag to check if splash has ended
+        let isFullyLoaded = false;
         const host = window.location.hostname;
         const grid = document.getElementById('main-grid');
         let sortableInstance = null;
@@ -195,18 +207,14 @@
             if (document.getElementById('admin-panel').style.display === 'block') renderAdminList();
         });
 
-        // رندر مخصص وآمن يمنع حقن الإطارات إلا بعد تخطي شاشة الترحيب
         function renderGrid() {
             grid.innerHTML = "";
             users.forEach(u => {
-                // نضع كود الـ iframe فقط إذا انتهى التحميل بالكامل
                 const iframeHTML = isFullyLoaded 
                     ? `<iframe src="https://player.kick.com/${u}?muted=true&parent=${host}" allowfullscreen="true" scrolling="no" loading="lazy"></iframe>`
                     : ``;
 
-                const placeholderHTML = isFullyLoaded
-                    ? ``
-                    : `<div class="loading-placeholder">LOADING...</div>`;
+                const placeholderHTML = `<div class="red-offline-placeholder"><div class="red-offline-box">${u.toUpperCase()} IS OFFLINE</div></div>`;
 
                 grid.innerHTML += `
                     <a href="https://kick.com/${u}" target="_blank" class="card-link">
@@ -217,7 +225,7 @@
                                 ${iframeHTML}
                             </div>
                             <div class="card-info">
-                                <div class="live-tag">LIVE</div>
+                                <div class="live-tag">STATUS</div>
                                 <div class="user-name">${u}</div>
                             </div>
                         </div>
@@ -301,8 +309,6 @@
                     selection.style.display = 'flex'; 
                     setTimeout(() => { 
                         selection.style.opacity = '1'; 
-                        
-                        // هنا نعلن رسمياً انتهاء التحميل ونقوم بحقن الـ iframes بأمان تام
                         isFullyLoaded = true; 
                         renderGrid(); 
                     }, 50); 
