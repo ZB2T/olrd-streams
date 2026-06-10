@@ -8,6 +8,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     <style>
         body { background: #000; color: #fff; font-family: sans-serif; text-align: center; }
+        h1 { margin-top: 50px; }
         #admin-panel {
             display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
             width: 90%; max-width: 600px; background: #050505; border: 1px solid #333;
@@ -21,11 +22,7 @@
             background: #1a1a1a; border: 1px solid #333; padding: 15px; border-radius: 10px;
             cursor: grab; display: flex; flex-direction: column; align-items: center;
         }
-        .streamer-item:active { cursor: grabbing; }
-        .delete-btn {
-            background: #200505; color: #ff4d4d; border: 1px solid #551111;
-            padding: 5px 10px; border-radius: 4px; margin-top: 10px; cursor: pointer;
-        }
+        .delete-btn { background: #200505; color: #ff4d4d; border: 1px solid #551111; padding: 5px 10px; border-radius: 4px; margin-top: 10px; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -48,10 +45,14 @@
         const database = firebase.database();
         let users = [];
 
+        
         database.ref('streamers_list').on('value', (snapshot) => {
-            users = snapshot.val() || [];
-            renderMainList();
-            if(document.getElementById('admin-panel').style.display === 'block') renderAdminList();
+            try {
+                users = snapshot.val() || [];
+                renderMainList();
+            } catch (e) {
+                console.error("Data Load Error:", e);
+            }
         });
 
         function renderMainList() {
@@ -79,7 +80,6 @@
                     <span>${u}</span>
                     <button class="delete-btn" onclick="del(${i})">DELETE</button>
                 </li>`).join('');
-            
             new Sortable(list, {
                 onEnd: function (evt) {
                     const item = users.splice(evt.oldIndex, 1)[0];
