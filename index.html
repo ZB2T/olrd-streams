@@ -12,6 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght=700;900&family=Montserrat:wght=400;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     <style>
+        /* Global Custom Cursor Rules */
         * {
             cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M4.5 2.25v17.218l4.493-4.321 3.232 7.103 3.012-1.371-3.262-7.042 5.525.013zm1.5 2.651l11.01 10.334-3.791-.01 3.242 6.996-1.503.684-3.213-7.06-2.745 2.637z" fill="%23b32424"/></svg>'), auto !important;
         }
@@ -29,6 +30,7 @@
         @keyframes rotateBg { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         h1, .splash-text, .selection-title, .category-box, .admin-title { font-family: 'Cinzel', serif; }
         
+        /* Custom Red Scrollbar */
         ::-webkit-scrollbar { width: 10px; height: 10px; }
         ::-webkit-scrollbar-track { background: #050505; }
         ::-webkit-scrollbar-thumb { background: #b32424; border-radius: 10px; }
@@ -58,12 +60,26 @@
         
         .container { width: 95%; max-width: 1600px; margin: 0 auto; }
         .live-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; margin-bottom: 40px; }
-        .card-link { text-decoration: none; display: block; }
+        .card-link { text-decoration: none; display: block; position: relative; }
         
-        .card { position: relative; background: #000; border: 1px solid #222; border-radius: 12px; overflow: hidden; transition: 0.3s; cursor: pointer; }
-        .card:hover { border-color: #b32424; transform: scale(1.02); }
+        /* Protection Layer for Custom Cursor Integrity inside iframes */
+        .card-link::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 5;
+            background: transparent;
+        }
+        
+        .card { position: relative; background: #000; border: 1px solid #222; border-radius: 12px; overflow: hidden; transition: 0.3s; }
+        .card-link:hover .card { border-color: #b32424; transform: scale(1.02); }
+        
         .v-wrap { position: relative; padding-bottom: 56.25%; height: 0; background: #111; }
-        iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+        iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; pointer-events: none; }
+        
         .card-info { position: absolute; bottom: 0; left: 0; width: 100%; box-sizing: border-box; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; background: rgba(0, 0, 0, 0.65); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-top: 1px solid rgba(255, 255, 255, 0.05); z-index: 10; }
         .user-name { font-weight: 700; font-size: 13px; text-transform: uppercase; color: #ffffff !important; text-decoration: none !important; letter-spacing: 1px; }
         .live-tag { color: #00ff00; font-size: 11px; font-weight: bold; display: flex; align-items: center; gap: 5px; }
@@ -165,19 +181,17 @@
             grid.innerHTML = "";
             users.forEach(u => {
                 grid.innerHTML += `
-                    <div class="card-link">
+                    <a href="https://kick.com/${u}" target="_blank" class="card-link">
                         <div class="card">
                             <div class="v-wrap">
                                 <iframe src="https://player.kick.com/${u}?muted=true&parent=${host}" allowfullscreen="true" scrolling="no" loading="lazy"></iframe>
                             </div>
-                            <a href="https://kick.com/${u}" target="_blank">
-                                <div class="card-info">
-                                    <div class="live-tag">LIVE</div>
-                                    <div class="user-name">${u}</div>
-                                </div>
-                            </a>
+                            <div class="card-info">
+                                <div class="live-tag">LIVE</div>
+                                <div class="user-name">${u}</div>
+                            </div>
                         </div>
-                    </div>`;
+                    </a>`;
             });
         }
 
