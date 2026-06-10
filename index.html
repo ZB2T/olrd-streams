@@ -12,9 +12,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght=700;900&family=Montserrat:wght=400;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     <style>
-        /* Global Custom Cursor Rules */
-        * {
-            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M4.5 2.25v17.218l4.493-4.321 3.232 7.103 3.012-1.371-3.262-7.042 5.525.013zm1.5 2.651l11.01 10.334-3.791-.01 3.242 6.996-1.503.684-3.213-7.06-2.745 2.637z" fill="%23b32424"/></svg>'), auto !important;
+        html, body, * {
+            cursor: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNNC41IDIuMjV2MTcuMjE4bDQuNDkzLTQuMzIxIDMuMjMyIDcuMTAzIDMuMDEyLTEuMzcxLTMuMjYyLTcuMDQyIDUuNTI1LjAxM3ptMS41IDIuNjUxbDExLjAxIDEwLjMzNC0zLjc5MS0uMDEgMy4yNDIgNi45OTYtMS41MDMuNjg0LTMuMjEzLTcuMDYtMi43NDUgMi42Mzd6IiBmaWxsPSIjYjMyNDI0Ii8+PC9zdmc+') 0 0, auto !important;
         }
 
         body { 
@@ -62,7 +61,6 @@
         .live-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; margin-bottom: 40px; }
         .card-link { text-decoration: none; display: block; position: relative; }
         
-        /* Protection Layer for Custom Cursor Integrity inside iframes */
         .card-link::after {
             content: '';
             position: absolute;
