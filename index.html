@@ -25,6 +25,13 @@
             overflow-x: hidden; 
         }
 
+        /* Prevent clicking globally while the site is still loading */
+        body.is-loading .card-link, 
+        body.is-loading .category-box, 
+        body.is-loading button {
+            pointer-events: none !important;
+        }
+
         .bg { position: fixed; top: -100%; left: -100%; width: 300%; height: 300%; background: url('bg.jpg') repeat; background-size: 350px; opacity: 0.12; z-index: -1; animation: rotateBg 60s linear infinite; }
         @keyframes rotateBg { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         h1, .splash-text, .selection-title, .category-box, .admin-title { font-family: 'Cinzel', serif; }
@@ -102,7 +109,7 @@
         .sortable-ghost { opacity: 0.4; border-color: #b32424; }
     </style>
 </head>
-<body>
+<body class="is-loading">
     <div class="bg"></div>
     <div id="splash-screen"><div class="splash-text">WELCOME TO <span>OLRD STREAMERS</span></div></div>
     <div id="main-selection">
@@ -265,7 +272,14 @@
                 const splash = document.getElementById('splash-screen');
                 const selection = document.getElementById('main-selection');
                 splash.style.opacity = '0';
-                setTimeout(() => { splash.style.display = 'none'; selection.style.display = 'flex'; setTimeout(() => { selection.style.opacity = '1'; }, 50); }, 1000);
+                setTimeout(() => { 
+                    splash.style.display = 'none'; 
+                    selection.style.display = 'flex'; 
+                    setTimeout(() => { 
+                        selection.style.opacity = '1'; 
+                        document.body.classList.remove('is-loading'); // Enable interaction only after full load
+                    }, 50); 
+                }, 1000);
             }, 3000);
         });
 
