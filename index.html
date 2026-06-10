@@ -12,7 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght=700;900&family=Montserrat:wght=400;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     <style>
-        html, body, * {
+        html, body, *, a, button, iframe {
             cursor: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNNC41IDIuMjV2MTcuMjE4bDQuNDkzLTQuMzIxIDMuMjMyIDcuMTAzIDMuMDEyLTEuMzcxLTMuMjYyLTcuMDQyIDUuNTI1LjAxM3ptMS41IDIuNjUxbDExLjAxIDEwLjMzNC0zLjc5MS0uMDEgMy4yNDIgNi45OTYtMS41MDMuNjg0LTMuMjEzLTcuMDYtMi43NDUgMi42Mzd6IiBmaWxsPSIjYjMyNDI0Ii8+PC9zdmc+') 0 0, auto !important;
         }
 
@@ -29,7 +29,6 @@
         @keyframes rotateBg { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         h1, .splash-text, .selection-title, .category-box, .admin-title { font-family: 'Cinzel', serif; }
         
-        /* Custom Red Scrollbar */
         ::-webkit-scrollbar { width: 10px; height: 10px; }
         ::-webkit-scrollbar-track { background: #050505; }
         ::-webkit-scrollbar-thumb { background: #b32424; border-radius: 10px; }
@@ -59,24 +58,25 @@
         
         .container { width: 95%; max-width: 1600px; margin: 0 auto; }
         .live-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; margin-bottom: 40px; }
-        .card-link { text-decoration: none; display: block; position: relative; }
         
-        .card-link::after {
-            content: '';
+        .card-link { text-decoration: none; display: block; position: relative; overflow: hidden; border-radius: 12px; }
+        
+        .mouse-guard {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 5;
-            background: transparent;
+            z-index: 999;
+            background: rgba(0, 0, 0, 0);
+            pointer-events: auto;
         }
         
         .card { position: relative; background: #000; border: 1px solid #222; border-radius: 12px; overflow: hidden; transition: 0.3s; }
         .card-link:hover .card { border-color: #b32424; transform: scale(1.02); }
         
         .v-wrap { position: relative; padding-bottom: 56.25%; height: 0; background: #111; }
-        iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; pointer-events: none; }
+        iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; pointer-events: none; z-index: 1; }
         
         .card-info { position: absolute; bottom: 0; left: 0; width: 100%; box-sizing: border-box; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; background: rgba(0, 0, 0, 0.65); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-top: 1px solid rgba(255, 255, 255, 0.05); z-index: 10; }
         .user-name { font-weight: 700; font-size: 13px; text-transform: uppercase; color: #ffffff !important; text-decoration: none !important; letter-spacing: 1px; }
@@ -180,6 +180,7 @@
             users.forEach(u => {
                 grid.innerHTML += `
                     <a href="https://kick.com/${u}" target="_blank" class="card-link">
+                        <div class="mouse-guard"></div>
                         <div class="card">
                             <div class="v-wrap">
                                 <iframe src="https://player.kick.com/${u}?muted=true&parent=${host}" allowfullscreen="true" scrolling="no" loading="lazy"></iframe>
