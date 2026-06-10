@@ -2,234 +2,100 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    <title>OLRD STREAMERS | OFFICIAL PLATFORM</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght=700;900&family=Montserrat:wght=400;700&display=swap" rel="stylesheet">
+    <title>OLRD SYSTEM</title>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     <style>
-        body { margin: 0; background: #000; color: #fff; font-family: 'Montserrat', sans-serif; text-align: center; overflow-x: hidden; }
-        .bg { position: fixed; top: -100%; left: -100%; width: 300%; height: 300%; background: url('bg.jpg') repeat; background-size: 350px; opacity: 0.12; z-index: -1; animation: rotateBg 60s linear infinite; }
-        @keyframes rotateBg { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        h1, .splash-text, .selection-title, .category-box, .admin-title { font-family: 'Cinzel', serif; }
-        #splash-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: flex; justify-content: center; align-items: center; z-index: 9999; opacity: 1; transition: opacity 1s ease-in-out; }
-        .splash-text { font-size: 3.5rem; font-weight: 900; letter-spacing: 6px; color: #fff; animation: fadeIn 1.5s ease-in-out forwards; }
-        .splash-text span { color: #b32424; }
-        @keyframes fadeIn { 0% { opacity: 0; transform: scale(0.95); } 100% { opacity: 1; transform: scale(1); } }
-        #main-selection { display: none; height: 100vh; justify-content: center; align-items: center; flex-direction: column; opacity: 0; transition: opacity 1s ease-in-out; position: relative; }
-        .selection-title { font-size: 28px; margin-bottom: 40px; letter-spacing: 4px; color: #aaa; font-weight: 700; }
-        .categories-container { display: flex; gap: 40px; width: 90%; max-width: 1200px; justify-content: center; }
-        .category-box { flex: 1; aspect-ratio: 1 / 1; max-width: 400px; background: rgba(10, 10, 10, 0.85); border: 2px solid #222; border-radius: 20px; display: flex; justify-content: center; align-items: center; font-size: 2.2rem; font-weight: 900; letter-spacing: 3px; cursor: pointer; transition: 0.4s ease; text-decoration: none; color: #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.7); }
-        .category-box:hover { border-color: #b32424; transform: translateY(-10px) scale(1.03); box-shadow: 0 0 30px rgba(179, 36, 36, 0.25); background: rgba(15, 5, 5, 0.9); }
-        .category-box span { color: #b32424; margin-left: 5px; }
-        #streamers-section, #story-section { display: none; padding-bottom: 50px; }
-        header { padding: 25px; background: rgba(0, 0, 0, 0.25); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid rgba(179, 36, 36, 0.35); margin-bottom: 40px; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .logo { width: 75px; margin-bottom: 8px; }
-        .header-controls { position: absolute; top: 50%; transform: translateY(-50%); right: 5%; display: flex; gap: 10px; }
-        .nav-btn { background: rgba(20, 20, 20, 0.6); border: 1px solid #333; color: #ccc; padding: 8px 22px; border-radius: 6px; cursor: pointer; transition: 0.3s ease; font-family: 'Montserrat', sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; font-size: 11px; }
-        .nav-btn:hover { background: #b32424; border-color: #b32424; color: #fff; box-shadow: 0 0 15px rgba(179, 36, 36, 0.35); }
-        .nav-btn.edit-trigger { background: rgba(255, 255, 255, 0.02); border-color: #222; color: #111; }
-        .nav-btn.edit-trigger:hover { background: #111; border-color: #b32424; color: #fff; box-shadow: none; }
-        .container { width: 95%; max-width: 1600px; margin: 0 auto; }
-        .live-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; margin-bottom: 40px; }
-        .card-link { text-decoration: none; display: block; }
-        .card { position: relative; background: #000; border: 1px solid #222; border-radius: 12px; overflow: hidden; transition: 0.3s; cursor: pointer; }
-        .card:hover { border-color: #b32424; transform: scale(1.02); }
-        .v-wrap { position: relative; padding-bottom: 56.25%; height: 0; background: #111; }
-        iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
-        .card-info { position: absolute; bottom: 0; left: 0; width: 100%; box-sizing: border-box; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; background: rgba(0, 0, 0, 0.65); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-top: 1px solid rgba(255, 255, 255, 0.05); z-index: 10; }
-        .user-name { font-weight: 700; font-size: 13px; text-transform: uppercase; color: #ffffff !important; text-decoration: none !important; letter-spacing: 1px; }
-        .live-tag { color: #00ff00; font-size: 11px; font-weight: bold; display: flex; align-items: center; gap: 5px; }
-        .live-tag::before { content: ''; width: 8px; height: 8px; background: #00ff00; border-radius: 50%; box-shadow: 0 0 5px #00ff00; }
-        .footer-credit { margin: 40px auto 15px auto; width: fit-content; min-width: 250px; padding: 12px 35px; background: rgba(179, 36, 36, 0.06); border: 1px solid rgba(179, 36, 36, 0.35); border-radius: 8px; font-weight: bold; font-size: 13px; letter-spacing: 2px; text-transform: uppercase; color: #fff; }
-        #admin-panel { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; max-width: 600px; max-height: 80vh; background: #0a0a0a; border: 2px solid #b32424; border-radius: 15px; z-index: 10000; padding: 25px; box-shadow: 0 0 30px rgba(0,0,0,0.9); overflow-y: auto; text-align: left; direction: ltr; }
-        .admin-overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index: 9999; }
-        .admin-title { text-align: center; color: #b32424; font-size: 20px; margin-bottom: 20px; letter-spacing: 2px; }
-        .admin-input-group { display: flex; gap: 10px; margin-bottom: 20px; }
-        .admin-input { flex: 1; padding: 10px; background: #111; border: 1px solid #333; color: #fff; border-radius: 5px; font-family: sans-serif; text-align: left; }
-        .admin-btn { background: #b32424; color: #fff; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; text-transform: uppercase; font-size: 12px; }
-        .admin-btn.close { background: #333; margin-top: 10px; width: 100%; letter-spacing: 1px; }
-        .streamer-manager-list { list-style: none; padding: 0; margin: 0; }
-        .streamer-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #151515; border: 1px solid #222; margin-bottom: 8px; border-radius: 5px; }
-        .streamer-actions { display: flex; gap: 5px; }
-        .action-btn { background: #222; color: #fff; border: 1px solid #444; padding: 3px 8px; border-radius: 3px; cursor: pointer; font-size: 12px; }
-        .action-btn.delete { background: rgba(179,36,36,0.15); border-color: #b32424; color: #b32424; text-transform: uppercase; font-size: 10px; font-weight: bold; padding: 3px 10px; }
+        body { background: #000; color: #fff; font-family: sans-serif; text-align: center; }
+        #admin-panel {
+            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 90%; max-width: 600px; background: #050505; border: 1px solid #333;
+            border-radius: 20px; padding: 25px; box-shadow: 0 20px 50px rgba(0,0,0,0.8); z-index: 1000;
+        }
+        .streamer-manager-list {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 10px; list-style: none; padding: 0; margin-top: 20px;
+        }
+        .streamer-item {
+            background: #1a1a1a; border: 1px solid #333; padding: 15px; border-radius: 10px;
+            cursor: grab; display: flex; flex-direction: column; align-items: center;
+        }
+        .streamer-item:active { cursor: grabbing; }
+        .delete-btn {
+            background: #200505; color: #ff4d4d; border: 1px solid #551111;
+            padding: 5px 10px; border-radius: 4px; margin-top: 10px; cursor: pointer;
+        }
     </style>
 </head>
 <body>
-    <div class="bg"></div>
-    <div id="splash-screen"><div class="splash-text">WELCOME TO <span>OLRD STREAMERS</span></div></div>
-    <div id="main-selection">
-        <div class="selection-title">SELECT CATEGORY</div>
-        <div class="categories-container">
-            <div class="category-box" onclick="showSection('streamers')">STREAMERS</div>
-            <div class="category-box" onclick="showSection('story')">STORY <span>BOOK</span></div>
-        </div>
-        <div class="footer-credit">CREATED BY ZB2T</div>
-    </div>
-    <div id="streamers-section">
-        <header>
-            <div class="header-controls">
-                <button class="nav-btn edit-trigger" onclick="checkAdminPassword()">Edit</button>
-                <button class="nav-btn" onclick="showSelectionPage()">Back</button>
-            </div>
-            <img src="logo.png" class="logo">
-            <h1 style="margin:0;">OLRD <span style="color:#b32424">STREAMERS</span></h1>
-        </header>
-        <div class="container"><div id="main-grid" class="live-grid"></div></div>
-    </div>
-    <div id="story-section">
-        <header>
-            <div class="header-controls"><button class="nav-btn" onclick="showSelectionPage()">Back</button></div>
-            <img src="logo.png" class="logo"><h1 style="margin:0;">STORY <span style="color:#b32424">BOOK</span></h1>
-        </header>
-        <div class="container" style="padding-top: 100px;">
-            <h2 style="font-size: 2.5rem; letter-spacing: 2px; font-family: 'Cinzel', serif;">STORY BOOK SECTION</h2>
-            <p style="color: #666; font-size: 1.2rem; letter-spacing: 1px;">COMING SOON.. ARCHIVING THE FINEST SERVER LORE.</p>
-        </div>
-    </div>
-    <div class="admin-overlay" id="admin-overlay" onclick="toggleAdminPanel(false)"></div>
+
+    <h1>OLRD STREAMERS</h1>
+    <ul id="streamer-list"></ul>
+    <button onclick="checkAdminPassword()">EDIT</button>
+
     <div id="admin-panel">
-        <div class="admin-title">OLRD MANAGEMENT PANEL</div>
-        <div class="admin-input-group">
-            <input type="text" id="new-streamer-input" class="admin-input" placeholder="Enter Kick username">
-            <button class="admin-btn" onclick="addStreamer()">Insert</button>
-        </div>
-        <ul class="streamer-manager-list" id="manager-list"></ul>
-        <button class="admin-btn close" onclick="toggleAdminPanel(false)">Exit Panel</button>
+        <h3>SYSTEM PREFERENCES</h3>
+        <input type="text" id="new-name" placeholder="Streamer Name">
+        <button onclick="addStreamer()">INSERT</button>
+        <ul id="manager-list" class="streamer-manager-list"></ul>
+        <button onclick="toggleAdminPanel(false)" style="margin-top:20px;">EXIT</button>
     </div>
 
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyABdmqw08cPnLhyEBA5oVDlO54pJKqOeWE",
-            authDomain: "olrd-streamers.firebaseapp.com",
-            databaseURL: "https://olrd-streamers-default-rtdb.firebaseio.com",
-            projectId: "olrd-streamers",
-            storageBucket: "olrd-streamers.firebasestorage.app",
-            messagingSenderId: "59629556786",
-            appId: "1:59629556786:web:67496cbb25b9b2d64582b"
-        };
-
+        const firebaseConfig = { databaseURL: "https://olrd-streamers-default-rtdb.firebaseio.com" };
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
-        const streamersRef = database.ref('streamers_list');
-
         let users = [];
-        const host = window.location.hostname;
-        const grid = document.getElementById('main-grid');
 
-        streamersRef.on('value', (snapshot) => {
-            const data = snapshot.val();
-            if (data) users = data;
-            renderGrid();
-            if (document.getElementById('admin-panel').style.display === 'block') renderAdminList();
+        database.ref('streamers_list').on('value', (snapshot) => {
+            users = snapshot.val() || [];
+            renderMainList();
+            if(document.getElementById('admin-panel').style.display === 'block') renderAdminList();
         });
 
-        function renderGrid() {
-            grid.innerHTML = "";
-            users.forEach(u => {
-                grid.innerHTML += `
-                    <div class="card-link">
-                        <div class="card">
-                            <div class="v-wrap">
-                                <iframe src="https://player.kick.com/${u}?muted=true&parent=${host}" allowfullscreen="true" scrolling="no" loading="lazy"></iframe>
-                            </div>
-                            <a href="https://kick.com/${u}" target="_blank">
-                                <div class="card-info">
-                                    <div class="live-tag">LIVE</div>
-                                    <div class="user-name">${u}</div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>`;
-            });
-        }
-
-        function renderAdminList() {
-            const list = document.getElementById('manager-list');
-            list.innerHTML = "";
-            users.forEach((u, index) => {
-                list.innerHTML += `
-                    <li class="streamer-item">
-                        <span style="font-weight:bold;">${u}</span>
-                        <div class="streamer-actions">
-                            <button class="action-btn" onclick="moveStreamer(${index}, -1)">▲</button>
-                            <button class="action-btn" onclick="moveStreamer(${index}, 1)">▼</button>
-                            <button class="action-btn delete" onclick="deleteStreamer(${index})">Remove</button>
-                        </div>
-                    </li>`;
-            });
+        function renderMainList() {
+            document.getElementById('streamer-list').innerHTML = users.map(u => `<li>${u}</li>`).join('');
         }
 
         function checkAdminPassword() {
-            const password = prompt("ENTER SYSTEM PIN SECURITY TO ACCESS PREFERENCES:");
-            if (password) {
-                database.ref('admin_secure_vault/' + password).once('value')
-                .then((snapshot) => {
-                    if (snapshot.exists() && snapshot.val() === true) {
-                        toggleAdminPanel(true);
-                    } else {
-                        alert("ACCESS DENIED: INVALID SECURITY PIN.");
-                    }
-                })
-                .catch((error) => {
-                    alert("ACCESS DENIED: INVALID SECURITY PIN.");
-                });
-            }
+            const pin = prompt("ENTER SYSTEM PIN:");
+            if (!pin) return;
+            database.ref('admin_secure_vault/' + pin).once('value').then(s => {
+                if(s.exists() && s.val() === true) toggleAdminPanel(true);
+                else alert("ACCESS DENIED");
+            });
         }
 
         function toggleAdminPanel(show) {
             document.getElementById('admin-panel').style.display = show ? 'block' : 'none';
-            document.getElementById('admin-overlay').style.display = show ? 'block' : 'none';
-            if (show) renderAdminList();
+            if(show) renderAdminList();
+        }
+
+        function renderAdminList() {
+            const list = document.getElementById('manager-list');
+            list.innerHTML = users.map((u, i) => `
+                <li class="streamer-item" data-id="${i}">
+                    <span>${u}</span>
+                    <button class="delete-btn" onclick="del(${i})">DELETE</button>
+                </li>`).join('');
+            
+            new Sortable(list, {
+                onEnd: function (evt) {
+                    const item = users.splice(evt.oldIndex, 1)[0];
+                    users.splice(evt.newIndex, 0, item);
+                    save();
+                }
+            });
         }
 
         function addStreamer() {
-            const input = document.getElementById('new-streamer-input');
-            const name = input.value.trim();
-            if(name) { users.unshift(name); input.value = ""; streamersRef.set(users); }
+            const input = document.getElementById('new-name');
+            if(input.value) { users.push(input.value); input.value = ''; save(); }
         }
 
-        function deleteStreamer(index) {
-            if(confirm("Are you sure?")) { users.splice(index, 1); streamersRef.set(users); }
-        }
-
-        function moveStreamer(index, direction) {
-            const targetIndex = index + direction;
-            if (targetIndex >= 0 && targetIndex < users.length) {
-                const temp = users[index];
-                users[index] = users[targetIndex];
-                users[targetIndex] = temp;
-                streamersRef.set(users);
-            }
-        }
-
-        window.addEventListener('DOMContentLoaded', () => {
-            setTimeout(() => {
-                const splash = document.getElementById('splash-screen');
-                const selection = document.getElementById('main-selection');
-                splash.style.opacity = '0';
-                setTimeout(() => { splash.style.display = 'none'; selection.style.display = 'flex'; setTimeout(() => { selection.style.opacity = '1'; }, 50); }, 1000);
-            }, 3000);
-        });
-
-        function showSection(section) {
-            document.getElementById('main-selection').style.display = 'none';
-            if(section === 'streamers') document.getElementById('streamers-section').style.display = 'block';
-            else if(section === 'story') document.getElementById('story-section').style.display = 'block';
-        }
-
-        function showSelectionPage() {
-            document.getElementById('streamers-section').style.display = 'none';
-            document.getElementById('story-section').style.display = 'none';
-            const selection = document.getElementById('main-selection');
-            selection.style.display = 'flex'; selection.style.opacity = '1';
-        }
+        function del(i) { users.splice(i, 1); save(); }
+        function save() { database.ref('streamers_list').set(users); }
     </script>
 </body>
 </html>
