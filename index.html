@@ -13,7 +13,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     <style>
         * {
-            cursor: none !important;
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M4.5 2.25v17.218l4.493-4.321 3.232 7.103 3.012-1.371-3.262-7.042 5.525.013zm1.5 2.651l11.01 10.334-3.791-.01 3.242 6.996-1.503.684-3.213-7.06-2.745 2.637z" fill="%23b32424"/></svg>'), auto !important;
         }
 
         body { 
@@ -33,20 +33,6 @@
         ::-webkit-scrollbar-track { background: #050505; }
         ::-webkit-scrollbar-thumb { background: #b32424; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #d42c2c; }
-        
-        #custom-cursor {
-            width: 0;
-            height: 0;
-            border-left: 7px solid transparent;
-            border-right: 7px solid transparent;
-            border-bottom: 18px solid rgba(179, 36, 36, 0.4);
-            filter: drop-shadow(0px 0px 1px #b32424) drop-shadow(0px 0px 0.5px #b32424);
-            position: fixed;
-            pointer-events: none;
-            z-index: 999999;
-            transform: rotate(-30deg);
-            transform-origin: top left;
-        }
 
         #splash-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: flex; justify-content: center; align-items: center; z-index: 9999; opacity: 1; transition: opacity 1s ease-in-out; }
         .splash-text { font-size: 3.5rem; font-weight: 900; letter-spacing: 6px; color: #fff; animation: fadeIn 1.5s ease-in-out forwards; }
@@ -103,7 +89,6 @@
     </style>
 </head>
 <body>
-    <div id="custom-cursor"></div>
     <div class="bg"></div>
     <div id="splash-screen"><div class="splash-text">WELCOME TO <span>OLRD STREAMERS</span></div></div>
     <div id="main-selection">
@@ -168,12 +153,6 @@
         const host = window.location.hostname;
         const grid = document.getElementById('main-grid');
         let sortableInstance = null;
-
-        const customCursor = document.getElementById('custom-cursor');
-        document.addEventListener('mousemove', (e) => {
-            customCursor.style.left = e.clientX + 'px';
-            customCursor.style.top = e.clientY + 'px';
-        });
 
         streamersRef.on('value', (snapshot) => {
             const data = snapshot.val();
