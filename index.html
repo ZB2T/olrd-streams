@@ -16,27 +16,33 @@
         .bg { position: fixed; top: -100%; left: -100%; width: 300%; height: 300%; background: url('bg.jpg') repeat; background-size: 350px; opacity: 0.12; z-index: -1; animation: rotateBg 60s linear infinite; }
         @keyframes rotateBg { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         h1, .splash-text, .selection-title, .category-box, .admin-title { font-family: 'Cinzel', serif; }
+        
         #splash-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: flex; justify-content: center; align-items: center; z-index: 9999; opacity: 1; transition: opacity 1s ease-in-out; }
         .splash-text { font-size: 3.5rem; font-weight: 900; letter-spacing: 6px; color: #fff; animation: fadeIn 1.5s ease-in-out forwards; }
         .splash-text span { color: #b32424; }
         @keyframes fadeIn { 0% { opacity: 0; transform: scale(0.95); } 100% { opacity: 1; transform: scale(1); } }
+        
         #main-selection { display: none; height: 100vh; justify-content: center; align-items: center; flex-direction: column; opacity: 0; transition: opacity 1s ease-in-out; position: relative; }
         .selection-title { font-size: 28px; margin-bottom: 40px; letter-spacing: 4px; color: #aaa; font-weight: 700; }
         .categories-container { display: flex; gap: 40px; width: 90%; max-width: 1200px; justify-content: center; }
         .category-box { flex: 1; aspect-ratio: 1 / 1; max-width: 400px; background: rgba(10, 10, 10, 0.85); border: 2px solid #222; border-radius: 20px; display: flex; justify-content: center; align-items: center; font-size: 2.2rem; font-weight: 900; letter-spacing: 3px; cursor: pointer; transition: 0.4s ease; text-decoration: none; color: #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.7); }
         .category-box:hover { border-color: #b32424; transform: translateY(-10px) scale(1.03); box-shadow: 0 0 30px rgba(179, 36, 36, 0.25); background: rgba(15, 5, 5, 0.9); }
         .category-box span { color: #b32424; margin-left: 5px; }
+        
         #streamers-section, #story-section { display: none; padding-bottom: 50px; }
         header { padding: 25px; background: rgba(0, 0, 0, 0.25); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid rgba(179, 36, 36, 0.35); margin-bottom: 40px; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .logo { width: 75px; margin-bottom: 8px; }
         .header-controls { position: absolute; top: 50%; transform: translateY(-50%); right: 5%; display: flex; gap: 10px; }
+        
         .nav-btn { background: rgba(20, 20, 20, 0.6); border: 1px solid #333; color: #ccc; padding: 8px 22px; border-radius: 6px; cursor: pointer; transition: 0.3s ease; font-family: 'Montserrat', sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; font-size: 11px; }
         .nav-btn:hover { background: #b32424; border-color: #b32424; color: #fff; box-shadow: 0 0 15px rgba(179, 36, 36, 0.35); }
         .nav-btn.edit-trigger { background: rgba(255, 255, 255, 0.02); border-color: #222; color: #111; }
         .nav-btn.edit-trigger:hover { background: #111; border-color: #b32424; color: #fff; box-shadow: none; }
+        
         .container { width: 95%; max-width: 1600px; margin: 0 auto; }
         .live-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; margin-bottom: 40px; }
         .card-link { text-decoration: none; display: block; }
+        
         .card { position: relative; background: #000; border: 1px solid #222; border-radius: 12px; overflow: hidden; transition: 0.3s; cursor: pointer; }
         .card:hover { border-color: #b32424; transform: scale(1.02); }
         .v-wrap { position: relative; padding-bottom: 56.25%; height: 0; background: #111; }
@@ -47,21 +53,23 @@
         .live-tag::before { content: ''; width: 8px; height: 8px; background: #00ff00; border-radius: 50%; box-shadow: 0 0 5px #00ff00; }
         .footer-credit { margin: 40px auto 15px auto; width: fit-content; min-width: 250px; padding: 12px 35px; background: rgba(179, 36, 36, 0.06); border: 1px solid rgba(179, 36, 36, 0.35); border-radius: 8px; font-weight: bold; font-size: 13px; letter-spacing: 2px; text-transform: uppercase; color: #fff; }
         
-        /* Modifying management panel elements */
-        #admin-panel { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; max-width: 600px; max-height: 80vh; background: #0a0a0a; border: 2px solid #b32424; border-radius: 15px; z-index: 10000; padding: 25px; box-shadow: 0 0 30px rgba(0,0,0,0.9); overflow-y: auto; text-align: left; direction: ltr; }
+        #admin-panel { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 95%; max-width: 1400px; height: 85vh; background: #0a0a0a; border: 2px solid #b32424; border-radius: 20px; z-index: 10000; padding: 30px; box-shadow: 0 0 50px rgba(0,0,0,0.95); overflow-y: auto; box-sizing: border-box; }
         .admin-overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index: 9999; }
-        .admin-title { text-align: center; color: #b32424; font-size: 20px; margin-bottom: 20px; letter-spacing: 2px; }
-        .admin-input-group { display: flex; gap: 10px; margin-bottom: 20px; }
-        .admin-input { flex: 1; padding: 10px; background: #111; border: 1px solid #333; color: #fff; border-radius: 5px; font-family: sans-serif; text-align: left; }
-        .admin-btn { background: #b32424; color: #fff; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; text-transform: uppercase; font-size: 12px; }
-        .admin-btn.close { background: #333; margin-top: 10px; width: 100%; letter-spacing: 1px; }
-        .streamer-manager-list { list-style: none; padding: 0; margin: 0; }
-        .streamer-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; background: #151515; border: 1px solid #222; margin-bottom: 8px; border-radius: 8px; cursor: grab; }
-        .streamer-item:active { cursor: grabbing; background: #1f1f1f; }
-        .streamer-actions { display: flex; align-items: center; gap: 15px; }
-        .drag-handle { color: #555; cursor: grab; font-size: 16px; user-select: none; margin-right: 5px; }
-        .action-btn.delete { background: rgba(179,36,36,0.15); border: 1px solid #b32424; color: #b32424; text-transform: uppercase; font-size: 10px; font-weight: bold; padding: 5px 12px; border-radius: 4px; cursor: pointer; }
-        .action-btn.delete:hover { background: #b32424; color: #fff; }
+        .admin-title { text-align: center; color: #b32424; font-size: 24px; margin-bottom: 25px; letter-spacing: 3px; font-weight: 900; }
+        .admin-input-group { display: flex; gap: 15px; margin-bottom: 30px; max-width: 600px; margin-left: auto; margin-right: auto; }
+        .admin-input { flex: 1; padding: 12px; background: #111; border: 1px solid #333; color: #fff; border-radius: 8px; font-family: sans-serif; }
+        .admin-btn { background: #b32424; color: #fff; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-weight: bold; text-transform: uppercase; font-size: 12px; letter-spacing: 1px; }
+        .admin-btn.close { background: #222; border: 1px solid #444; margin-top: 30px; width: 100%; max-width: 300px; display: block; margin-left: auto; margin-right: auto; }
+        .admin-btn.close:hover { background: #b32424; border-color: #b32424; }
+        
+        .admin-grid-manager { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; list-style: none; padding: 0; margin: 0; }
+        .admin-card-item { position: relative; background: #111; border: 2px dashed #333; border-radius: 12px; aspect-ratio: 16 / 9; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: grab; transition: transform 0.2s, border-color 0.2s; background-size: cover; background-position: center; }
+        .admin-card-item:active { cursor: grabbing; border-color: #b32424; transform: scale(0.98); }
+        .admin-card-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75); border-radius: 10px; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 10px; padding: 10px; box-sizing: border-box; }
+        .admin-user-name { font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; color: #fff; }
+        .admin-delete-btn { background: rgba(179, 36, 36, 0.2); border: 1px solid #b32424; color: #b32424; padding: 4px 12px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.2s; }
+        .admin-delete-btn:hover { background: #b32424; color: #fff; }
+        .sortable-ghost { opacity: 0.4; border-color: #b32424; }
     </style>
 </head>
 <body>
@@ -96,14 +104,15 @@
             <p style="color: #666; font-size: 1.2rem; letter-spacing: 1px;">COMING SOON.. ARCHIVING THE FINEST SERVER LORE.</p>
         </div>
     </div>
+    
     <div class="admin-overlay" id="admin-overlay" onclick="toggleAdminPanel(false)"></div>
     <div id="admin-panel">
-        <div class="admin-title">OLRD MANAGEMENT PANEL</div>
+        <div class="admin-title">OLRD VISUAL MANAGEMENT PANEL</div>
         <div class="admin-input-group">
             <input type="text" id="new-streamer-input" class="admin-input" placeholder="Enter Kick username">
             <button class="admin-btn" onclick="addStreamer()">Insert</button>
         </div>
-        <ul class="streamer-manager-list" id="manager-list"></ul>
+        <ul class="admin-grid-manager" id="manager-list"></ul>
         <button class="admin-btn close" onclick="toggleAdminPanel(false)">Exit Panel</button>
     </div>
 
@@ -161,30 +170,29 @@
             list.innerHTML = "";
             users.forEach((u, index) => {
                 list.innerHTML += `
-                    <li class="streamer-item" data-id="${index}">
-                        <div style="display: flex; align-items: center;">
-                            <span class="drag-handle">☰</span>
-                            <span style="font-weight:bold; letter-spacing: 1px;">${u}</span>
-                        </div>
-                        <div class="streamer-actions">
-                            <button class="action-btn delete" onclick="deleteStreamer(${index})">Remove</button>
+                    <li class="admin-card-item" data-index="${index}">
+                        <div class="admin-card-overlay">
+                            <span class="admin-user-name">${u}</span>
+                            <button class="admin-delete-btn" onclick="deleteStreamer(${index}); event.stopPropagation();">Remove</button>
                         </div>
                     </li>`;
             });
 
-            // Initialize SortableJS drag and drop feature
-            if (sortableInstance) sortableInstance.destroy();
+            if (sortableInstance) {
+                sortableInstance.destroy();
+            }
+
             sortableInstance = new Sortable(list, {
-                handle: '.drag-handle',
-                animation: 150,
+                animation: 250,
+                ghostClass: 'sortable-ghost',
                 onEnd: function () {
-                    const updatedOrder = [];
-                    const items = list.querySelectorAll('.streamer-item');
+                    const updatedUsers = [];
+                    const items = list.querySelectorAll('.admin-card-item');
                     items.forEach(item => {
-                        const originalIndex = parseInt(item.getAttribute('data-id'));
-                        updatedOrder.push(users[originalIndex]);
+                        const oldIndex = parseInt(item.getAttribute('data-index'));
+                        updatedUsers.push(users[oldIndex]);
                     });
-                    users = updatedOrder;
+                    users = updatedUsers;
                     streamersRef.set(users);
                 }
             });
