@@ -1,0 +1,173 @@
+.site-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 15px clamp(20px, 5vw, 60px);
+    background: rgba(9, 6, 8, 0.32);
+    backdrop-filter: blur(14px) saturate(120%);
+    -webkit-backdrop-filter: blur(14px) saturate(120%);
+    border-bottom: 1px solid rgba(178, 20, 32, 0.22);
+    box-shadow: 0 1px 0 rgba(178, 20, 32, 0.22), 0 18px 40px rgba(0, 0, 0, 0.4);
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    text-decoration: none;
+    color: var(--bone);
+}
+
+.brand__crest {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 10px rgba(178, 20, 32, 0.5));
+}
+
+.brand__text {
+    font-family: var(--display);
+    font-size: 22px;
+    font-weight: 600;
+    font-stretch: 88%;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+}
+
+.brand__text i { font-style: normal; color: var(--crimson-2); }
+
+.site-nav {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.nav-link {
+    position: relative;
+    padding: 10px 18px;
+    color: var(--ash);
+    text-decoration: none;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    border: 1px solid transparent;
+    transition: color 0.3s var(--ease), border-color 0.3s var(--ease), background 0.3s var(--ease);
+}
+
+.nav-link::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: 5px;
+    width: 0;
+    height: 2px;
+    background: var(--crimson);
+    transform: translateX(-50%);
+    transition: width 0.3s var(--ease);
+}
+
+.nav-link:hover,
+.nav-link.is-active { color: var(--bone); }
+
+.nav-link:hover::after,
+.nav-link.is-active::after { width: calc(100% - 36px); }
+
+.nav-link.is-active {
+    border-color: var(--line-2);
+    background: rgba(178, 20, 32, 0.06);
+}
+
+.page-hero {
+    position: relative;
+    padding: clamp(58px, 9vw, 120px) 0 clamp(34px, 5vw, 60px);
+    text-align: center;
+}
+
+.page-hero--tight { padding-bottom: clamp(22px, 3vw, 40px); }
+
+.page-hero__eyebrow {
+    display: inline-block;
+    margin-bottom: 20px;
+    padding: 7px 16px;
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    color: var(--crimson-2);
+    border: 1px solid rgba(178, 20, 32, 0.45);
+    text-transform: uppercase;
+    clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+}
+
+.page-hero__title {
+    font-size: clamp(2.8rem, 8vw, 6rem);
+    letter-spacing: clamp(1px, 0.4vw, 5px);
+    text-shadow: 0 6px 40px rgba(0, 0, 0, 0.6);
+}
+
+.page-hero__meta {
+    margin-top: 20px;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 3px;
+    color: var(--ash);
+    text-transform: uppercase;
+}
+
+.page-hero__meta span { color: var(--crimson-2); }
+
+.page-hero__rule {
+    width: 70px;
+    height: 2px;
+    margin: 28px auto 0;
+    background: linear-gradient(90deg, transparent, var(--crimson), transparent);
+}
+
+.page-section { padding-bottom: clamp(60px, 9vw, 120px); }
+
+.site-footer {
+    position: relative;
+    margin-top: 40px;
+    padding: 52px 24px 58px;
+    text-align: center;
+    border-top: 1px solid var(--line);
+    background: linear-gradient(180deg, transparent, rgba(178, 20, 32, 0.04));
+}
+
+.footer-credit {
+    display: inline-block;
+    padding: 12px 38px;
+    font-family: var(--display);
+    font-size: 15px;
+    font-weight: 600;
+    font-stretch: 88%;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--bone);
+    border: 1px solid rgba(178, 20, 32, 0.42);
+    background: rgba(178, 20, 32, 0.05);
+    clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
+}
+
+.footer-note {
+    display: block;
+    margin-top: 20px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--ash-2);
+    text-transform: uppercase;
+}
+
+@media (max-width: 760px) {
+    .site-header { flex-direction: column; gap: 13px; padding: 13px 16px; }
+    .brand__text { font-size: 18px; letter-spacing: 2px; }
+    .site-nav { flex-wrap: wrap; justify-content: center; }
+    .nav-link { padding: 8px 12px; letter-spacing: 1.4px; }
+}
