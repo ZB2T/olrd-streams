@@ -6,46 +6,53 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
     <style>
-        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #000; font-family: sans-serif; color: #fff; }
+        body { background: #000; color: #fff; font-family: sans-serif; text-align: center; }
         
-        #bg { 
-            position: fixed; top: -50%; left: -50%; width: 200%; height: 200%; 
-            background: radial-gradient(circle, #333, #000); 
-            animation: rotate 60s linear infinite; z-index: -1; 
+        #admin-panel {
+            display: none;
+            position: fixed;
+            top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 90%; max-width: 600px;
+            background: #050505;
+            border: 1px solid #333;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            z-index: 1000;
         }
-        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-        #welcome-screen { position: fixed; top:0; left:0; width:100%; height:100%; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 2000; background: rgba(0,0,0,0.8); }
-        #main-content { display: none; padding: 20px; text-align: center; }
-        
-        .story-container { display: flex; justify-content: center; gap: 15px; margin-bottom: 40px; overflow-x: auto; padding: 10px; }
-        .story-circle { width: 70px; height: 70px; border-radius: 50%; border: 2px solid #00ffcc; display: flex; align-items: center; justify-content: center; font-size: 10px; background: rgba(0,0,0,0.5); }
-        #streamer-list { list-style: none; padding: 0; max-width: 400px; margin: 0 auto; }
-        #streamer-list li { background: rgba(255,255,255,0.1); padding: 12px; margin-bottom: 5px; border-radius: 10px; backdrop-filter: blur(5px); }
-
-        #admin-panel { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; max-width: 600px; background: #050505; border: 1px solid #333; border-radius: 20px; padding: 25px; box-shadow: 0 20px 50px rgba(0,0,0,0.8); z-index: 3000; }
-        .streamer-manager-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; list-style: none; padding: 0; margin-top: 20px; max-height: 400px; overflow-y: auto; }
-        .streamer-item { background: #111; border: 1px solid #222; padding: 10px; border-radius: 10px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+        .streamer-manager-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 12px;
+            list-style: none;
+            padding: 0;
+            margin-top: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .streamer-item {
+            background: #111;
+            border: 1px solid #222;
+            padding: 10px;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
         .streamer-actions { display: flex; gap: 5px; width: 100%; }
-        .action-btn { flex: 1; background: #1a1a1a; border: 1px solid #333; color: #fff; padding: 5px; border-radius: 4px; cursor: pointer; font-size: 12px; }
+        .action-btn {
+            flex: 1; background: #1a1a1a; border: 1px solid #333;
+            color: #fff; padding: 5px; border-radius: 4px; cursor: pointer; font-size: 12px;
+        }
         .action-btn.delete { color: #ff4d4d; border-color: #551111; background: #200505; }
     </style>
 </head>
 <body>
 
-    <div id="bg"></div>
-
-    <div id="welcome-screen">
-        <h1>WELCOME TO OLRD</h1>
-        <button onclick="this.parentElement.style.display='none'; document.getElementById('main-content').style.display='block';">ENTER</button>
-    </div>
-
-    <div id="main-content">
-        <h1>OLRD STREAMERS</h1>
-        <div class="story-container" id="story-list"></div>
-        <ul id="streamer-list"></ul>
-        <button onclick="checkAdminPassword()">EDIT</button>
-    </div>
+    <h1>OLRD STREAMERS</h1>
+    <ul id="streamer-list"></ul>
+    <button onclick="checkAdminPassword()">EDIT</button>
 
     <div id="admin-panel">
         <h3>SYSTEM PREFERENCES</h3>
@@ -56,28 +63,30 @@
     </div>
 
     <script>
-        const firebaseConfig = { databaseURL: "https://olrd-streamers-default-rtdb.firebaseio.com" };
+        const firebaseConfig = {
+            databaseURL: "https://olrd-streamers-default-rtdb.firebaseio.com"
+        };
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
         let users = [];
 
         database.ref('streamers_list').on('value', (snapshot) => {
             users = snapshot.val() || [];
-            document.getElementById('story-list').innerHTML = users.map(u => `<div class="story-circle">${u.substring(0, 3)}</div>`).join('');
             renderMainList();
             if(document.getElementById('admin-panel').style.display === 'block') renderAdminList();
         });
 
         function renderMainList() {
-            document.getElementById('streamer-list').innerHTML = users.map(u => `<li>${u}</li>`).join('');
+            const list = document.getElementById('streamer-list');
+            list.innerHTML = users.map(u => `<li>${u}</li>`).join('');
         }
 
         function checkAdminPassword() {
-            const pin = prompt("ENTER SYSTEM PIN:");
-            if (!pin) return;
-            database.ref('admin_secure_vault/' + pin).once('value').then(s => {
+            const password = prompt("ENTER SYSTEM PIN:");
+            if (!password) return;
+            database.ref('admin_secure_vault/' + password).once('value').then(s => {
                 if(s.exists() && s.val() === true) toggleAdminPanel(true);
-                else alert("ACCESS DENIED");
+                else alert("ACCESS DENIED: INVALID PIN");
             });
         }
 
@@ -99,10 +108,22 @@
                 </li>`).join('');
         }
 
-        function addStreamer() { const input = document.getElementById('new-name'); if(input.value) { users.push(input.value); input.value = ''; save(); } }
+        function addStreamer() {
+            const input = document.getElementById('new-name');
+            if(input.value) { users.push(input.value); input.value = ''; save(); }
+        }
+
         function del(i) { users.splice(i, 1); save(); }
-        function move(i, d) { const t = i + d; if(t >= 0 && t < users.length) { [users[i], users[t]] = [users[t], users[i]]; save(); } }
+
+        function move(i, d) {
+            const target = i + d;
+            if(target >= 0 && target < users.length) {
+                [users[i], users[target]] = [users[target], users[i]];
+                save();
+            }
+        }
+
         function save() { database.ref('streamers_list').set(users); }
     </script>
 </body>
-</html>
+</html>ص
