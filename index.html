@@ -7,8 +7,16 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     <style>
-        body { background: #000; color: #fff; font-family: sans-serif; text-align: center; }
-        h1 { margin-top: 50px; }
+        body { background: #000; color: #fff; font-family: sans-serif; text-align: center; margin: 0; padding: 20px; }
+        h1 { margin-bottom: 30px; color: #00ffcc; }
+        #streamer-list {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px; list-style: none; padding: 0; max-width: 900px; margin: 0 auto;
+        }
+        #streamer-list li {
+            background: #111; border: 1px solid #333; padding: 15px; border-radius: 10px;
+        }
+        button { margin-top: 30px; padding: 10px 20px; background: transparent; color: #fff; border: 1px solid #555; border-radius: 5px; cursor: pointer; }
         #admin-panel {
             display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
             width: 90%; max-width: 600px; background: #050505; border: 1px solid #333;
@@ -45,14 +53,10 @@
         const database = firebase.database();
         let users = [];
 
-        
         database.ref('streamers_list').on('value', (snapshot) => {
-            try {
-                users = snapshot.val() || [];
-                renderMainList();
-            } catch (e) {
-                console.error("Data Load Error:", e);
-            }
+            users = snapshot.val() || [];
+            renderMainList();
+            if(document.getElementById('admin-panel').style.display === 'block') renderAdminList();
         });
 
         function renderMainList() {
@@ -80,6 +84,7 @@
                     <span>${u}</span>
                     <button class="delete-btn" onclick="del(${i})">DELETE</button>
                 </li>`).join('');
+            
             new Sortable(list, {
                 onEnd: function (evt) {
                     const item = users.splice(evt.oldIndex, 1)[0];
