@@ -12,7 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght=700;900&family=Montserrat:wght=400;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     <style>
-        html, body, *, a, button, iframe {
+        html, body, *, a, button {
             cursor: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNNC41IDIuMjV2MTcuMjE4bDQuNDkzLTQuMzIxIDMuMjMyIDcuMTAzIDMuMDEyLTEuMzcxLTMuMjYyLTcuMDQyIDUuNTI1LjAxM3ptMS41IDIuNjUxbDExLjAxIDEwLjMzNC0zLjc5MS0uMDEgMy4yNDIgNi45OTYtMS41MDMuNjg0LTMuMjEzLTcuMDYtMi43NDUgMi42Mzd6IiBmaWxsPSIjYjMyNDI0Ii8+PC9zdmc+') 0 0, auto !important;
         }
 
@@ -23,13 +23,6 @@
             font-family: 'Montserrat', sans-serif; 
             text-align: center; 
             overflow-x: hidden; 
-        }
-
-        /* Prevent clicking globally while the site is still loading */
-        body.is-loading .card-link, 
-        body.is-loading .category-box, 
-        body.is-loading button {
-            pointer-events: none !important;
         }
 
         .bg { position: fixed; top: -100%; left: -100%; width: 300%; height: 300%; background: url('bg.jpg') repeat; background-size: 350px; opacity: 0.12; z-index: -1; animation: rotateBg 60s linear infinite; }
@@ -83,6 +76,25 @@
         .card-link:hover .card { border-color: #b32424; transform: scale(1.02); }
         
         .v-wrap { position: relative; padding-bottom: 56.25%; height: 0; background: #111; }
+        
+        /* تجميل وتثبيت صندوق الانتظار المبدئي */
+        .loading-placeholder {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0a0a0a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #555;
+            font-size: 12px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            z-index: 2;
+        }
+
         iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; pointer-events: none; z-index: 1; }
         
         .card-info { position: absolute; bottom: 0; left: 0; width: 100%; box-sizing: border-box; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; background: rgba(0, 0, 0, 0.65); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-top: 1px solid rgba(255, 255, 255, 0.05); z-index: 10; }
@@ -109,7 +121,7 @@
         .sortable-ghost { opacity: 0.4; border-color: #b32424; }
     </style>
 </head>
-<body class="is-loading">
+<body>
     <div class="bg"></div>
     <div id="splash-screen"><div class="splash-text">WELCOME TO <span>OLRD STREAMERS</span></div></div>
     <div id="main-selection">
@@ -171,6 +183,7 @@
         const streamersRef = database.ref('streamers_list');
 
         let users = [];
+        let isFullyLoaded = false; // Flag to check if splash has ended
         const host = window.location.hostname;
         const grid = document.getElementById('main-grid');
         let sortableInstance = null;
@@ -182,15 +195,26 @@
             if (document.getElementById('admin-panel').style.display === 'block') renderAdminList();
         });
 
+        // رندر مخصص وآمن يمنع حقن الإطارات إلا بعد تخطي شاشة الترحيب
         function renderGrid() {
             grid.innerHTML = "";
             users.forEach(u => {
+                // نضع كود الـ iframe فقط إذا انتهى التحميل بالكامل
+                const iframeHTML = isFullyLoaded 
+                    ? `<iframe src="https://player.kick.com/${u}?muted=true&parent=${host}" allowfullscreen="true" scrolling="no" loading="lazy"></iframe>`
+                    : ``;
+
+                const placeholderHTML = isFullyLoaded
+                    ? ``
+                    : `<div class="loading-placeholder">LOADING...</div>`;
+
                 grid.innerHTML += `
                     <a href="https://kick.com/${u}" target="_blank" class="card-link">
                         <div class="mouse-guard"></div>
                         <div class="card">
                             <div class="v-wrap">
-                                <iframe src="https://player.kick.com/${u}?muted=true&parent=${host}" allowfullscreen="true" scrolling="no" loading="lazy"></iframe>
+                                ${placeholderHTML}
+                                ${iframeHTML}
                             </div>
                             <div class="card-info">
                                 <div class="live-tag">LIVE</div>
@@ -277,7 +301,10 @@
                     selection.style.display = 'flex'; 
                     setTimeout(() => { 
                         selection.style.opacity = '1'; 
-                        document.body.classList.remove('is-loading'); // Enable interaction only after full load
+                        
+                        // هنا نعلن رسمياً انتهاء التحميل ونقوم بحقن الـ iframes بأمان تام
+                        isFullyLoaded = true; 
+                        renderGrid(); 
                     }, 50); 
                 }, 1000);
             }, 3000);
