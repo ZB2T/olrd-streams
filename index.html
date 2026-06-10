@@ -13,7 +13,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     <style>
         html, body, *, a, button {
-            cursor: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNNC41IDIuMjV2MTcuMjE4bDQuNDkzLTQuMzIxIDMuMjMyIDcuMTAzIDMuMDEyLTEuMzcxLTMuMjYyLTcuMDQyIDUuNTI1LjAxM3ptMS41IDIuNjUxbDExLjAxIDEwLjMzNC0zLjc5MS0uMDEgMy4yNDIgNi45OTYtMS41MDMuNjg0LTMuMjEzLTcuMDYtMi43NDUgMi42Mzd6IiBmaWxsPSIjYjMyNDI0Ii8+PC9zdmc+') 0 0, auto !important;
+            cursor: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNNC41IDIuMjV2MTcuMjE4bDQuNDkzLTQuMzIxIDMuMjMyIDcuMTAzIDMuMDEyLTEuMzcxLTMuMjYyLTcuMDQyIDUuNTI1LjAxM3ptMS41IDIuNjUxbDExLjAxIDEwLjMzNC0zLjc5MS0uMDEgMy4yNDIgNi45OTYtMS41MDMuNjg0LTMuMjIxLTcuMDYtMi43NDUgMi42Mzd6IiBmaWxsPSIjYjMyNDI0Ii8+PC9zdmc+') 0 0, auto !important;
         }
 
         body { 
@@ -98,8 +98,8 @@
         
         .card-info { position: absolute; bottom: 0; left: 0; width: 100%; box-sizing: border-box; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; background: rgba(0, 0, 0, 0.65); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-top: 1px solid rgba(255, 255, 255, 0.05); z-index: 10; }
         .user-name { font-weight: 700; font-size: 13px; text-transform: uppercase; color: #ffffff !important; text-decoration: none !important; letter-spacing: 1px; }
-        .live-tag { color: #00ff00; font-size: 11px; font-weight: bold; display: flex; align-items: center; gap: 5px; }
-        .live-tag::before { content: ''; width: 8px; height: 8px; background: #00ff00; border-radius: 50%; box-shadow: 0 0 5px #00ff00; }
+        .live-tag { color: #b32424; font-size: 11px; font-weight: bold; display: flex; align-items: center; gap: 5px; letter-spacing: 1px; }
+        .live-tag::before { content: ''; width: 8px; height: 8px; background: #b32424; border-radius: 50%; box-shadow: 0 0 8px #b32424; }
         .footer-credit { margin: 40px auto 15px auto; width: fit-content; min-width: 250px; padding: 12px 35px; background: rgba(179, 36, 36, 0.06); border: 1px solid rgba(179, 36, 36, 0.35); border-radius: 8px; font-weight: bold; font-size: 13px; letter-spacing: 2px; text-transform: uppercase; color: #fff; }
         
         #admin-panel { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 95%; max-width: 1400px; height: 85vh; background: #0a0a0a; border: 2px solid #b32424; border-radius: 20px; z-index: 10000; padding: 30px; box-shadow: 0 0 50px rgba(0,0,0,0.95); overflow-y: auto; box-sizing: border-box; }
@@ -107,9 +107,14 @@
         .admin-title { text-align: center; color: #b32424; font-size: 24px; margin-bottom: 25px; letter-spacing: 3px; font-weight: 900; }
         .admin-input-group { display: flex; gap: 15px; margin-bottom: 30px; max-width: 600px; margin-left: auto; margin-right: auto; }
         .admin-input { flex: 1; padding: 12px; background: #111; border: 1px solid #333; color: #fff; border-radius: 8px; font-family: sans-serif; }
-        .admin-btn { background: #b32424; color: #fff; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-weight: bold; text-transform: uppercase; font-size: 12px; letter-spacing: 1px; }
-        .admin-btn.close { background: #222; border: 1px solid #444; margin-top: 30px; width: 100%; max-width: 300px; display: block; margin-left: auto; margin-right: auto; }
+        .admin-btn { background: #b32424; color: #fff; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-weight: bold; text-transform: uppercase; font-size: 12px; letter-spacing: 1px; transition: background 0.2s; }
+        .admin-btn:hover { background: #d42c2c; }
+        
+        .admin-footer-controls { display: flex; justify-content: center; gap: 20px; margin-top: 30px; width: 100%; }
+        .admin-btn.close { background: #222; border: 1px solid #444; width: 100%; max-width: 200px; margin: 0; }
         .admin-btn.close:hover { background: #b32424; border-color: #b32424; }
+        .admin-btn.save { background: #b32424; border: 1px solid #b32424; width: 100%; max-width: 200px; margin: 0; }
+        .admin-btn.save:hover { background: #d42c2c; border-color: #d42c2c; }
         
         .admin-grid-manager { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; list-style: none; padding: 0; margin: 0; }
         .admin-card-item { position: relative; background: #111; border: 2px dashed #333; border-radius: 12px; aspect-ratio: 16 / 9; display: flex; flex-direction: column; justify-content: center; align-items: center; }
@@ -155,13 +160,16 @@
     
     <div class="admin-overlay" id="admin-overlay" onclick="toggleAdminPanel(false)"></div>
     <div id="admin-panel">
-        <div class="admin-title">OLRD VISUAL MANAGEMENT PANEL</div>
+        <div class="admin-title">ADMIN PANEL</div>
         <div class="admin-input-group">
             <input type="text" id="new-streamer-input" class="admin-input" placeholder="Enter Kick username">
             <button class="admin-btn" onclick="addStreamer()">Insert</button>
         </div>
         <ul class="admin-grid-manager" id="manager-list"></ul>
-        <button class="admin-btn close" onclick="toggleAdminPanel(false)">Exit Panel</button>
+        <div class="admin-footer-controls">
+            <button class="admin-btn close" onclick="toggleAdminPanel(false)">Exit Panel</button>
+            <button class="admin-btn save" onclick="saveAdminChanges()">Save</button>
+        </div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -181,23 +189,25 @@
         const database = firebase.database();
         const streamersRef = database.ref('streamers_list');
 
-        let users = [];
-        let isFullyLoaded = false; // Flag to check if splash has ended
+        let dbUsers = [];
+        let localUsersTemp = [];
+        let isFullyLoaded = false;
         const host = window.location.hostname;
         const grid = document.getElementById('main-grid');
         let sortableInstance = null;
 
         streamersRef.on('value', (snapshot) => {
             const data = snapshot.val();
-            users = data || [];
-            renderGrid();
-            if (document.getElementById('admin-panel').style.display === 'block') renderAdminList();
+            dbUsers = data || [];
+            if (document.getElementById('admin-panel').style.display !== 'block') {
+                localUsersTemp = [...dbUsers];
+                renderGrid();
+            }
         });
 
         function renderGrid() {
             grid.innerHTML = "";
-            users.forEach(u => {
-               
+            dbUsers.forEach(u => {
                 const iframeHTML = isFullyLoaded 
                     ? `<iframe src="https://player.kick.com/${u}?muted=true&parent=${host}" allowfullscreen="true" scrolling="no" loading="lazy"></iframe>`
                     : ``;
@@ -226,7 +236,7 @@
         function renderAdminList() {
             const list = document.getElementById('manager-list');
             list.innerHTML = "";
-            users.forEach((u, index) => {
+            localUsersTemp.forEach((u, index) => {
                 list.innerHTML += `
                     <li class="admin-card-item" data-index="${index}">
                         <div class="admin-card-overlay">
@@ -244,14 +254,14 @@
                 animation: 250,
                 ghostClass: 'sortable-ghost',
                 onEnd: function () {
-                    const updatedUsers = [];
+                    const sortedUsers = [];
                     const items = list.querySelectorAll('.admin-card-item');
                     items.forEach(item => {
                         const oldIndex = parseInt(item.getAttribute('data-index'));
-                        updatedUsers.push(users[oldIndex]);
+                        sortedUsers.push(localUsersTemp[oldIndex]);
                     });
-                    users = updatedUsers;
-                    streamersRef.set(users);
+                    localUsersTemp = sortedUsers;
+                    renderAdminList();
                 }
             });
         }
@@ -262,6 +272,7 @@
                 database.ref('admin_secure_vault/' + password).once('value')
                 .then((snapshot) => {
                     if (snapshot.exists() && snapshot.val() === true) {
+                        localUsersTemp = [...dbUsers];
                         toggleAdminPanel(true);
                     } else {
                         alert("ACCESS DENIED: INVALID SECURITY PIN.");
@@ -276,17 +287,41 @@
         function toggleAdminPanel(show) {
             document.getElementById('admin-panel').style.display = show ? 'block' : 'none';
             document.getElementById('admin-overlay').style.display = show ? 'block' : 'none';
-            if (show) renderAdminList();
+            if (show) {
+                renderAdminList();
+            } else {
+                localUsersTemp = [...dbUsers];
+            }
         }
 
         function addStreamer() {
             const input = document.getElementById('new-streamer-input');
             const name = input.value.trim();
-            if(name) { users.unshift(name); input.value = ""; streamersRef.set(users); }
+            if(name) { 
+                localUsersTemp.unshift(name); 
+                input.value = ""; 
+                renderAdminList(); 
+            }
         }
 
         function deleteStreamer(index) {
-            if(confirm("Are you sure?")) { users.splice(index, 1); streamersRef.set(users); }
+            if(confirm("Are you sure?")) { 
+                localUsersTemp.splice(index, 1); 
+                renderAdminList(); 
+            }
+        }
+
+        function saveAdminChanges() {
+            streamersRef.set(localUsersTemp)
+            .then(() => {
+                alert("Changes saved successfully!");
+                dbUsers = [...localUsersTemp];
+                renderGrid();
+                toggleAdminPanel(false);
+            })
+            .catch((error) => {
+                alert("Failed to save changes: " + error.message);
+            });
         }
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -299,8 +334,6 @@
                     selection.style.display = 'flex'; 
                     setTimeout(() => { 
                         selection.style.opacity = '1'; 
-                        
-                               
                         isFullyLoaded = true; 
                         renderGrid(); 
                     }, 50); 
