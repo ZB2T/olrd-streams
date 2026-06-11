@@ -427,3 +427,44 @@
 }
 
 .book-page__prose--caption { margin-top: 16px; }
+
+.book-open__bar-spacer { width: 88px; flex-shrink: 0; }
+
+.book-pdfwrap {
+    position: relative;
+    width: 100%;
+    background: rgba(10, 8, 9, 0.42);
+    min-height: 72vh;
+}
+
+.book-pdfwrap .book-page__pdf-frame {
+    display: block;
+    width: 100%;
+    height: 82vh;
+    border: 0;
+    background: #2a2018;
+}
+
+.book-pdfwrap .book-page__pdf-open {
+    display: inline-block;
+    margin: 12px 16px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: var(--ash);
+    text-decoration: none;
+    border-bottom: 1px solid var(--line-2);
+    padding-bottom: 2px;
+    transition: color 0.2s var(--ease), border-color 0.2s var(--ease);
+}
+
+.book-pdfwrap .book-page__pdf-open:hover { color: var(--crimson-2); border-color: var(--crimson-2); }
+
+.book-pdfwrap .book-page__pdf-status {
+    padding: 90px 20px;
+    text-align: center;
+    font-family: var(--serif);
+    color: var(--ash);
+    font-size: 1.05rem;
+}

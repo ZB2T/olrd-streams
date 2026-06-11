@@ -188,6 +188,12 @@
         ["title", "author", "subtitle"].forEach(function (key) {
             if (patch[key] !== undefined) { state.book[key] = patch[key]; }
         });
+        if (patch.pdf !== undefined) {
+            if (patch.pdf) { state.book.pdf = patch.pdf; } else { delete state.book.pdf; }
+        }
+        if (patch.pdfName !== undefined) {
+            if (patch.pdfName) { state.book.pdfName = patch.pdfName; } else { delete state.book.pdfName; }
+        }
         return write(state);
     }
 

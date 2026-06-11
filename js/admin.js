@@ -191,38 +191,10 @@
         }
     }
 
-    function pageBlock(page, index) {
-        var pdfRow = page.pdf
-            ? '<span class="page-edit__pdfname" title="' + esc(page.pdfName || "") + '">' + esc(page.pdfName || t("pdf.attached")) + '</span>' +
-              '<button type="button" class="row-remove" data-pdf-remove="' + esc(page.id) + '">' + esc(t("pdf.remove")) + '</button>'
-            : '<span class="page-edit__pdfhint">' + esc(t("pdf.hint")) + '</span>';
-        return '' +
-            '<li class="page-edit" data-sort-id="' + esc(page.id) + '" draggable="true">' +
-                '<div class="page-edit__head">' +
-                    '<span class="sort-row__grip" aria-hidden="true"></span>' +
-                    '<span class="page-edit__no">' + pad(index + 1) + '</span>' +
-                    '<input type="text" class="field page-edit__title" data-pg-title="' + esc(page.id) + '" value="' + esc(page.title) + '" placeholder="' + esc(t("page.titlePh")) + '">' +
-                    '<button type="button" class="row-remove" data-pg-remove="' + esc(page.id) + '">' + esc(t("common.delete")) + '</button>' +
-                '</div>' +
-                '<textarea class="field page-edit__body" data-pg-body="' + esc(page.id) + '" rows="6" placeholder="' + esc(t("page.bodyPh")) + '">' + esc(page.body) + '</textarea>' +
-                '<div class="page-edit__pdf' + (page.pdf ? ' has-pdf' : '') + '">' +
-                    pdfRow +
-                    '<label class="pdf-upload">' +
-                        '<input type="file" accept="application/pdf,.pdf" data-pdf-input="' + esc(page.id) + '">' +
-                        '<span class="pdf-upload__btn">' + esc(page.pdf ? t("pdf.replace") : t("pdf.attach")) + '</span>' +
-                    '</label>' +
-                    '<span class="pdf-msg" data-pdf-msg="' + esc(page.id) + '"></span>' +
-                '</div>' +
-            '</li>';
-    }
-
     function renderBook() {
         var panel = $("#book-manager");
         if (!panel) { return; }
         var b = store().getBook();
-        var total = $("[data-page-total]");
-        if (total) { total.textContent = pad(b.pages.length); }
-        var pages = b.pages.map(pageBlock).join("");
         panel.innerHTML = '' +
             '<div class="book-edit">' +
                 '<div class="editor-head">' +
@@ -234,8 +206,15 @@
                     '<label class="field-label">' + esc(t("field.author")) + '<input type="text" class="field" data-bk="author" value="' + esc(b.author) + '"></label>' +
                 '</div>' +
                 '<label class="field-label">' + esc(t("field.bookSubtitle")) + '<input type="text" class="field" data-bk="subtitle" value="' + esc(b.subtitle) + '"></label>' +
-                '<div class="chapter-head-row"><span class="field-label">' + esc(t("pages.label")) + '</span><button type="button" class="ghost-btn" data-page-add>' + esc(t("pages.add")) + '</button></div>' +
-                '<ul class="page-list" id="page-list">' + (pages || '<li class="sort-empty">' + esc(t("admin.empty.pages")) + '</li>') + '</ul>' +
+                '<div class="book-pdf-manager">' +
+                    '<span class="field-label">' + esc(t("book.pdfSection")) + '</span>' +
+                    '<p class="book-pdf-manager__hint">' + esc(t("book.pdfSectionHint")) + '</p>' +
+                    (b.pdf
+                        ? '<div class="book-pdf-current"><span class="page-edit__pdfname" title="' + esc(b.pdfName || "") + '">' + esc(b.pdfName || t("pdf.attached")) + '</span><button type="button" class="row-remove" data-book-pdf-remove>' + esc(t("pdf.remove")) + '</button></div>'
+                        : '') +
+                    '<label class="pdf-upload"><input type="file" accept="application/pdf,.pdf" data-book-pdf-input><span class="pdf-upload__btn">' + esc(b.pdf ? t("pdf.replace") : t("book.pdfUpload")) + '</span></label>' +
+                    '<span class="pdf-msg" data-book-pdf-msg></span>' +
+                '</div>' +
             '</div>';
         bindBook();
     }
@@ -264,53 +243,18 @@
             });
         }
 
-        var add = $("[data-page-add]", panel);
-        if (add) {
-            add.addEventListener("click", function () {
-                store().addPage();
-                ui().toast(t("toast.pageAdded"), "ok");
+        var pdfInput = $("[data-book-pdf-input]", panel);
+        if (pdfInput) {
+            pdfInput.addEventListener("change", function () {
+                var file = pdfInput.files && pdfInput.files[0];
+                pdfInput.value = "";
+                if (file) { handleBookPdfUpload(file); }
             });
         }
 
-        $all("[data-pg-title]", panel).forEach(function (input) {
-            var id = input.getAttribute("data-pg-title");
-            input.addEventListener("blur", function () { store().updatePage(id, { title: input.value }); });
-        });
-
-        $all("[data-pg-body]", panel).forEach(function (area) {
-            var id = area.getAttribute("data-pg-body");
-            area.addEventListener("blur", function () { store().updatePage(id, { body: area.value }); });
-        });
-
-        $all("[data-pg-remove]", panel).forEach(function (btn) {
-            btn.addEventListener("click", function () {
-                if (root.confirm(t("confirm.removePage"))) {
-                    store().removePage(btn.getAttribute("data-pg-remove"));
-                    ui().toast(t("toast.pageRemoved"), "ok");
-                }
-            });
-        });
-
-        $all("[data-pdf-input]", panel).forEach(function (input) {
-            var id = input.getAttribute("data-pdf-input");
-            input.addEventListener("change", function () {
-                var file = input.files && input.files[0];
-                input.value = "";
-                if (file) { handlePdfUpload(id, file); }
-            });
-        });
-
-        $all("[data-pdf-remove]", panel).forEach(function (btn) {
-            var id = btn.getAttribute("data-pdf-remove");
-            btn.addEventListener("click", function () { handlePdfRemove(id); });
-        });
-
-        var list = $("#page-list", panel);
-        if (list) {
-            ui().makeSortable(list, function (ids) {
-                store().reorderPages(ids);
-                ui().toast(t("toast.pagesReordered"), "ok");
-            });
+        var pdfRemove = $("[data-book-pdf-remove]", panel);
+        if (pdfRemove) {
+            pdfRemove.addEventListener("click", handleBookPdfRemove);
         }
     }
 
@@ -465,31 +409,23 @@
 
     var PDF_MAX = 6 * 1024 * 1024;
 
-    function pdfMsgFor(pageId) {
-        var nodes = $all('[data-pdf-msg]');
-        for (var i = 0; i < nodes.length; i++) {
-            if (nodes[i].getAttribute("data-pdf-msg") === pageId) { return nodes[i]; }
-        }
-        return null;
-    }
-
-    function handlePdfUpload(pageId, file) {
-        var msg = pdfMsgFor(pageId);
+    function handleBookPdfUpload(file) {
+        var msg = $("[data-book-pdf-msg]");
         var isPdf = (file.type && file.type.indexOf("pdf") !== -1) || /\.pdf$/i.test(file.name || "");
         if (!isPdf) { if (msg) { setMsg(msg, t("pdf.notPdf"), "err"); } return; }
         if (file.size > PDF_MAX) { if (msg) { setMsg(msg, t("pdf.tooLarge"), "err"); } return; }
         if (!(root.OLRD.sync && root.OLRD.sync.available())) { if (msg) { setMsg(msg, t("msg.publishNotSet"), "warn"); } return; }
         var key = publishKeyValue();
-        if (!key) { if (msg) { setMsg(msg, t("msg.publishKeyNeeded"), "warn"); } return; }
+        if (!key) { if (msg) { setMsg(msg, t("msg.loginForPublish"), "warn"); } return; }
         if (msg) { setMsg(msg, t("pdf.uploading"), "muted"); }
         var reader = new root.FileReader();
         reader.onload = function () {
             var result = String(reader.result || "");
             var comma = result.indexOf(",");
             var base64 = comma >= 0 ? result.slice(comma + 1) : result;
-            root.OLRD.sync.saveBookFile(key, "pg_" + pageId, file.name, "application/pdf", base64).then(function (ok) {
+            root.OLRD.sync.saveBookFile(key, "book_main", file.name, "application/pdf", base64).then(function (ok) {
                 if (ok) {
-                    store().updatePage(pageId, { pdf: "pg_" + pageId, pdfName: file.name });
+                    store().updateBookMeta({ pdf: "book_main", pdfName: file.name });
                     ui().toast(t("pdf.uploaded"), "ok");
                 } else {
                     if (msg) { setMsg(msg, t("pdf.uploadFail"), "err"); }
@@ -501,11 +437,11 @@
         reader.readAsDataURL(file);
     }
 
-    function handlePdfRemove(pageId) {
+    function handleBookPdfRemove() {
         var key = publishKeyValue();
-        store().updatePage(pageId, { pdf: "", pdfName: "" });
+        store().updateBookMeta({ pdf: "", pdfName: "" });
         if (key && root.OLRD.sync && root.OLRD.sync.available()) {
-            root.OLRD.sync.deleteBookFile(key, "pg_" + pageId);
+            root.OLRD.sync.deleteBookFile(key, "book_main");
         }
         ui().toast(t("pdf.removed"), "ok");
     }

@@ -55,7 +55,7 @@
     position: relative;
     width: 100%;
     padding-bottom: 56.25%;
-    background: #0a0a0c;
+    background: rgba(12, 11, 15, 0.4);
     overflow: hidden;
 }
 

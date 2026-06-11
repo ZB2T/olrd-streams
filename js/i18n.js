@@ -140,7 +140,11 @@
             "pdf.tooLarge": "PDF is too large (max 6 MB).",
             "book.pdfLoading": "Loading PDF…",
             "book.pdfMissing": "PDF not available.",
-            "book.pdfOpen": "Open in new tab"
+            "book.pdfOpen": "Open in new tab",
+            "book.pdfSection": "Book PDF",
+            "book.pdfSectionHint": "Upload one PDF — it becomes the whole book in the reader.",
+            "book.pdfUpload": "Upload PDF",
+            "book.pdfEdition": "PDF edition"
         },
         ar: {
             "nav.streamers": "الستريمرز",
@@ -276,7 +280,11 @@
             "pdf.tooLarge": "حجم الـPDF كبير جداً (الحد 6 ميغابايت).",
             "book.pdfLoading": "جارٍ تحميل الـPDF…",
             "book.pdfMissing": "الـPDF غير متاح.",
-            "book.pdfOpen": "فتح في تبويب جديد"
+            "book.pdfOpen": "فتح في تبويب جديد",
+            "book.pdfSection": "ملف الكتاب (PDF)",
+            "book.pdfSectionHint": "ارفع ملف PDF واحداً — يصبح هو الكتاب كاملاً في القارئ.",
+            "book.pdfUpload": "رفع PDF",
+            "book.pdfEdition": "نسخة PDF"
         }
     };
 

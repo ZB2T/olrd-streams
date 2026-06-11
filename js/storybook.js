@@ -66,7 +66,7 @@
     function renderCover() {
         var b = book();
         var count = b.pages.length;
-        var meta = count + " " + (count === 1 ? t("book.page") : t("book.pages"));
+        var meta = b.pdf ? t("book.pdfEdition") : (count + " " + (count === 1 ? t("book.page") : t("book.pages")));
         stage.innerHTML = '' +
             '<div class="book-cover" data-reveal>' +
                 '<div class="book-cover__art"></div>' +
@@ -82,6 +82,24 @@
         ui().mountReveal();
         var open = stage.querySelector("[data-open-book]");
         if (open) { open.addEventListener("click", openBook); }
+    }
+
+    function renderPdfBook() {
+        var b = book();
+        stage.innerHTML = '' +
+            '<div class="book-open book-open--pdf">' +
+                '<div class="book-open__bar">' +
+                    '<button type="button" class="ghost-btn book-open__close" data-close-book>' + ui().escapeHtml(t("book.close")) + '</button>' +
+                    '<span class="book-open__title">' + ui().escapeHtml(b.title) + '</span>' +
+                    '<span class="book-open__bar-spacer" aria-hidden="true"></span>' +
+                '</div>' +
+                '<div class="book-pdfwrap" data-pdf-host="' + ui().escapeHtml(b.pdf) + '">' +
+                    '<div class="book-page__pdf-status">' + ui().escapeHtml(t("book.pdfLoading")) + '</div>' +
+                '</div>' +
+            '</div>';
+        var close = stage.querySelector("[data-close-book]");
+        if (close) { close.addEventListener("click", closeBook); }
+        loadPdf(b.pdf);
     }
 
     function renderOpen() {
@@ -212,6 +230,11 @@
     function openBook() {
         state.open = true;
         state.index = 0;
+        if (book().pdf) {
+            renderPdfBook();
+            try { root.history.replaceState(null, "", "#read"); } catch (e) {}
+            return;
+        }
         var hash = parseInt((root.location.hash || "").replace("#p", ""), 10);
         if (!isNaN(hash) && hash > 0) { state.index = hash - 1; }
         renderOpen();
@@ -225,7 +248,11 @@
     }
 
     function refresh() {
-        if (state.open) { renderOpen(); } else { renderCover(); }
+        if (state.open) {
+            if (book().pdf) { renderPdfBook(); } else { renderOpen(); }
+        } else {
+            renderCover();
+        }
     }
 
     function boot() {
@@ -242,7 +269,7 @@
         root.OLRD.store.init().then(function () {
             root.OLRD.store.dropStaleDraft();
             renderCover();
-            if ((root.location.hash || "").indexOf("#p") === 0) { openBook(); }
+            if (/^#(p|read)/.test(root.location.hash || "")) { openBook(); }
             root.OLRD.store.startLiveSync();
         });
     }

@@ -370,3 +370,16 @@
 
 .pdf-msg { font-size: 11px; letter-spacing: 0.3px; }
 .pdf-msg:empty { display: none; }
+
+.book-pdf-manager {
+    margin-top: 20px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+}
+
+.book-pdf-manager__hint { margin: 0; font-size: 12px; line-height: 1.6; color: var(--ash); }
+.book-pdf-current { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
