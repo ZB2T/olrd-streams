@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OLRD STREAMERS — Live Roster</title>
+    <meta name="description" content="The live OLRD roster on Kick. Every broadcaster on the wall, streaming in real time on the official OLRD platform.">
+    <meta name="theme-color" content="#0a0a0a">
+    <link rel="icon" type="image/x-icon" href="assets/logo.ico">
+    <link rel="shortcut icon" href="assets/logo.ico">
+    <link rel="apple-touch-icon" href="assets/logo.png">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="OLRD STREAMERS">
+    <meta property="og:title" content="OLRD STREAMERS — Live Roster">
+    <meta property="og:description" content="Watch the OLRD roster live on Kick. The official platform of the OLRD collective.">
+    <meta property="og:image" content="assets/logo.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="assets/logo.png">
+    <link rel="stylesheet" href="css/fonts.css">
+    <link rel="stylesheet" href="css/core.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <script src="js/i18n.js"></script>
+</head>
+<body class="page-streamers">
+    <div class="fog"></div>
+    <div class="grain"></div>
+
+    <header class="site-header">
+        <a class="brand" href="index.html">
+            <img class="brand__crest" src="assets/logo.png" alt="OLRD" data-admin-gate>
+            <span class="brand__text">OLRD <i>Streamers</i></span>
+        </a>
+        <nav class="site-nav">
+            <a class="nav-link is-active" href="streamers.html" data-i18n="nav.streamers">Streamers</a>
+            <a class="nav-link" href="storybook.html" data-i18n="nav.story">Story Book</a>
+            <a class="nav-link" href="index.html" data-i18n="nav.home">Home</a>
+            <div class="lang-switch">
+                <button type="button" class="lang-btn" data-lang="en">EN</button>
+                <button type="button" class="lang-btn" data-lang="ar">ع</button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="page-section">
+        <section class="page-hero">
+            <span class="page-hero__eyebrow" data-i18n="streamers.eyebrow">Live Roster · Kick</span>
+            <h1 class="page-hero__title" data-i18n-html="streamers.title">OLRD <span class="accent">Streamers</span></h1>
+            <div class="page-hero__meta"><span data-roster-count>00</span> <span data-i18n="streamers.meta">Channels On The Wall</span></div>
+            <div class="page-hero__rule"></div>
+        </section>
+
+        <div class="container">
+            <div id="stream-grid" class="stream-grid"></div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <span class="footer-credit" data-i18n="footer.credit">Created By ZB2T</span>
+        <span class="footer-note" data-i18n="footer.note">OLRD Streamers · Official Platform</span>
+    </footer>
+
+    <script src="js/atmosphere.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/sync.js"></script>
+    <script src="js/crypto.js"></script>
+    <script src="js/seed.js"></script>
+    <script src="js/store.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/streamers.js"></script>
+</body>
+</html>
