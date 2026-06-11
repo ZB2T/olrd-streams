@@ -366,6 +366,53 @@
         }
     }
 
+    function bindPublish() {
+        var form = $("#publish-form");
+        var keyInput = $("#publish-key");
+        var msg = $("#publish-msg");
+        if (!form || !keyInput) { return; }
+
+        try {
+            var saved = root.localStorage.getItem("olrd.pubkey");
+            if (saved) { keyInput.value = saved; }
+        } catch (e) {}
+
+        form.addEventListener("submit", function (e) {
+            e.preventDefault();
+            var cfg = root.OLRD.config || {};
+            var url = (cfg.publishUrl || "").trim();
+            if (!url) { setMsg(msg, t("msg.publishNotSet"), "warn"); return; }
+            var key = keyInput.value.trim();
+            if (!key) { setMsg(msg, t("msg.publishKeyNeeded"), "warn"); return; }
+            try { root.localStorage.setItem("olrd.pubkey", key); } catch (e2) {}
+
+            var btn = $("#publish-btn");
+            if (btn) { btn.disabled = true; btn.textContent = t("msg.publishing"); }
+            setMsg(msg, t("msg.publishing"), "muted");
+
+            root.fetch(url, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ key: key, data: store().snapshot() })
+            }).then(function (r) {
+                return r.json().then(function (j) { return { ok: r.ok && j && j.ok, body: j }; }, function () { return { ok: false }; });
+            }).then(function (res) {
+                if (btn) { btn.disabled = false; btn.textContent = t("security.publishBtn"); }
+                if (res.ok) {
+                    setMsg(msg, t("msg.published"), "muted");
+                    ui().toast(t("msg.published"), "ok");
+                } else {
+                    setMsg(msg, t("msg.publishFail"), "err");
+                    ui().toast(t("msg.publishFail"), "err");
+                }
+            }).catch(function () {
+                if (btn) { btn.disabled = false; btn.textContent = t("security.publishBtn"); }
+                setMsg(msg, t("msg.publishFail"), "err");
+                ui().toast(t("msg.publishFail"), "err");
+            });
+        });
+    }
+
     function dashVisible() {
         var dash = $("#admin-dash");
         return dash && !dash.classList.contains("is-hidden");
@@ -377,6 +424,7 @@
         bindTabs();
         bindStreamers();
         bindSecurity();
+        bindPublish();
         store().subscribe(function () {
             if (dashVisible()) { renderStreamers(); renderBook(); }
         });

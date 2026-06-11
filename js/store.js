@@ -110,7 +110,7 @@
     }
 
     function sanitizeUsername(value) {
-        return String(value || "").trim().replace(/^@+/, "").toLowerCase().replace(/[^a-z0-9_]/g, "");
+        return String(value || "").trim().replace(/^@+/, "").toLowerCase().replace(/[^a-z0-9_-]/g, "");
     }
 
     function getStreamers() { return read().streamers; }
@@ -198,6 +198,10 @@
         return write(state);
     }
 
+    function snapshot() {
+        return read();
+    }
+
     function exportAll() {
         return JSON.stringify(read(), null, 2);
     }
@@ -251,6 +255,7 @@
         updatePage: updatePage,
         removePage: removePage,
         reorderPages: reorderPages,
+        snapshot: snapshot,
         exportAll: exportAll,
         importAll: importAll,
         resetAll: resetAll,

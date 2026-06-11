@@ -102,6 +102,16 @@
                         </div>
 
                         <div class="sec-card">
+                            <h3 class="sec-card__title" data-i18n="security.publishTitle">Publish To Site</h3>
+                            <p class="sec-card__sub" data-i18n="security.publishSub">Push your changes live for everyone.</p>
+                            <form id="publish-form" autocomplete="off">
+                                <label class="field-label"><span data-i18n="field.publishKey">Publish Key</span><input type="password" id="publish-key" class="field" autocomplete="off" spellcheck="false"></label>
+                                <button type="submit" id="publish-btn" class="btn" data-i18n="security.publishBtn">Publish Now</button>
+                            </form>
+                            <div id="publish-msg" class="form-msg"></div>
+                        </div>
+
+                        <div class="sec-card">
                             <h3 class="sec-card__title" data-i18n="security.toolsTitle">Archive Tools</h3>
                             <p class="sec-card__sub" data-i18n="security.toolsSub">Export the full roster and library to a file you can back up or move to another machine. Import replaces everything currently stored.</p>
                             <div class="sec-tools">
@@ -122,6 +132,7 @@
     </div>
 
     <script src="js/atmosphere.js"></script>
+    <script src="js/config.js"></script>
     <script src="js/crypto.js"></script>
     <script src="js/seed.js"></script>
     <script src="js/store.js"></script>

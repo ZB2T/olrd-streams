@@ -3,32 +3,262 @@
   "streamers": [
     {
       "id": "sd-strm-01",
-      "username": "zb2t",
+      "username": "abo3th",
       "platform": "kick"
     },
     {
       "id": "sd-strm-02",
-      "username": "olrd",
+      "username": "ii2a",
       "platform": "kick"
     },
     {
       "id": "sd-strm-03",
-      "username": "nightfall",
+      "username": "qyem",
       "platform": "kick"
     },
     {
       "id": "sd-strm-04",
-      "username": "crimsonwave",
+      "username": "d4t4xi",
       "platform": "kick"
     },
     {
       "id": "sd-strm-05",
-      "username": "vortexlive",
+      "username": "shanks_u",
       "platform": "kick"
     },
     {
       "id": "sd-strm-06",
-      "username": "echochamber",
+      "username": "fed0tb",
+      "platform": "kick"
+    },
+    {
+      "id": "sd-strm-07",
+      "username": "evely3",
+      "platform": "kick"
+    },
+    {
+      "id": "sd-strm-08",
+      "username": "lkaiiser",
+      "platform": "kick"
+    },
+    {
+      "id": "sd-strm-09",
+      "username": "kurd1i",
+      "platform": "kick"
+    },
+    {
+      "id": "sd-strm-10",
+      "username": "ialfa",
+      "platform": "kick"
+    },
+    {
+      "id": "sd-strm-11",
+      "username": "irust",
+      "platform": "kick"
+    },
+    {
+      "id": "sd-strm-12",
+      "username": "lunedee",
+      "platform": "kick"
+    },
+    {
+      "id": "sd-strm-13",
+      "username": "romeo",
+      "platform": "kick"
+    },
+    {
+      "id": "sd-strm-14",
+      "username": "z7lion",
+      "platform": "kick"
+    },
+    {
+      "id": "sd-strm-15",
+      "username": "saraalnamlah",
+      "platform": "kick"
+    },
+    {
+      "id": "sd-strm-16",
+      "username": "mrfarosyy",
+      "platform": "kick"
+    },
+    {
+      "id": "sd-strm-17",
+      "username": "yzfk",
+      "platform": "kick"
+    },
+    {
+      "id": "sd-strm-18",
+      "username": "zb2t",
+      "platform": "kick"
+    },
+    {
+      "id": "sd-strm-19",
+      "username": "ngdi",
+      "platform": "kick"
+    },
+    {
+      "id": "sd-strm-20",
+      "username": "abosaloum",
+      "platform": "kick"
+    },
+    {
+      "id": "sd-strm-21",
+      "username": "nolizr",
+      "platform": "kick"
+    },
+    {
+      "id": "sd-strm-22",
+      "username": "iitalal7",
+      "platform": "kick"
+    },
+    {
+      "id": "sd-strm-23",
+      "username": "kr0m",
+      "platform": "kick"
+    },
+    {
+      "id": "sd-strm-24",
+      "username": "teek0",
+      "platform": "kick"
+    },
+    {
+      "id": "sd-strm-25",
+      "username": "seba0z",
+      "platform": "kick"
+    },
+    {
+      "id": "sd-strm-26",
+      "username": "iwdd",
+      "platform": "kick"
+    },
+    {
+      "id": "sd-strm-27",
+      "username": "d7m1-s",
+      "platform": "kick"
+    },
+    {
+      "id": "sd-strm-28",
+      "username": "imsh4",
+      "platform": "kick"
+    },
+    {
+      "id": "sd-strm-29",
+      "username": "0xcharlie",
+      "platform": "kick"
+    },
+    {
+      "id": "sd-strm-30",
+      "username": "25sniperksa",
+      "platform": "kick"
+    },
+    {
+      "id": "sd-strm-31",
+      "username": "22rahaf",
+      "platform": "kick"
+    },
+    {
+      "id": "sd-strm-32",
+      "username": "0md1",
+      "platform": "kick"
+    },
+    {
+      "id": "sd-strm-33",
+      "username": "9lb6h",
+      "platform": "kick"
+    },
+    {
+      "id": "sd-strm-34",
+      "username": "elbulldozer",
+      "platform": "kick"
+    },
+    {
+      "id": "sd-strm-35",
+      "username": "berlin26x",
+      "platform": "kick"
+    },
+    {
+      "id": "sd-strm-36",
+      "username": "gyg2",
+      "platform": "kick"
+    },
+    {
+      "id": "sd-strm-37",
+      "username": "mr20s",
+      "platform": "kick"
+    },
+    {
+      "id": "sd-strm-38",
+      "username": "aizen56",
+      "platform": "kick"
+    },
+    {
+      "id": "sd-strm-39",
+      "username": "iicloud",
+      "platform": "kick"
+    },
+    {
+      "id": "sd-strm-40",
+      "username": "alarwilii",
+      "platform": "kick"
+    },
+    {
+      "id": "sd-strm-41",
+      "username": "icq50",
+      "platform": "kick"
+    },
+    {
+      "id": "sd-strm-42",
+      "username": "xlive1",
+      "platform": "kick"
+    },
+    {
+      "id": "sd-strm-43",
+      "username": "nas_24",
+      "platform": "kick"
+    },
+    {
+      "id": "sd-strm-44",
+      "username": "ithanos",
+      "platform": "kick"
+    },
+    {
+      "id": "sd-strm-45",
+      "username": "alahmady03",
+      "platform": "kick"
+    },
+    {
+      "id": "sd-strm-46",
+      "username": "ykoy",
+      "platform": "kick"
+    },
+    {
+      "id": "sd-strm-47",
+      "username": "iiw2le",
+      "platform": "kick"
+    },
+    {
+      "id": "sd-strm-48",
+      "username": "omutx",
+      "platform": "kick"
+    },
+    {
+      "id": "sd-strm-49",
+      "username": "v0lka",
+      "platform": "kick"
+    },
+    {
+      "id": "sd-strm-50",
+      "username": "qtrm7md",
+      "platform": "kick"
+    },
+    {
+      "id": "sd-strm-51",
+      "username": "bnshddad",
+      "platform": "kick"
+    },
+    {
+      "id": "sd-strm-52",
+      "username": "1nxe",
       "platform": "kick"
     }
   ],

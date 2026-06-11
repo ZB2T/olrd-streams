@@ -85,7 +85,11 @@
             "security.toolsSub": "Export the full roster and book to a file you can back up or move to another machine. Import replaces everything currently stored.",
             "security.export": "Export Archive",
             "security.import": "Import Archive",
-            "security.reset": "Restore Seed Data",
+            "security.reset": "Discard Local Draft",
+            "security.publishTitle": "Publish To Site",
+            "security.publishSub": "Push your changes live for everyone through your Cloudflare Worker. Needs the worker URL in config.js and your publish key.",
+            "field.publishKey": "Publish Key",
+            "security.publishBtn": "Publish Now",
             "toast.order": "Order saved",
             "toast.added": "Broadcaster added",
             "toast.dup": "Already on the wall",
@@ -101,7 +105,7 @@
             "toast.importErr": "Invalid archive file",
             "toast.restored": "Restored to seed",
             "confirm.removePage": "Remove this page permanently?",
-            "confirm.reset": "Restore the original seed data? Current edits will be lost.",
+            "confirm.reset": "Discard your local draft and revert to the published version?",
             "msg.enterKey": "Enter the access key.",
             "msg.deriving": "Deriving key…",
             "msg.denied": "Access denied.",
@@ -115,7 +119,12 @@
             "msg.tooShort": "New key is too short.",
             "msg.mustDiffer": "New key must differ from the old one.",
             "msg.storeFail": "Could not store the new key.",
-            "msg.keyUpdated": "Access key updated."
+            "msg.keyUpdated": "Access key updated.",
+            "msg.publishing": "Publishing…",
+            "msg.published": "Published. Everyone will see it within ~1 minute.",
+            "msg.publishFail": "Publish failed — check the publish key and the worker URL.",
+            "msg.publishKeyNeeded": "Enter your publish key.",
+            "msg.publishNotSet": "Set your worker URL in config.js first."
         },
         ar: {
             "nav.streamers": "الستريمرز",
@@ -196,7 +205,11 @@
             "security.toolsSub": "صدّر كامل القائمة والكتاب إلى ملف للنسخ الاحتياطي أو النقل لجهاز آخر. الاستيراد يستبدل كل ما هو مخزّن حالياً.",
             "security.export": "تصدير الأرشيف",
             "security.import": "استيراد الأرشيف",
-            "security.reset": "استعادة البيانات الأصلية",
+            "security.reset": "تجاهل المسودّة المحلية",
+            "security.publishTitle": "النشر إلى الموقع",
+            "security.publishSub": "انشر تعديلاتك للجميع عبر Cloudflare Worker الخاص بك. يتطلّب رابط الـWorker في config.js ومفتاح النشر.",
+            "field.publishKey": "مفتاح النشر",
+            "security.publishBtn": "انشر الآن",
             "toast.order": "حُفظ الترتيب",
             "toast.added": "أُضيف المذيع",
             "toast.dup": "موجود في القائمة مسبقاً",
@@ -212,7 +225,7 @@
             "toast.importErr": "ملف أرشيف غير صالح",
             "toast.restored": "استُعيدت البيانات الأصلية",
             "confirm.removePage": "حذف هذه الصفحة نهائياً؟",
-            "confirm.reset": "استعادة البيانات الأصلية؟ ستُفقد التعديلات الحالية.",
+            "confirm.reset": "تجاهل المسودّة المحلية والعودة إلى النسخة المنشورة؟",
             "msg.enterKey": "أدخل مفتاح الدخول.",
             "msg.deriving": "جارٍ اشتقاق المفتاح…",
             "msg.denied": "رُفض الدخول.",
@@ -226,7 +239,12 @@
             "msg.tooShort": "المفتاح الجديد قصير جداً.",
             "msg.mustDiffer": "يجب أن يختلف المفتاح الجديد عن القديم.",
             "msg.storeFail": "تعذّر حفظ المفتاح الجديد.",
-            "msg.keyUpdated": "تم تحديث مفتاح الدخول."
+            "msg.keyUpdated": "تم تحديث مفتاح الدخول.",
+            "msg.publishing": "جارٍ النشر…",
+            "msg.published": "تم النشر. سيراه الجميع خلال ~دقيقة.",
+            "msg.publishFail": "فشل النشر — تحقّق من مفتاح النشر ورابط الـWorker.",
+            "msg.publishKeyNeeded": "أدخل مفتاح النشر.",
+            "msg.publishNotSet": "ضع رابط الـWorker في config.js أولاً."
         }
     };
 
