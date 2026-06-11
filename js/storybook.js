@@ -188,6 +188,7 @@
         root.OLRD.store.init().then(function () {
             renderCover();
             if ((root.location.hash || "").indexOf("#p") === 0) { openBook(); }
+            root.OLRD.store.startLiveSync();
         });
     }
 

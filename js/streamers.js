@@ -125,9 +125,13 @@
     function boot() {
         grid = ui().$("#stream-grid");
         if (!grid) { return; }
-        root.OLRD.store.init().then(load);
-        root.OLRD.store.subscribe(function () { rendered = []; load(); });
+        root.OLRD.store.init().then(function () {
+            load();
+            root.OLRD.store.startLiveSync();
+        });
+        root.OLRD.store.subscribe(load);
         root.OLRD.i18n.subscribe(paint);
+        root.setInterval(load, 60000);
     }
 
     if (doc.readyState === "loading") {

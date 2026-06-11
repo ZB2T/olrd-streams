@@ -61,24 +61,55 @@
         return parsed;
     }
 
+    function fetchFile() {
+        if (!root.fetch) { return Promise.resolve(null); }
+        return root.fetch(PUBLISHED_URL, { cache: "no-store" })
+            .then(function (r) { return r && r.ok ? r.json() : null; })
+            .then(function (j) { return (j && Array.isArray(j.streamers)) ? j : null; })
+            .catch(function () { return null; });
+    }
+
+    function cloud() {
+        return (root.OLRD.sync && root.OLRD.sync.available()) ? root.OLRD.sync.fetchContent() : Promise.resolve(null);
+    }
+
     function init() {
         if (initPromise) { return initPromise; }
         initPromise = new Promise(function (resolve) {
-            if (!root.fetch) { resolve(); return; }
             var done = false;
             var finish = function () { if (!done) { done = true; resolve(); } };
-            root.fetch(PUBLISHED_URL, { cache: "no-store" })
-                .then(function (r) { return r && r.ok ? r.json() : null; })
-                .then(function (j) {
-                    if (j && typeof j === "object" && Array.isArray(j.streamers)) {
-                        published = normalise(j);
-                    }
+            cloud().then(function (data) {
+                if (data && Array.isArray(data.streamers)) { published = normalise(data); finish(); return; }
+                fetchFile().then(function (j) {
+                    if (j) { published = normalise(j); }
                     finish();
-                })
-                .catch(finish);
-            root.setTimeout(finish, 6000);
+                });
+            }).catch(function () { fetchFile().then(function (j) { if (j) { published = normalise(j); } finish(); }); });
+            root.setTimeout(finish, 7000);
         });
         return initPromise;
+    }
+
+    function startLiveSync() {
+        if (!(root.OLRD.sync && root.OLRD.sync.available())) { return; }
+        var last = published ? JSON.stringify(published) : "";
+        var pull = function () {
+            root.OLRD.sync.fetchContent().then(function (data) {
+                if (!data || !Array.isArray(data.streamers)) { return; }
+                var norm = normalise(data);
+                var str = JSON.stringify(norm);
+                if (str !== last) { last = str; published = norm; emit(); }
+            });
+        };
+        root.setInterval(pull, 3000);
+        if (root.addEventListener) {
+            root.addEventListener("focus", pull);
+            if (root.document) {
+                root.document.addEventListener("visibilitychange", function () {
+                    if (!root.document.hidden) { pull(); }
+                });
+            }
+        }
     }
 
     function read() {
@@ -244,6 +275,7 @@
     root.OLRD = root.OLRD || {};
     root.OLRD.store = {
         init: init,
+        startLiveSync: startLiveSync,
         getStreamers: getStreamers,
         setStreamers: setStreamers,
         addStreamer: addStreamer,

@@ -379,9 +379,7 @@
 
         form.addEventListener("submit", function (e) {
             e.preventDefault();
-            var cfg = root.OLRD.config || {};
-            var url = (cfg.publishUrl || "").trim();
-            if (!url) { setMsg(msg, t("msg.publishNotSet"), "warn"); return; }
+            if (!(root.OLRD.sync && root.OLRD.sync.available())) { setMsg(msg, t("msg.publishNotSet"), "warn"); return; }
             var key = keyInput.value.trim();
             if (!key) { setMsg(msg, t("msg.publishKeyNeeded"), "warn"); return; }
             try { root.localStorage.setItem("olrd.pubkey", key); } catch (e2) {}
@@ -390,13 +388,7 @@
             if (btn) { btn.disabled = true; btn.textContent = t("msg.publishing"); }
             setMsg(msg, t("msg.publishing"), "muted");
 
-            root.fetch(url, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ key: key, data: store().snapshot() })
-            }).then(function (r) {
-                return r.json().then(function (j) { return { ok: r.ok && j && j.ok, body: j }; }, function () { return { ok: false }; });
-            }).then(function (res) {
+            root.OLRD.sync.publish(store().snapshot(), key).then(function (res) {
                 if (btn) { btn.disabled = false; btn.textContent = t("security.publishBtn"); }
                 if (res.ok) {
                     setMsg(msg, t("msg.published"), "muted");
@@ -405,10 +397,6 @@
                     setMsg(msg, t("msg.publishFail"), "err");
                     ui().toast(t("msg.publishFail"), "err");
                 }
-            }).catch(function () {
-                if (btn) { btn.disabled = false; btn.textContent = t("security.publishBtn"); }
-                setMsg(msg, t("msg.publishFail"), "err");
-                ui().toast(t("msg.publishFail"), "err");
             });
         });
     }

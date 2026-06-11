@@ -87,7 +87,7 @@
             "security.import": "Import Archive",
             "security.reset": "Discard Local Draft",
             "security.publishTitle": "Publish To Site",
-            "security.publishSub": "Push your changes live for everyone through your Cloudflare Worker. Needs the worker URL in config.js and your publish key.",
+            "security.publishSub": "Push your changes live for everyone instantly through Supabase. Needs your Supabase keys in config.js and your publish key.",
             "field.publishKey": "Publish Key",
             "security.publishBtn": "Publish Now",
             "toast.order": "Order saved",
@@ -124,7 +124,7 @@
             "msg.published": "Published. Everyone will see it within ~1 minute.",
             "msg.publishFail": "Publish failed — check the publish key and the worker URL.",
             "msg.publishKeyNeeded": "Enter your publish key.",
-            "msg.publishNotSet": "Set your worker URL in config.js first."
+            "msg.publishNotSet": "Set your Supabase keys in config.js first."
         },
         ar: {
             "nav.streamers": "الستريمرز",
@@ -207,7 +207,7 @@
             "security.import": "استيراد الأرشيف",
             "security.reset": "تجاهل المسودّة المحلية",
             "security.publishTitle": "النشر إلى الموقع",
-            "security.publishSub": "انشر تعديلاتك للجميع عبر Cloudflare Worker الخاص بك. يتطلّب رابط الـWorker في config.js ومفتاح النشر.",
+            "security.publishSub": "انشر تعديلاتك للجميع فوراً عبر Supabase. يتطلّب مفاتيح Supabase في config.js ومفتاح النشر.",
             "field.publishKey": "مفتاح النشر",
             "security.publishBtn": "انشر الآن",
             "toast.order": "حُفظ الترتيب",
@@ -244,7 +244,7 @@
             "msg.published": "تم النشر. سيراه الجميع خلال ~دقيقة.",
             "msg.publishFail": "فشل النشر — تحقّق من مفتاح النشر ورابط الـWorker.",
             "msg.publishKeyNeeded": "أدخل مفتاح النشر.",
-            "msg.publishNotSet": "ضع رابط الـWorker في config.js أولاً."
+            "msg.publishNotSet": "ضع مفاتيح Supabase في config.js أولاً."
         }
     };
 
