@@ -3,7 +3,8 @@
 
     var VAULT_KEY = "olrd.vault.v1";
     var GUARD_KEY = "olrd.guard.v1";
-    var SESSION_KEY = "olrd.session.v1";
+    var SESSION_COOKIE = "olrd_session";
+    var SESSION_DAYS = 14;
 
     var DEFAULT_VAULT = {
         salt: "9e8e40edda3298fb993270c0d7b942ac",
@@ -135,18 +136,39 @@
             });
     }
 
+    function secureFlag() {
+        return (root.location && root.location.protocol === "https:") ? "; Secure" : "";
+    }
+
+    function setCookie(name, value, days) {
+        try {
+            var expires = "";
+            if (days) {
+                var date = new Date();
+                date.setTime(date.getTime() + days * 86400000);
+                expires = "; expires=" + date.toUTCString() + "; max-age=" + (days * 86400);
+            }
+            root.document.cookie = name + "=" + value + "; path=/" + expires + "; SameSite=Lax" + secureFlag();
+        } catch (e) {}
+    }
+
+    function getCookie(name) {
+        try {
+            var match = root.document.cookie.match(new RegExp("(?:^|; )" + name + "=([^;]*)"));
+            return match ? match[1] : "";
+        } catch (e) { return ""; }
+    }
+
     function startSession() {
-        try { root.sessionStorage.setItem(SESSION_KEY, crypto().randomHex(16)); }
-        catch (e) {}
+        setCookie(SESSION_COOKIE, crypto().randomHex(18), SESSION_DAYS);
     }
 
     function hasSession() {
-        try { return !!root.sessionStorage.getItem(SESSION_KEY); }
-        catch (e) { return false; }
+        return !!getCookie(SESSION_COOKIE);
     }
 
     function endSession() {
-        try { root.sessionStorage.removeItem(SESSION_KEY); }
+        try { root.document.cookie = SESSION_COOKIE + "=; path=/; max-age=0; SameSite=Lax" + secureFlag(); }
         catch (e) {}
     }
 
