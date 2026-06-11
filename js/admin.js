@@ -447,7 +447,12 @@
     function autoPublish() {
         if (!(root.OLRD.sync && root.OLRD.sync.available())) { return; }
         var key = publishKeyValue();
-        if (!key) { return; }
+        if (!key) {
+            var warn = $("#publish-msg");
+            if (warn) { setMsg(warn, t("msg.loginForPublish"), "warn"); }
+            ui().toast(t("msg.loginForPublish"), "warn");
+            return;
+        }
         if (publishTimer) { root.clearTimeout(publishTimer); }
         publishTimer = root.setTimeout(function () {
             root.OLRD.sync.publish(store().snapshot(), key).then(function (res) {
@@ -526,11 +531,16 @@
         });
         store().init().then(function () {
             store().dropStaleDraft();
-            if (auth().hasSession()) {
+            var cloudOn = !!(root.OLRD.sync && root.OLRD.sync.available());
+            var keyReady = !!publishKeyValue();
+            if (auth().hasSession() && (keyReady || !cloudOn)) {
                 enterDash();
             } else {
                 show($("#admin-dash"), false);
                 show($("#admin-login"), true);
+                if (auth().hasSession() && cloudOn && !keyReady) {
+                    setMsg($("#login-msg"), t("msg.loginForPublish"), "muted");
+                }
             }
         });
     }
