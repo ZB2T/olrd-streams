@@ -525,6 +525,7 @@
             if (dashVisible()) { renderStreamers(); renderBook(); }
         });
         store().init().then(function () {
+            store().dropStaleDraft();
             if (auth().hasSession()) {
                 enterDash();
             } else {

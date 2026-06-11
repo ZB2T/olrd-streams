@@ -264,6 +264,14 @@
         return true;
     }
 
+    function dropStaleDraft() {
+        if (published && Array.isArray(published.streamers) && published.streamers.length) {
+            try { root.localStorage.removeItem(DATA_KEY); } catch (e) {}
+            return true;
+        }
+        return false;
+    }
+
     function subscribe(fn) {
         listeners.push(fn);
         return function () {
@@ -299,6 +307,7 @@
         exportAll: exportAll,
         importAll: importAll,
         resetAll: resetAll,
+        dropStaleDraft: dropStaleDraft,
         subscribe: subscribe,
         sanitizeUsername: sanitizeUsername
     };
