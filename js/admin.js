@@ -90,6 +90,13 @@
     function enterDash() {
         show($("#admin-login"), false);
         show($("#admin-dash"), true);
+        var pk = $("#publish-key");
+        if (pk && !pk.value.trim()) {
+            try {
+                var saved = root.localStorage.getItem("olrd.pubkey") || "";
+                if (saved) { pk.value = saved; }
+            } catch (e) {}
+        }
         switchTab(state.tab);
         renderStreamers();
         renderBook();
@@ -309,6 +316,8 @@
                         setMsg(msg, t("msg.tooShort"), "err");
                     } else if (res.error === "same") {
                         setMsg(msg, t("msg.mustDiffer"), "err");
+                    } else if (res.error === "cloud") {
+                        setMsg(msg, t("msg.cloudFail"), "err");
                     } else {
                         setMsg(msg, t("msg.storeFail"), "err");
                     }

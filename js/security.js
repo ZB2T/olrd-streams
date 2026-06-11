@@ -18,6 +18,21 @@
     var MAX_LOCK = 900000;
 
     function crypto() { return root.OLRD.crypto; }
+    function sync() { return root.OLRD.sync; }
+
+    function cloudReady() {
+        var s = sync();
+        return !!(s && s.available && s.available() && s.login);
+    }
+
+    function storeKey(key) {
+        try { root.localStorage.setItem("olrd.pubkey", key); } catch (e) {}
+    }
+
+    function readKey() {
+        try { return root.localStorage.getItem("olrd.pubkey") || ""; }
+        catch (e) { return ""; }
+    }
 
     function now() {
         try { return new Date().getTime(); }
@@ -89,11 +104,17 @@
         writeGuard({ fails: 0, tier: 0, lockUntil: 0 });
     }
 
-    function verify(password) {
-        var gate = lockState();
-        if (gate.locked) {
-            return Promise.resolve({ ok: false, locked: true, remaining: gate.remaining });
-        }
+    function rejectResult() {
+        var after = registerFailure();
+        return {
+            ok: false,
+            locked: after.locked,
+            remaining: after.remaining,
+            attemptsLeft: after.attemptsLeft
+        };
+    }
+
+    function verifyLocal(password) {
         var vault = readVault();
         return crypto().deriveHex(password, vault.salt, vault.iterations, vault.dkLen || 32)
             .then(function (derived) {
@@ -102,13 +123,51 @@
                     startSession();
                     return { ok: true };
                 }
-                var after = registerFailure();
-                return {
-                    ok: false,
-                    locked: after.locked,
-                    remaining: after.remaining,
-                    attemptsLeft: after.attemptsLeft
-                };
+                return rejectResult();
+            });
+    }
+
+    function verify(password) {
+        var gate = lockState();
+        if (gate.locked) {
+            return Promise.resolve({ ok: false, locked: true, remaining: gate.remaining });
+        }
+        if (cloudReady()) {
+            return sync().login(password).then(function (res) {
+                if (res && res.ok) {
+                    clearGuard();
+                    startSession();
+                    if (res.key) { storeKey(res.key); }
+                    return { ok: true };
+                }
+                if (res && res.unreachable) {
+                    return verifyLocal(password);
+                }
+                return rejectResult();
+            });
+        }
+        return verifyLocal(password);
+    }
+
+    function writeLocalVault(newPassword) {
+        var salt = crypto().randomHex(16);
+        var iterations = 310000;
+        return crypto().deriveHex(newPassword, salt, iterations, 32).then(function (hash) {
+            var next = { salt: salt, iterations: iterations, dkLen: 32, hash: hash };
+            if (!writeVault(next)) { return { ok: false, error: "storage" }; }
+            clearGuard();
+            return { ok: true };
+        });
+    }
+
+    function changePasswordLocal(oldPassword, newPassword) {
+        var vault = readVault();
+        return crypto().deriveHex(oldPassword, vault.salt, vault.iterations, vault.dkLen || 32)
+            .then(function (derived) {
+                if (!crypto().timingSafeEqual(derived, vault.hash)) {
+                    return { ok: false, error: "mismatch" };
+                }
+                return writeLocalVault(newPassword);
             });
     }
 
@@ -119,21 +178,22 @@
         if (oldPassword === newPassword) {
             return Promise.resolve({ ok: false, error: "same" });
         }
-        var vault = readVault();
-        return crypto().deriveHex(oldPassword, vault.salt, vault.iterations, vault.dkLen || 32)
-            .then(function (derived) {
-                if (!crypto().timingSafeEqual(derived, vault.hash)) {
-                    return { ok: false, error: "mismatch" };
+        if (cloudReady() && sync().setPassword) {
+            return sync().login(oldPassword).then(function (res) {
+                if (res && res.ok && res.key) {
+                    return sync().setPassword(res.key, newPassword).then(function (done) {
+                        if (!done) { return { ok: false, error: "cloud" }; }
+                        storeKey(res.key);
+                        return writeLocalVault(newPassword);
+                    });
                 }
-                var salt = crypto().randomHex(16);
-                var iterations = 310000;
-                return crypto().deriveHex(newPassword, salt, iterations, 32).then(function (hash) {
-                    var next = { salt: salt, iterations: iterations, dkLen: 32, hash: hash };
-                    if (!writeVault(next)) { return { ok: false, error: "storage" }; }
-                    clearGuard();
-                    return { ok: true };
-                });
+                if (res && res.unreachable) {
+                    return changePasswordLocal(oldPassword, newPassword);
+                }
+                return { ok: false, error: "mismatch" };
             });
+        }
+        return changePasswordLocal(oldPassword, newPassword);
     }
 
     function secureFlag() {

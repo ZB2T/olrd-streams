@@ -121,10 +121,11 @@
             "msg.storeFail": "Could not store the new key.",
             "msg.keyUpdated": "Access key updated.",
             "msg.publishing": "Publishing…",
-            "msg.published": "Published. Everyone will see it within ~1 minute.",
-            "msg.publishFail": "Publish failed — check the publish key and the worker URL.",
+            "msg.published": "Published. Everyone sees it within a few seconds.",
+            "msg.publishFail": "Publish failed — check your publish key and your connection.",
             "msg.publishKeyNeeded": "Enter your publish key.",
-            "msg.publishNotSet": "Set your Supabase keys in config.js first."
+            "msg.publishNotSet": "Set your Supabase keys in config.js first.",
+            "msg.cloudFail": "Couldn't reach the cloud to update your key. Check your connection and retry."
         },
         ar: {
             "nav.streamers": "الستريمرز",
@@ -241,10 +242,11 @@
             "msg.storeFail": "تعذّر حفظ المفتاح الجديد.",
             "msg.keyUpdated": "تم تحديث مفتاح الدخول.",
             "msg.publishing": "جارٍ النشر…",
-            "msg.published": "تم النشر. سيراه الجميع خلال ~دقيقة.",
-            "msg.publishFail": "فشل النشر — تحقّق من مفتاح النشر ورابط الـWorker.",
+            "msg.published": "تم النشر. سيراه الجميع خلال ثوانٍ.",
+            "msg.publishFail": "فشل النشر — تحقّق من مفتاح النشر واتصالك بالإنترنت.",
             "msg.publishKeyNeeded": "أدخل مفتاح النشر.",
-            "msg.publishNotSet": "ضع مفاتيح Supabase في config.js أولاً."
+            "msg.publishNotSet": "ضع مفاتيح Supabase في config.js أولاً.",
+            "msg.cloudFail": "تعذّر الوصول إلى السحابة لتحديث المفتاح. تحقّق من اتصالك وأعد المحاولة."
         }
     };
 

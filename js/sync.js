@@ -46,11 +46,42 @@
         }).catch(function () { return { ok: false }; });
     }
 
+    function login(password) {
+        if (!available() || !root.fetch) { return Promise.resolve({ unreachable: true }); }
+        var url = base() + "/rest/v1/rpc/admin_login";
+        return root.fetch(url, {
+            method: "POST",
+            headers: headers(),
+            body: JSON.stringify({ p_password: password })
+        }).then(function (r) {
+            if (!r || !r.ok) { return { unreachable: true }; }
+            return r.json().then(function (key) {
+                if (typeof key === "string" && key) { return { ok: true, key: key }; }
+                return { ok: false };
+            });
+        }).catch(function () { return { unreachable: true }; });
+    }
+
+    function setPassword(key, newPass) {
+        if (!available() || !root.fetch) { return Promise.resolve(false); }
+        var url = base() + "/rest/v1/rpc/admin_set_password";
+        return root.fetch(url, {
+            method: "POST",
+            headers: headers(),
+            body: JSON.stringify({ p_key: key, p_new: newPass })
+        }).then(function (r) {
+            return r && r.ok ? r.json() : false;
+        }).then(function (v) { return v === true; })
+            .catch(function () { return false; });
+    }
+
     root.OLRD = root.OLRD || {};
     root.OLRD.sync = {
         available: available,
         fetchContent: fetchContent,
-        publish: publish
+        publish: publish,
+        login: login,
+        setPassword: setPassword
     };
 
 })(typeof self !== "undefined" ? self : this);
