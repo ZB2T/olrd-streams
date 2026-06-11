@@ -268,15 +268,16 @@ p { color: rgba(231, 224, 212, 0.76); }
 .lang-btn.is-active { color: #fff; background: var(--crimson); border-color: var(--crimson); }
 
 [lang="ar"] {
-    --display: "Lalezar", "Changa", "Segoe UI", sans-serif;
-    --serif: "Changa", "Segoe UI", "Tahoma", sans-serif;
-    --sans: "Changa", "Segoe UI", "Tahoma", sans-serif;
+    --display: "Aref Ruqaa", "Lalezar", "Changa", "Segoe UI", sans-serif;
+    --serif: "Aref Ruqaa", "Changa", "Segoe UI", "Tahoma", sans-serif;
+    --sans: "Aref Ruqaa", "Changa", "Segoe UI", "Tahoma", sans-serif;
     --mono: "Changa", "Segoe UI", "Tahoma", sans-serif;
 }
 
-[lang="ar"] body { font-family: "Changa", "Segoe UI", "Tahoma", sans-serif; }
+[lang="ar"] body { font-family: "Aref Ruqaa", "Changa", "Segoe UI", "Tahoma", sans-serif; }
 [lang="ar"] body, [lang="ar"] body * { letter-spacing: 0 !important; }
-[lang="ar"] h1, [lang="ar"] h2, [lang="ar"] h3 { font-weight: 400; }
+[lang="ar"] h1, [lang="ar"] h2, [lang="ar"] h3 { font-weight: 700; }
+[lang="ar"] .eyebrow, [lang="ar"] [class*="eyebrow"], [lang="ar"] [class*="__meta"], [lang="ar"] [class*="__no"] { font-family: var(--mono); }
 
 @media (prefers-reduced-motion: reduce) {
     .fog, .grain { animation: none; }
