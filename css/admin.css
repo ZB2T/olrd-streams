@@ -321,3 +321,52 @@
     .admin-top { flex-wrap: wrap; }
     .editor-grid { grid-template-columns: 1fr; }
 }
+
+.page-edit__pdf {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+}
+
+.page-edit__pdfhint { font-size: 11px; letter-spacing: 0.3px; color: var(--ash-2); }
+
+.page-edit__pdfname {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--bone);
+    background: rgba(178, 20, 32, 0.14);
+    border: 1px solid rgba(178, 20, 32, 0.4);
+    padding: 5px 10px;
+    max-width: 240px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.pdf-upload { display: inline-flex; cursor: pointer; }
+.pdf-upload input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+
+.pdf-upload__btn {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: var(--bone);
+    border: 1px solid var(--line-2);
+    padding: 8px 14px;
+    transition: border-color 0.2s var(--ease), background 0.2s var(--ease), color 0.2s var(--ease);
+}
+
+.pdf-upload:hover .pdf-upload__btn {
+    border-color: var(--crimson);
+    color: #fff;
+    background: rgba(178, 20, 32, 0.2);
+}
+
+.pdf-msg { font-size: 11px; letter-spacing: 0.3px; }
+.pdf-msg:empty { display: none; }

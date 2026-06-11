@@ -19,6 +19,50 @@
         }).join("");
     }
 
+    var pdfCache = {};
+
+    function base64ToBlobUrl(b64, mime) {
+        try {
+            var bin = root.atob(b64);
+            var bytes = new root.Uint8Array(bin.length);
+            for (var i = 0; i < bin.length; i++) { bytes[i] = bin.charCodeAt(i); }
+            return root.URL.createObjectURL(new root.Blob([bytes], { type: mime || "application/pdf" }));
+        } catch (e) { return ""; }
+    }
+
+    function findHost(id) {
+        var hosts = ui().$all("[data-pdf-host]", stage);
+        for (var i = 0; i < hosts.length; i++) {
+            if (hosts[i].getAttribute("data-pdf-host") === id) { return hosts[i]; }
+        }
+        return null;
+    }
+
+    function paintPdf(host, url) {
+        if (!host) { return; }
+        if (!url) {
+            host.innerHTML = '<div class="book-page__pdf-status">' + ui().escapeHtml(t("book.pdfMissing")) + '</div>';
+            return;
+        }
+        host.innerHTML = '<iframe class="book-page__pdf-frame" src="' + url + '" title="PDF" loading="lazy"></iframe>' +
+            '<a class="book-page__pdf-open" href="' + url + '" target="_blank" rel="noopener">' + ui().escapeHtml(t("book.pdfOpen")) + '</a>';
+    }
+
+    function loadPdf(id) {
+        if (pdfCache[id]) { paintPdf(findHost(id), pdfCache[id]); return; }
+        var sync = root.OLRD.sync;
+        if (!(sync && sync.available && sync.available() && sync.fetchBookFile)) {
+            paintPdf(findHost(id), "");
+            return;
+        }
+        sync.fetchBookFile(id).then(function (row) {
+            if (!row || !row.data) { paintPdf(findHost(id), ""); return; }
+            var url = base64ToBlobUrl(row.data, row.mime);
+            if (url) { pdfCache[id] = url; }
+            paintPdf(findHost(id), url);
+        });
+    }
+
     function renderCover() {
         var b = book();
         var count = b.pages.length;
@@ -90,15 +134,25 @@
         var page = b.pages[state.index];
         var n = pad(state.index + 1);
         var total = pad(b.pages.length);
+        var content;
+        if (page.pdf) {
+            content = '<div class="book-page__pdf" data-pdf-host="' + ui().escapeHtml(page.pdf) + '">' +
+                          '<div class="book-page__pdf-status">' + ui().escapeHtml(t("book.pdfLoading")) + '</div>' +
+                      '</div>' +
+                      (page.body && page.body.trim() ? '<div class="book-page__prose book-page__prose--caption">' + paragraphs(page.body) + '</div>' : "");
+        } else {
+            content = '<div class="book-page__prose">' + paragraphs(page.body) + '</div>';
+        }
         pageEl.innerHTML = '' +
-            '<div class="book-page__sheet">' +
+            '<div class="book-page__sheet' + (page.pdf ? " book-page__sheet--pdf" : "") + '">' +
                 '<span class="book-page__no">' + n + "</span>" +
                 '<span class="book-page__mark">' + ui().escapeHtml(t("book.eyebrow")) + '</span>' +
                 '<h3 class="book-page__title">' + ui().escapeHtml(page.title) + "</h3>" +
-                '<div class="book-page__prose">' + paragraphs(page.body) + "</div>" +
+                content +
                 '<span class="book-page__folio">' + n + " / " + total + "</span>" +
                 '<span class="book-page__ribbon"></span>' +
             "</div>";
+        if (page.pdf) { loadPdf(page.pdf); }
         if (countEl) { countEl.textContent = n + " / " + total; }
         var tocItems = ui().$all(".book-toc__item", stage);
         tocItems.forEach(function (item, i) { item.classList.toggle("is-current", i === state.index); });

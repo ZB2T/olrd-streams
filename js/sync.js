@@ -75,13 +75,51 @@
             .catch(function () { return false; });
     }
 
+    function saveBookFile(key, id, name, mime, data) {
+        if (!available() || !root.fetch || !key) { return Promise.resolve(false); }
+        var url = base() + "/rest/v1/rpc/save_book_file";
+        return root.fetch(url, {
+            method: "POST",
+            headers: headers(),
+            body: JSON.stringify({ p_key: key, p_id: id, p_name: name, p_mime: mime, p_data: data })
+        }).then(function (r) {
+            return r && r.ok ? r.json() : false;
+        }).then(function (v) { return v === true; })
+            .catch(function () { return false; });
+    }
+
+    function deleteBookFile(key, id) {
+        if (!available() || !root.fetch || !key) { return Promise.resolve(false); }
+        var url = base() + "/rest/v1/rpc/delete_book_file";
+        return root.fetch(url, {
+            method: "POST",
+            headers: headers(),
+            body: JSON.stringify({ p_key: key, p_id: id })
+        }).then(function (r) {
+            return r && r.ok ? r.json() : false;
+        }).then(function (v) { return v === true; })
+            .catch(function () { return false; });
+    }
+
+    function fetchBookFile(id) {
+        if (!available() || !root.fetch || !id) { return Promise.resolve(null); }
+        var url = base() + "/rest/v1/book_files?id=eq." + encodeURIComponent(id) + "&select=data,mime,name";
+        return root.fetch(url, { headers: headers(), cache: "no-store" })
+            .then(function (r) { return r && r.ok ? r.json() : null; })
+            .then(function (rows) { return (rows && rows[0]) ? rows[0] : null; })
+            .catch(function () { return null; });
+    }
+
     root.OLRD = root.OLRD || {};
     root.OLRD.sync = {
         available: available,
         fetchContent: fetchContent,
         publish: publish,
         login: login,
-        setPassword: setPassword
+        setPassword: setPassword,
+        saveBookFile: saveBookFile,
+        deleteBookFile: deleteBookFile,
+        fetchBookFile: fetchBookFile
     };
 
 })(typeof self !== "undefined" ? self : this);

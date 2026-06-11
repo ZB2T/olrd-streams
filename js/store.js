@@ -206,6 +206,14 @@
             if (pages[i].id === id) {
                 if (patch.title !== undefined) { pages[i].title = patch.title; }
                 if (patch.body !== undefined) { pages[i].body = patch.body; }
+                if (patch.pdf !== undefined) {
+                    if (patch.pdf) { pages[i].pdf = patch.pdf; }
+                    else { delete pages[i].pdf; }
+                }
+                if (patch.pdfName !== undefined) {
+                    if (patch.pdfName) { pages[i].pdfName = patch.pdfName; }
+                    else { delete pages[i].pdfName; }
+                }
                 return write(state);
             }
         }

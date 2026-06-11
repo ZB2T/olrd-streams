@@ -383,3 +383,47 @@
     .book-spread { padding-left: 22px; }
     .book-binding { width: 22px; }
 }
+
+.book-page__sheet--pdf { padding-bottom: 56px; }
+
+.book-page__pdf {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 4px 0 8px;
+}
+
+.book-page__pdf-frame {
+    width: 100%;
+    height: clamp(420px, 62vh, 760px);
+    border: 1px solid rgba(74, 54, 32, 0.4);
+    background: #2a2018;
+    box-shadow: 0 14px 34px rgba(20, 12, 6, 0.3);
+}
+
+.book-page__pdf-open {
+    align-self: flex-end;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: #6a4a22;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(106, 74, 34, 0.5);
+    padding-bottom: 2px;
+    transition: color 0.2s var(--ease), border-color 0.2s var(--ease);
+}
+
+.book-page__pdf-open:hover { color: var(--crimson); border-color: var(--crimson); }
+
+.book-page__pdf-status {
+    font-family: var(--serif);
+    color: #5a4632;
+    text-align: center;
+    padding: 48px 0;
+    font-size: 1.05rem;
+}
+
+.book-page__prose--caption { margin-top: 16px; }

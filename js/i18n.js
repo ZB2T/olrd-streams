@@ -125,7 +125,21 @@
             "msg.publishFail": "Publish failed — check your publish key and your connection.",
             "msg.publishKeyNeeded": "Enter your publish key.",
             "msg.publishNotSet": "Set your Supabase keys in config.js first.",
-            "msg.cloudFail": "Couldn't reach the cloud to update your key. Check your connection and retry."
+            "msg.cloudFail": "Couldn't reach the cloud to update your key. Check your connection and retry.",
+            "pdf.attach": "Attach PDF",
+            "pdf.replace": "Replace PDF",
+            "pdf.remove": "Remove PDF",
+            "pdf.attached": "PDF attached",
+            "pdf.hint": "Attach a PDF to show it on this page instead of text.",
+            "pdf.uploading": "Uploading PDF…",
+            "pdf.uploaded": "PDF uploaded.",
+            "pdf.uploadFail": "PDF upload failed.",
+            "pdf.removed": "PDF removed.",
+            "pdf.notPdf": "Please choose a PDF file.",
+            "pdf.tooLarge": "PDF is too large (max 6 MB).",
+            "book.pdfLoading": "Loading PDF…",
+            "book.pdfMissing": "PDF not available.",
+            "book.pdfOpen": "Open in new tab"
         },
         ar: {
             "nav.streamers": "الستريمرز",
@@ -246,7 +260,21 @@
             "msg.publishFail": "فشل النشر — تحقّق من مفتاح النشر واتصالك بالإنترنت.",
             "msg.publishKeyNeeded": "أدخل مفتاح النشر.",
             "msg.publishNotSet": "ضع مفاتيح Supabase في config.js أولاً.",
-            "msg.cloudFail": "تعذّر الوصول إلى السحابة لتحديث المفتاح. تحقّق من اتصالك وأعد المحاولة."
+            "msg.cloudFail": "تعذّر الوصول إلى السحابة لتحديث المفتاح. تحقّق من اتصالك وأعد المحاولة.",
+            "pdf.attach": "إرفاق PDF",
+            "pdf.replace": "استبدال PDF",
+            "pdf.remove": "إزالة",
+            "pdf.attached": "ملف PDF مرفق",
+            "pdf.hint": "أرفق ملف PDF ليظهر في هذه الصفحة بدل النص.",
+            "pdf.uploading": "جارٍ رفع الـPDF…",
+            "pdf.uploaded": "تم رفع الـPDF.",
+            "pdf.uploadFail": "فشل رفع الـPDF.",
+            "pdf.removed": "تمت إزالة الـPDF.",
+            "pdf.notPdf": "اختر ملف PDF.",
+            "pdf.tooLarge": "حجم الـPDF كبير جداً (الحد 6 ميغابايت).",
+            "book.pdfLoading": "جارٍ تحميل الـPDF…",
+            "book.pdfMissing": "الـPDF غير متاح.",
+            "book.pdfOpen": "فتح في تبويب جديد"
         }
     };
 

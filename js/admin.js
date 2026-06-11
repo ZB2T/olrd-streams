@@ -192,6 +192,10 @@
     }
 
     function pageBlock(page, index) {
+        var pdfRow = page.pdf
+            ? '<span class="page-edit__pdfname" title="' + esc(page.pdfName || "") + '">' + esc(page.pdfName || t("pdf.attached")) + '</span>' +
+              '<button type="button" class="row-remove" data-pdf-remove="' + esc(page.id) + '">' + esc(t("pdf.remove")) + '</button>'
+            : '<span class="page-edit__pdfhint">' + esc(t("pdf.hint")) + '</span>';
         return '' +
             '<li class="page-edit" data-sort-id="' + esc(page.id) + '" draggable="true">' +
                 '<div class="page-edit__head">' +
@@ -201,6 +205,14 @@
                     '<button type="button" class="row-remove" data-pg-remove="' + esc(page.id) + '">' + esc(t("common.delete")) + '</button>' +
                 '</div>' +
                 '<textarea class="field page-edit__body" data-pg-body="' + esc(page.id) + '" rows="6" placeholder="' + esc(t("page.bodyPh")) + '">' + esc(page.body) + '</textarea>' +
+                '<div class="page-edit__pdf' + (page.pdf ? ' has-pdf' : '') + '">' +
+                    pdfRow +
+                    '<label class="pdf-upload">' +
+                        '<input type="file" accept="application/pdf,.pdf" data-pdf-input="' + esc(page.id) + '">' +
+                        '<span class="pdf-upload__btn">' + esc(page.pdf ? t("pdf.replace") : t("pdf.attach")) + '</span>' +
+                    '</label>' +
+                    '<span class="pdf-msg" data-pdf-msg="' + esc(page.id) + '"></span>' +
+                '</div>' +
             '</li>';
     }
 
@@ -277,6 +289,20 @@
                     ui().toast(t("toast.pageRemoved"), "ok");
                 }
             });
+        });
+
+        $all("[data-pdf-input]", panel).forEach(function (input) {
+            var id = input.getAttribute("data-pdf-input");
+            input.addEventListener("change", function () {
+                var file = input.files && input.files[0];
+                input.value = "";
+                if (file) { handlePdfUpload(id, file); }
+            });
+        });
+
+        $all("[data-pdf-remove]", panel).forEach(function (btn) {
+            var id = btn.getAttribute("data-pdf-remove");
+            btn.addEventListener("click", function () { handlePdfRemove(id); });
         });
 
         var list = $("#page-list", panel);
@@ -430,6 +456,53 @@
                 else { setMsg(msg, t("msg.publishFail"), "err"); }
             });
         }, 900);
+    }
+
+    var PDF_MAX = 6 * 1024 * 1024;
+
+    function pdfMsgFor(pageId) {
+        var nodes = $all('[data-pdf-msg]');
+        for (var i = 0; i < nodes.length; i++) {
+            if (nodes[i].getAttribute("data-pdf-msg") === pageId) { return nodes[i]; }
+        }
+        return null;
+    }
+
+    function handlePdfUpload(pageId, file) {
+        var msg = pdfMsgFor(pageId);
+        var isPdf = (file.type && file.type.indexOf("pdf") !== -1) || /\.pdf$/i.test(file.name || "");
+        if (!isPdf) { if (msg) { setMsg(msg, t("pdf.notPdf"), "err"); } return; }
+        if (file.size > PDF_MAX) { if (msg) { setMsg(msg, t("pdf.tooLarge"), "err"); } return; }
+        if (!(root.OLRD.sync && root.OLRD.sync.available())) { if (msg) { setMsg(msg, t("msg.publishNotSet"), "warn"); } return; }
+        var key = publishKeyValue();
+        if (!key) { if (msg) { setMsg(msg, t("msg.publishKeyNeeded"), "warn"); } return; }
+        if (msg) { setMsg(msg, t("pdf.uploading"), "muted"); }
+        var reader = new root.FileReader();
+        reader.onload = function () {
+            var result = String(reader.result || "");
+            var comma = result.indexOf(",");
+            var base64 = comma >= 0 ? result.slice(comma + 1) : result;
+            root.OLRD.sync.saveBookFile(key, "pg_" + pageId, file.name, "application/pdf", base64).then(function (ok) {
+                if (ok) {
+                    store().updatePage(pageId, { pdf: "pg_" + pageId, pdfName: file.name });
+                    ui().toast(t("pdf.uploaded"), "ok");
+                } else {
+                    if (msg) { setMsg(msg, t("pdf.uploadFail"), "err"); }
+                    ui().toast(t("pdf.uploadFail"), "err");
+                }
+            });
+        };
+        reader.onerror = function () { if (msg) { setMsg(msg, t("pdf.uploadFail"), "err"); } };
+        reader.readAsDataURL(file);
+    }
+
+    function handlePdfRemove(pageId) {
+        var key = publishKeyValue();
+        store().updatePage(pageId, { pdf: "", pdfName: "" });
+        if (key && root.OLRD.sync && root.OLRD.sync.available()) {
+            root.OLRD.sync.deleteBookFile(key, "pg_" + pageId);
+        }
+        ui().toast(t("pdf.removed"), "ok");
     }
 
     function dashVisible() {
