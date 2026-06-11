@@ -8,10 +8,6 @@
     function ui() { return root.OLRD.ui; }
     function t(key, vars) { return root.OLRD.i18n.t(key, vars); }
 
-    function host() {
-        return root.location.hostname || "localhost";
-    }
-
     function formatViewers(n) {
         n = n || 0;
         if (n >= 1000) { return (n / 1000).toFixed(n >= 10000 ? 0 : 1).replace(/\.0$/, "") + "K"; }
@@ -38,8 +34,7 @@
         var label = name.toUpperCase();
         var ordinal = (index + 1 < 10 ? "0" : "") + (index + 1);
         var frame = '<iframe src="https://player.kick.com/' + name +
-            '?muted=true&autoplay=false&parent=' + host() +
-            '" allowfullscreen scrolling="no" loading="lazy" title="' + label + '"></iframe>';
+            '?autoplay=true&muted=true" allowfullscreen scrolling="no" loading="lazy" title="' + label + '"></iframe>';
         return '' +
             '<a class="stream-card is-live" href="https://kick.com/' + name + '" target="_blank" rel="noopener" data-reveal>' +
                 '<span class="stream-card__index">' + ordinal + '</span>' +

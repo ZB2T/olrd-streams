@@ -100,11 +100,14 @@
         switchTab(state.tab);
         renderStreamers();
         renderBook();
+        loadStreamerStatus();
+        if (!statusTimer) { statusTimer = root.setInterval(loadStreamerStatus, 60000); }
         if (lockTimer) { root.clearInterval(lockTimer); lockTimer = null; }
     }
 
     function leaveDash() {
         auth().endSession();
+        if (statusTimer) { root.clearInterval(statusTimer); statusTimer = null; }
         show($("#admin-dash"), false);
         show($("#admin-login"), true);
         var input = $("#login-pass");
@@ -130,21 +133,59 @@
         });
     }
 
+    var statusCache = {};
+    var statusTimer = null;
+
+    function formatViewers(n) {
+        n = n || 0;
+        if (n >= 1000) { return (n / 1000).toFixed(n >= 10000 ? 0 : 1).replace(/\.0$/, "") + "K"; }
+        return String(n);
+    }
+
+    function fetchStatus(username) {
+        if (!root.fetch) { return Promise.resolve({ online: false, viewers: 0 }); }
+        return root.fetch("https://kick.com/api/v2/channels/" + encodeURIComponent(username), { headers: { "Accept": "application/json" } })
+            .then(function (r) { return r && r.ok ? r.json() : null; })
+            .then(function (j) {
+                if (!j) { return { online: false, viewers: 0 }; }
+                var ls = j.livestream;
+                return { online: !!ls, viewers: ls ? (ls.viewer_count || ls.viewers || 0) : 0 };
+            })
+            .catch(function () { return { online: false, viewers: 0 }; });
+    }
+
+    function sortedForAdmin() {
+        return store().getStreamers().map(function (s, i) {
+            var st = statusCache[s.username] || { online: false, viewers: 0 };
+            return { s: s, online: st.online, viewers: st.viewers, order: i };
+        }).sort(function (a, b) {
+            if (a.online !== b.online) { return a.online ? -1 : 1; }
+            if (a.online && b.online) { return b.viewers - a.viewers; }
+            return a.order - b.order;
+        }).map(function (x) { return x.s; });
+    }
+
     function streamerRow(streamer, index) {
         var label = esc(streamer.username).toUpperCase();
+        var st = statusCache[streamer.username] || { online: false, viewers: 0 };
+        var live = st.online;
         return '' +
-            '<li class="stream-card stream-card--admin" data-sort-id="' + esc(streamer.id) + '" draggable="true">' +
+            '<li class="stream-card stream-card--admin ' + (live ? "is-live" : "is-offline") + '" data-sort-id="' + esc(streamer.id) + '" draggable="true">' +
                 '<span class="stream-card__index">' + pad(index + 1) + '</span>' +
                 '<button type="button" class="stream-card__remove" data-remove="' + esc(streamer.id) + '" title="' + esc(t("common.remove")) + '" aria-label="' + esc(t("common.remove")) + '">&times;</button>' +
+                (live ? '<span class="stream-card__live"><i></i>' + esc(t("card.live")) + '</span>' : '') +
                 '<div class="stream-card__frame">' +
                     '<div class="stream-card__offline">' +
                         '<img class="stream-card__art" src="assets/logo.png" alt="" draggable="false">' +
+                        (live ? '' : '<span class="stream-card__offline-tag">' + esc(t("card.offline")) + '</span>') +
                     '</div>' +
                 '</div>' +
                 '<div class="stream-card__bar">' +
                     '<span class="stream-card__platform">KICK</span>' +
                     '<span class="stream-card__name">' + label + '</span>' +
-                    '<span class="stream-card__status stream-card__griptext" aria-hidden="true">&#x2059;</span>' +
+                    (live
+                        ? '<span class="stream-card__status is-live">' + formatViewers(st.viewers) + ' ' + esc(t("card.watching")) + '</span>'
+                        : '<span class="stream-card__status">' + esc(t("card.closed")) + '</span>') +
                 '</div>' +
             '</li>';
     }
@@ -154,17 +195,27 @@
         if (!list) { return; }
         list.classList.remove("sort-list");
         list.classList.add("streamer-grid");
-        var streamers = store().getStreamers();
+        var ordered = sortedForAdmin();
         var total = $("[data-streamer-total]");
-        if (total) { total.textContent = pad(streamers.length); }
-        if (!streamers.length) {
+        if (total) { total.textContent = pad(ordered.length); }
+        if (!ordered.length) {
             list.innerHTML = '<li class="sort-empty">' + esc(t("admin.empty.streamers")) + '</li>';
             return;
         }
-        list.innerHTML = streamers.map(streamerRow).join("");
+        list.innerHTML = ordered.map(streamerRow).join("");
         ui().makeSortable(list, function (ids) {
             store().reorderStreamers(ids);
             ui().toast(t("toast.order"), "ok");
+        });
+    }
+
+    function loadStreamerStatus() {
+        var streamers = store().getStreamers();
+        if (!streamers.length) { return; }
+        Promise.all(streamers.map(function (s) {
+            return fetchStatus(s.username).then(function (st) { statusCache[s.username] = st; });
+        })).then(function () {
+            if (dashVisible() && !doc.querySelector(".is-dragging")) { renderStreamers(); }
         });
     }
 
