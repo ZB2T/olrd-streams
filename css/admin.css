@@ -386,8 +386,8 @@
 
 .streamer-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 18px;
+    grid-template-columns: repeat(auto-fill, minmax(232px, 1fr));
+    gap: 16px;
     list-style: none;
 }
 
@@ -418,3 +418,11 @@
 .stream-card__remove:hover { background: var(--crimson); border-color: var(--crimson); color: #fff; }
 
 .stream-card__griptext { letter-spacing: 3px; opacity: 0.55; }
+
+.streamer-grid.is-sorting .stream-card { transition: none; }
+.streamer-grid.is-sorting .stream-card:hover { transform: none; box-shadow: none; }
+.streamer-grid.is-sorting .stream-card:hover::before,
+.streamer-grid.is-sorting .stream-card:hover::after { opacity: 0; }
+
+.streamer-grid .stream-card.drop-before { box-shadow: inset 5px 0 0 var(--crimson-2); }
+.streamer-grid .stream-card.drop-after { box-shadow: inset -5px 0 0 var(--crimson-2); }

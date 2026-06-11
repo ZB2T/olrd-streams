@@ -81,36 +81,40 @@
         if (!list || list.getAttribute("data-sortable-bound") === "1") { return; }
         list.setAttribute("data-sortable-bound", "1");
         var dragging = null;
+        var target = null;
+        var after = false;
 
         function items() {
             return $all("[data-sort-id]", list);
         }
 
-        function afterElement(x, y) {
-            var els = items().filter(function (el) { return el !== dragging; });
+        function clearMarks() {
+            items().forEach(function (el) { el.classList.remove("drop-before", "drop-after"); });
+            target = null;
+        }
+
+        function nearest(x, y) {
             var closest = null;
-            var closestDist = Infinity;
-            var after = false;
-            els.forEach(function (el) {
+            var best = Infinity;
+            var side = false;
+            items().forEach(function (el) {
+                if (el === dragging) { return; }
                 var box = el.getBoundingClientRect();
                 var cx = box.left + box.width / 2;
                 var cy = box.top + box.height / 2;
                 var dx = x - cx;
                 var dy = y - cy;
                 var dist = dx * dx + dy * dy;
-                if (dist < closestDist) {
-                    closestDist = dist;
-                    closest = el;
-                    after = x > cx;
-                }
+                if (dist < best) { best = dist; closest = el; side = x > cx; }
             });
-            return { el: closest, after: after };
+            return { el: closest, after: side };
         }
 
         list.addEventListener("dragstart", function (e) {
             var item = e.target.closest ? e.target.closest("[data-sort-id]") : null;
             if (!item || !list.contains(item)) { return; }
             dragging = item;
+            list.classList.add("is-sorting");
             item.classList.add("is-dragging");
             if (e.dataTransfer) {
                 e.dataTransfer.effectAllowed = "move";
@@ -122,16 +126,24 @@
             if (!dragging) { return; }
             e.preventDefault();
             if (e.dataTransfer) { e.dataTransfer.dropEffect = "move"; }
-            var ref = afterElement(e.clientX, e.clientY);
-            if (!ref.el) { list.appendChild(dragging); }
-            else if (ref.after) { list.insertBefore(dragging, ref.el.nextSibling); }
-            else { list.insertBefore(dragging, ref.el); }
+            var ref = nearest(e.clientX, e.clientY);
+            if (ref.el === target && ref.after === after) { return; }
+            clearMarks();
+            target = ref.el;
+            after = ref.after;
+            if (target) { target.classList.add(after ? "drop-after" : "drop-before"); }
         });
 
         list.addEventListener("drop", function (e) { e.preventDefault(); });
 
         list.addEventListener("dragend", function () {
+            if (dragging && target && target !== dragging) {
+                if (after) { list.insertBefore(dragging, target.nextSibling); }
+                else { list.insertBefore(dragging, target); }
+            }
             if (dragging) { dragging.classList.remove("is-dragging"); }
+            list.classList.remove("is-sorting");
+            clearMarks();
             dragging = null;
             var ids = items().map(function (el) { return el.getAttribute("data-sort-id"); });
             onReorder(ids);
