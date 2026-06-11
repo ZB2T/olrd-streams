@@ -383,3 +383,38 @@
 
 .book-pdf-manager__hint { margin: 0; font-size: 12px; line-height: 1.6; color: var(--ash); }
 .book-pdf-current { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+.streamer-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 18px;
+    list-style: none;
+}
+
+.stream-card--admin { cursor: grab; user-select: none; }
+.stream-card--admin:active { cursor: grabbing; }
+.stream-card--admin.is-dragging { opacity: 0.4; }
+.stream-card--admin .stream-card__art { pointer-events: none; }
+
+.stream-card__remove {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    z-index: 6;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 17px;
+    line-height: 1;
+    color: var(--bone);
+    background: rgba(10, 8, 9, 0.72);
+    border: 1px solid var(--line-2);
+    cursor: pointer;
+    transition: background 0.2s var(--ease), border-color 0.2s var(--ease), color 0.2s var(--ease);
+}
+
+.stream-card__remove:hover { background: var(--crimson); border-color: var(--crimson); color: #fff; }
+
+.stream-card__griptext { letter-spacing: 3px; opacity: 0.55; }

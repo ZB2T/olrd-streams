@@ -131,21 +131,29 @@
     }
 
     function streamerRow(streamer, index) {
+        var label = esc(streamer.username).toUpperCase();
         return '' +
-            '<li class="sort-row" data-sort-id="' + esc(streamer.id) + '" draggable="true">' +
-                '<span class="sort-row__grip" aria-hidden="true"></span>' +
-                '<span class="sort-row__index">' + pad(index + 1) + '</span>' +
-                '<span class="sort-row__main">' +
-                    '<span class="sort-row__title">' + esc(streamer.username) + '</span>' +
-                    '<span class="sort-row__sub">KICK · player.kick.com/' + esc(streamer.username) + '</span>' +
-                '</span>' +
-                '<button type="button" class="row-remove" data-remove="' + esc(streamer.id) + '">' + esc(t("common.remove")) + '</button>' +
+            '<li class="stream-card stream-card--admin" data-sort-id="' + esc(streamer.id) + '" draggable="true">' +
+                '<span class="stream-card__index">' + pad(index + 1) + '</span>' +
+                '<button type="button" class="stream-card__remove" data-remove="' + esc(streamer.id) + '" title="' + esc(t("common.remove")) + '" aria-label="' + esc(t("common.remove")) + '">&times;</button>' +
+                '<div class="stream-card__frame">' +
+                    '<div class="stream-card__offline">' +
+                        '<img class="stream-card__art" src="assets/logo.png" alt="" draggable="false">' +
+                    '</div>' +
+                '</div>' +
+                '<div class="stream-card__bar">' +
+                    '<span class="stream-card__platform">KICK</span>' +
+                    '<span class="stream-card__name">' + label + '</span>' +
+                    '<span class="stream-card__status stream-card__griptext" aria-hidden="true">&#x2059;</span>' +
+                '</div>' +
             '</li>';
     }
 
     function renderStreamers() {
         var list = $("#streamer-list");
         if (!list) { return; }
+        list.classList.remove("sort-list");
+        list.classList.add("streamer-grid");
         var streamers = store().getStreamers();
         var total = $("[data-streamer-total]");
         if (total) { total.textContent = pad(streamers.length); }

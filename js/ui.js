@@ -86,19 +86,25 @@
             return $all("[data-sort-id]", list);
         }
 
-        function afterElement(y) {
+        function afterElement(x, y) {
             var els = items().filter(function (el) { return el !== dragging; });
             var closest = null;
-            var closestOffset = -Infinity;
+            var closestDist = Infinity;
+            var after = false;
             els.forEach(function (el) {
                 var box = el.getBoundingClientRect();
-                var offset = y - box.top - box.height / 2;
-                if (offset < 0 && offset > closestOffset) {
-                    closestOffset = offset;
+                var cx = box.left + box.width / 2;
+                var cy = box.top + box.height / 2;
+                var dx = x - cx;
+                var dy = y - cy;
+                var dist = dx * dx + dy * dy;
+                if (dist < closestDist) {
+                    closestDist = dist;
                     closest = el;
+                    after = x > cx;
                 }
             });
-            return closest;
+            return { el: closest, after: after };
         }
 
         list.addEventListener("dragstart", function (e) {
@@ -116,9 +122,10 @@
             if (!dragging) { return; }
             e.preventDefault();
             if (e.dataTransfer) { e.dataTransfer.dropEffect = "move"; }
-            var reference = afterElement(e.clientY);
-            if (reference == null) { list.appendChild(dragging); }
-            else { list.insertBefore(dragging, reference); }
+            var ref = afterElement(e.clientX, e.clientY);
+            if (!ref.el) { list.appendChild(dragging); }
+            else if (ref.after) { list.insertBefore(dragging, ref.el.nextSibling); }
+            else { list.insertBefore(dragging, ref.el); }
         });
 
         list.addEventListener("drop", function (e) { e.preventDefault(); });
