@@ -400,7 +400,7 @@
     position: absolute;
     top: 8px;
     left: 8px;
-    z-index: 6;
+    z-index: 7;
     width: 28px;
     height: 28px;
     display: flex;
@@ -416,6 +416,7 @@
 }
 
 .stream-card__remove:hover { background: var(--crimson); border-color: var(--crimson); color: #fff; }
+.stream-card--admin.is-live .stream-card__remove { top: 46px; }
 
 .stream-card__griptext { letter-spacing: 3px; opacity: 0.55; }
 
