@@ -126,6 +126,7 @@
         grid = ui().$("#stream-grid");
         if (!grid) { return; }
         root.OLRD.store.init().then(function () {
+            root.OLRD.store.dropStaleDraft();
             load();
             root.OLRD.store.startLiveSync();
         });

@@ -240,6 +240,7 @@
         root.OLRD.store.subscribe(refresh);
         root.OLRD.i18n.subscribe(refresh);
         root.OLRD.store.init().then(function () {
+            root.OLRD.store.dropStaleDraft();
             renderCover();
             if ((root.location.hash || "").indexOf("#p") === 0) { openBook(); }
             root.OLRD.store.startLiveSync();
