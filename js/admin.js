@@ -4,6 +4,7 @@
     var doc = root.document;
     var state = { tab: "streamers" };
     var lockTimer = null;
+    var publishTimer = null;
 
     function ui() { return root.OLRD.ui; }
     function store() { return root.OLRD.store; }
@@ -401,6 +402,27 @@
         });
     }
 
+    function publishKeyValue() {
+        var el = $("#publish-key");
+        if (el && el.value.trim()) { return el.value.trim(); }
+        try { return root.localStorage.getItem("olrd.pubkey") || ""; }
+        catch (e) { return ""; }
+    }
+
+    function autoPublish() {
+        if (!(root.OLRD.sync && root.OLRD.sync.available())) { return; }
+        var key = publishKeyValue();
+        if (!key) { return; }
+        if (publishTimer) { root.clearTimeout(publishTimer); }
+        publishTimer = root.setTimeout(function () {
+            root.OLRD.sync.publish(store().snapshot(), key).then(function (res) {
+                var msg = $("#publish-msg");
+                if (res.ok) { setMsg(msg, t("msg.published"), "muted"); }
+                else { setMsg(msg, t("msg.publishFail"), "err"); }
+            });
+        }, 900);
+    }
+
     function dashVisible() {
         var dash = $("#admin-dash");
         return dash && !dash.classList.contains("is-hidden");
@@ -415,6 +437,7 @@
         bindPublish();
         store().subscribe(function () {
             if (dashVisible()) { renderStreamers(); renderBook(); }
+            autoPublish();
         });
         root.OLRD.i18n.subscribe(function () {
             if (dashVisible()) { renderStreamers(); renderBook(); }
