@@ -84,22 +84,159 @@
         if (open) { open.addEventListener("click", openBook); }
     }
 
+    var pdfBook = { doc: null, page: 1, total: 0, turning: false, cache: {}, loading: null };
+
+    function ensurePdfJs() {
+        if (root.pdfjsLib) { return Promise.resolve(root.pdfjsLib); }
+        if (pdfBook.loading) { return pdfBook.loading; }
+        pdfBook.loading = new Promise(function (resolve, reject) {
+            var s = doc.createElement("script");
+            s.src = "js/pdf/pdf.min.js";
+            s.onload = function () {
+                if (root.pdfjsLib) {
+                    try { root.pdfjsLib.GlobalWorkerOptions.workerSrc = "js/pdf/pdf.worker.min.js"; } catch (e) {}
+                    resolve(root.pdfjsLib);
+                } else { reject(new Error("pdfjs")); }
+            };
+            s.onerror = function () { reject(new Error("pdfjs")); };
+            doc.head.appendChild(s);
+        });
+        return pdfBook.loading;
+    }
+
+    function base64ToBytes(b64) {
+        var bin = root.atob(b64);
+        var bytes = new root.Uint8Array(bin.length);
+        for (var i = 0; i < bin.length; i++) { bytes[i] = bin.charCodeAt(i); }
+        return bytes;
+    }
+
+    function pageHost() { return stage.querySelector("[data-page]"); }
+
+    function getPageCanvas(num) {
+        if (pdfBook.cache[num]) { return Promise.resolve(pdfBook.cache[num]); }
+        return pdfBook.doc.getPage(num).then(function (page) {
+            var scale = (root.devicePixelRatio && root.devicePixelRatio > 1) ? 2 : 1.7;
+            var vp = page.getViewport({ scale: scale });
+            var canvas = doc.createElement("canvas");
+            canvas.className = "book-pdf-canvas";
+            canvas.width = Math.floor(vp.width);
+            canvas.height = Math.floor(vp.height);
+            return page.render({ canvasContext: canvas.getContext("2d"), viewport: vp }).promise.then(function () {
+                pdfBook.cache[num] = canvas;
+                return canvas;
+            });
+        });
+    }
+
+    function placeCanvas(canvas, num) {
+        var host = pageHost();
+        if (!host) { return; }
+        host.innerHTML = "";
+        var sheet = doc.createElement("div");
+        sheet.className = "book-page__sheet book-page__sheet--flip";
+        sheet.appendChild(canvas);
+        var folio = doc.createElement("span");
+        folio.className = "book-page__folio";
+        folio.textContent = num + " / " + pdfBook.total;
+        sheet.appendChild(folio);
+        host.appendChild(sheet);
+    }
+
+    function preloadAround() {
+        [pdfBook.page + 1, pdfBook.page - 1].forEach(function (n) {
+            if (n >= 1 && n <= pdfBook.total && !pdfBook.cache[n]) { getPageCanvas(n).catch(function () {}); }
+        });
+    }
+
+    function updatePdfPager() {
+        var countEl = stage.querySelector("[data-count]");
+        if (countEl) { countEl.textContent = pdfBook.page + " / " + pdfBook.total; }
+        ui().$all('[data-flip]', stage).forEach(function (el) {
+            var dir = parseInt(el.getAttribute("data-flip"), 10);
+            el.disabled = (dir > 0) ? (pdfBook.page >= pdfBook.total) : (pdfBook.page <= 1);
+        });
+    }
+
+    function flipPdf(dir) {
+        if (pdfBook.turning || !pdfBook.doc) { return; }
+        var next = pdfBook.page + dir;
+        if (next < 1 || next > pdfBook.total) { return; }
+        var pageEl = pageHost();
+        if (!pageEl) { return; }
+        pdfBook.turning = true;
+        getPageCanvas(next).then(function (canvas) {
+            pageEl.classList.add(dir > 0 ? "is-turn-next" : "is-turn-prev");
+            root.setTimeout(function () {
+                pdfBook.page = next;
+                placeCanvas(canvas, next);
+                pageEl.classList.remove("is-turn-next", "is-turn-prev");
+                pageEl.classList.add(dir > 0 ? "is-enter-next" : "is-enter-prev");
+                updatePdfPager();
+                preloadAround();
+                root.setTimeout(function () {
+                    pageEl.classList.remove("is-enter-next", "is-enter-prev");
+                    pdfBook.turning = false;
+                }, 260);
+            }, 230);
+        }).catch(function () { pdfBook.turning = false; });
+    }
+
+    function startPdf(id) {
+        var sync = root.OLRD.sync;
+        function fail() {
+            var h = pageHost();
+            if (h) { h.innerHTML = '<div class="book-page__sheet book-page__sheet--flip"><div class="book-pdf-status">' + ui().escapeHtml(t("book.pdfMissing")) + '</div></div>'; }
+        }
+        if (!(sync && sync.available && sync.available() && sync.fetchBookFile)) { fail(); return; }
+        Promise.all([ensurePdfJs(), sync.fetchBookFile(id)]).then(function (res) {
+            var lib = res[0];
+            var row = res[1];
+            if (!row || !row.data) { throw new Error("no data"); }
+            return lib.getDocument({ data: base64ToBytes(row.data) }).promise;
+        }).then(function (pdf) {
+            pdfBook.doc = pdf;
+            pdfBook.total = pdf.numPages;
+            pdfBook.cache = {};
+            if (pdfBook.page > pdfBook.total || pdfBook.page < 1) { pdfBook.page = 1; }
+            return getPageCanvas(pdfBook.page);
+        }).then(function (canvas) {
+            placeCanvas(canvas, pdfBook.page);
+            updatePdfPager();
+            preloadAround();
+        }).catch(fail);
+    }
+
     function renderPdfBook() {
         var b = book();
         stage.innerHTML = '' +
-            '<div class="book-open book-open--pdf">' +
+            '<div class="book-open book-open--flip">' +
                 '<div class="book-open__bar">' +
                     '<button type="button" class="ghost-btn book-open__close" data-close-book>' + ui().escapeHtml(t("book.close")) + '</button>' +
                     '<span class="book-open__title">' + ui().escapeHtml(b.title) + '</span>' +
                     '<span class="book-open__bar-spacer" aria-hidden="true"></span>' +
                 '</div>' +
-                '<div class="book-pdfwrap" data-pdf-host="' + ui().escapeHtml(b.pdf) + '">' +
-                    '<div class="book-page__pdf-status">' + ui().escapeHtml(t("book.pdfLoading")) + '</div>' +
+                '<div class="book-flip">' +
+                    '<button type="button" class="book-flip__edge book-flip__edge--prev" data-flip="-1" aria-label="' + ui().escapeHtml(t("book.prev")) + '"><span>‹</span></button>' +
+                    '<div class="book-spread book-spread--single">' +
+                        '<article class="book-page book-page--pdf" data-page>' +
+                            '<div class="book-page__sheet book-page__sheet--flip"><div class="book-pdf-status">' + ui().escapeHtml(t("book.pdfLoading")) + '</div></div>' +
+                        '</article>' +
+                    '</div>' +
+                    '<button type="button" class="book-flip__edge book-flip__edge--next" data-flip="1" aria-label="' + ui().escapeHtml(t("book.next")) + '"><span>›</span></button>' +
+                '</div>' +
+                '<div class="book-pager">' +
+                    '<button type="button" class="book-pager__btn" data-flip="-1">' + turnLabel(-1) + '</button>' +
+                    '<span class="book-pager__count" data-count></span>' +
+                    '<button type="button" class="book-pager__btn" data-flip="1">' + turnLabel(1) + '</button>' +
                 '</div>' +
             '</div>';
         var close = stage.querySelector("[data-close-book]");
         if (close) { close.addEventListener("click", closeBook); }
-        loadPdf(b.pdf);
+        ui().$all('[data-flip]', stage).forEach(function (el) {
+            el.addEventListener("click", function () { flipPdf(parseInt(el.getAttribute("data-flip"), 10)); });
+        });
+        startPdf(b.pdf);
     }
 
     function renderOpen() {
@@ -260,9 +397,10 @@
         if (!stage) { return; }
         doc.addEventListener("keydown", function (e) {
             if (!state.open) { return; }
-            if (e.key === "Escape") { closeBook(); }
-            else if (e.key === "ArrowRight") { turn(1); }
-            else if (e.key === "ArrowLeft") { turn(-1); }
+            if (e.key === "Escape") { closeBook(); return; }
+            var isPdf = !!book().pdf;
+            if (e.key === "ArrowRight") { if (isPdf) { flipPdf(1); } else { turn(1); } }
+            else if (e.key === "ArrowLeft") { if (isPdf) { flipPdf(-1); } else { turn(-1); } }
         });
         root.OLRD.store.subscribe(refresh);
         root.OLRD.i18n.subscribe(refresh);
