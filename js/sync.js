@@ -76,16 +76,18 @@
     }
 
     function saveBookFile(key, id, name, mime, data) {
-        if (!available() || !root.fetch || !key) { return Promise.resolve(false); }
+        if (!available() || !root.fetch || !key) { return Promise.resolve({ ok: false, status: 0 }); }
         var url = base() + "/rest/v1/rpc/save_book_file";
         return root.fetch(url, {
             method: "POST",
             headers: headers(),
             body: JSON.stringify({ p_key: key, p_id: id, p_name: name, p_mime: mime, p_data: data })
         }).then(function (r) {
-            return r && r.ok ? r.json() : false;
-        }).then(function (v) { return v === true; })
-            .catch(function () { return false; });
+            var status = r ? r.status : 0;
+            if (!r || !r.ok) { return { ok: false, status: status }; }
+            return r.json().then(function (v) { return { ok: v === true, status: status }; },
+                function () { return { ok: false, status: status }; });
+        }).catch(function () { return { ok: false, status: 0 }; });
     }
 
     function deleteBookFile(key, id) {

@@ -5,6 +5,7 @@
     var state = { tab: "streamers" };
     var lockTimer = null;
     var publishTimer = null;
+    var dirtyArmed = false;
 
     function ui() { return root.OLRD.ui; }
     function store() { return root.OLRD.store; }
@@ -16,6 +17,21 @@
     function pad(n) { return (n < 10 ? "0" : "") + n; }
 
     function show(el, on) { if (el) { el.classList.toggle("is-hidden", !on); } }
+
+    function markDirty() {
+        if (!dirtyArmed) { return; }
+        var hint = $("#save-hint");
+        if (hint) { show(hint, true); }
+        var btn = $("#save-snapshot-btn");
+        if (btn) { btn.classList.add("is-dirty"); }
+    }
+
+    function clearDirty() {
+        var hint = $("#save-hint");
+        if (hint) { show(hint, false); }
+        var btn = $("#save-snapshot-btn");
+        if (btn) { btn.classList.remove("is-dirty"); }
+    }
 
     function bindLogin() {
         var form = $("#login-form");
@@ -104,10 +120,15 @@
         loadStreamerStatus();
         if (!statusTimer) { statusTimer = root.setInterval(loadStreamerStatus, 60000); }
         if (lockTimer) { root.clearInterval(lockTimer); lockTimer = null; }
+        clearDirty();
+        dirtyArmed = false;
+        root.setTimeout(function () { dirtyArmed = true; }, 500);
     }
 
     function leaveDash() {
         auth().endSession();
+        dirtyArmed = false;
+        clearDirty();
         if (statusTimer) { root.clearInterval(statusTimer); statusTimer = null; }
         show($("#admin-dash"), false);
         show($("#admin-login"), true);
@@ -273,6 +294,7 @@
                         ? '<div class="book-pdf-current"><span class="page-edit__pdfname" title="' + esc(b.pdfName || "") + '">' + esc(b.pdfName || t("pdf.attached")) + '</span><button type="button" class="row-remove" data-book-pdf-remove>' + esc(t("pdf.remove")) + '</button></div>'
                         : '') +
                     '<label class="pdf-upload"><input type="file" accept="application/pdf,.pdf" data-book-pdf-input><span class="pdf-upload__btn">' + esc(b.pdf ? t("pdf.replace") : t("book.pdfUpload")) + '</span></label>' +
+                    '<div class="pdf-progress is-hidden" data-pdf-progress aria-hidden="true"><div class="pdf-progress__track"><span class="pdf-progress__fill" data-pdf-fill data-state="active"></span></div><span class="pdf-progress__label" data-pdf-label></span></div>' +
                     '<span class="pdf-msg" data-book-pdf-msg></span>' +
                 '</div>' +
             '</div>';
@@ -467,33 +489,63 @@
         }, 900);
     }
 
-    var PDF_MAX = 6 * 1024 * 1024;
+    var PDF_MAX = 25 * 1024 * 1024;
 
     function handleBookPdfUpload(file) {
         var msg = $("[data-book-pdf-msg]");
+        var prog = $("[data-pdf-progress]");
+        var fill = $("[data-pdf-fill]");
+        var plabel = $("[data-pdf-label]");
+        function bar(pct, label, kind) {
+            if (prog) { prog.classList.remove("is-hidden"); }
+            if (fill) { fill.style.width = Math.max(0, Math.min(100, pct)) + "%"; fill.setAttribute("data-state", kind || "active"); }
+            if (plabel) { plabel.textContent = label || ""; }
+        }
+        function fail(text) {
+            bar(100, text, "err");
+            if (msg) { setMsg(msg, text, "err"); }
+            ui().toast(text, "err");
+            root.setTimeout(function () { if (prog) { prog.classList.add("is-hidden"); } }, 5000);
+        }
+        if (msg) { setMsg(msg, "", "muted"); }
+
         var isPdf = (file.type && file.type.indexOf("pdf") !== -1) || /\.pdf$/i.test(file.name || "");
-        if (!isPdf) { if (msg) { setMsg(msg, t("pdf.notPdf"), "err"); } return; }
-        if (file.size > PDF_MAX) { if (msg) { setMsg(msg, t("pdf.tooLarge"), "err"); } return; }
-        if (!(root.OLRD.sync && root.OLRD.sync.available())) { if (msg) { setMsg(msg, t("msg.publishNotSet"), "warn"); } return; }
+        if (!isPdf) { fail(t("pdf.notPdf")); return; }
+        var maxMb = Math.round(PDF_MAX / 1048576);
+        if (file.size > PDF_MAX) { fail(t("pdf.tooLarge", { mb: (file.size / 1048576).toFixed(1), max: maxMb })); return; }
+        if (!(root.OLRD.sync && root.OLRD.sync.available())) { fail(t("msg.publishNotSet")); return; }
         var key = publishKeyValue();
-        if (!key) { if (msg) { setMsg(msg, t("msg.loginForPublish"), "warn"); } return; }
-        if (msg) { setMsg(msg, t("pdf.uploading"), "muted"); }
+        if (!key) { fail(t("msg.loginForPublish")); return; }
+
+        bar(5, t("pdf.reading"), "active");
         var reader = new root.FileReader();
+        reader.onprogress = function (e) {
+            if (e.lengthComputable) { bar(5 + Math.round((e.loaded / e.total) * 45), t("pdf.reading"), "active"); }
+        };
+        reader.onerror = function () { fail(t("pdf.uploadFail")); };
         reader.onload = function () {
             var result = String(reader.result || "");
             var comma = result.indexOf(",");
             var base64 = comma >= 0 ? result.slice(comma + 1) : result;
-            root.OLRD.sync.saveBookFile(key, "book_main", file.name, "application/pdf", base64).then(function (ok) {
-                if (ok) {
-                    store().updateBookMeta({ pdf: "book_main", pdfName: file.name });
-                    ui().toast(t("pdf.uploaded"), "ok");
-                } else {
-                    if (msg) { setMsg(msg, t("pdf.uploadFail"), "err"); }
-                    ui().toast(t("pdf.uploadFail"), "err");
+            bar(62, t("pdf.uploading"), "active");
+            root.OLRD.sync.saveBookFile(key, "book_main", file.name, "application/pdf", base64).then(function (res) {
+                if (!res || !res.ok) {
+                    fail(res && res.status === 413 ? t("pdf.tooLargeServer") : t("pdf.uploadFail"));
+                    return;
                 }
+                bar(84, t("pdf.verifying"), "active");
+                root.OLRD.sync.fetchBookFile("book_main").then(function (row) {
+                    if (row && row.data && String(row.data).length > 100) {
+                        bar(100, t("pdf.uploaded"), "ok");
+                        if (msg) { setMsg(msg, t("pdf.uploaded"), "ok"); }
+                        ui().toast(t("pdf.uploaded"), "ok");
+                        root.setTimeout(function () { store().updateBookMeta({ pdf: "book_main", pdfName: file.name }); }, 1300);
+                    } else {
+                        fail(t("pdf.uploadFail"));
+                    }
+                });
             });
         };
-        reader.onerror = function () { if (msg) { setMsg(msg, t("pdf.uploadFail"), "err"); } };
         reader.readAsDataURL(file);
     }
 
@@ -560,7 +612,7 @@
             sync.saveHistory(key, "book", store().getBook(), null)
         ]).then(function (res) {
             if (btn) { btn.disabled = false; }
-            if (res[0] && res[1]) { ui().toast(t("history.saved"), "ok"); renderHistory(); }
+            if (res[0] && res[1]) { ui().toast(t("history.saved"), "ok"); clearDirty(); renderHistory(); }
             else { ui().toast(t("history.saveFail"), "err"); }
         });
     }
@@ -595,6 +647,7 @@
         store().subscribe(function () {
             if (dashVisible()) { renderStreamers(); renderBook(); }
             autoPublish();
+            markDirty();
         });
         root.OLRD.i18n.subscribe(function () {
             if (dashVisible()) { renderStreamers(); renderBook(); }
