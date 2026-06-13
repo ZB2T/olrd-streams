@@ -183,6 +183,12 @@
 
     function getBook() { return read().book; }
 
+    function setBook(b) {
+        var state = read();
+        state.book = normaliseBook(clone(b || {}));
+        return write(state);
+    }
+
     function updateBookMeta(patch) {
         var state = read();
         ["title", "author", "subtitle"].forEach(function (key) {
@@ -304,6 +310,7 @@
         removeStreamer: removeStreamer,
         reorderStreamers: reorderStreamers,
         getBook: getBook,
+        setBook: setBook,
         updateBookMeta: updateBookMeta,
         addPage: addPage,
         updatePage: updatePage,

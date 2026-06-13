@@ -432,6 +432,16 @@
 }
 .gate-back:hover { color: var(--bone); border-color: var(--line-2); }
 .admin-back { text-decoration: none; }
+.admin-save { padding: 9px 20px; }
+
+.history-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.history-col__head { display: block; font-family: var(--mono); font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--crimson-2); margin-bottom: 10px; }
+.history-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.history-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 11px; border: 1px solid var(--line); background: rgba(20, 19, 25, 0.4); }
+.history-row__when { font-family: var(--mono); font-size: 11px; color: var(--ash); }
+.history-row__restore { padding: 5px 12px; font-size: 11px; }
+.history-empty { font-family: var(--mono); font-size: 11px; letter-spacing: 1px; color: var(--ash-2); padding: 8px 0; }
+@media (max-width: 620px) { .history-cols { grid-template-columns: 1fr; } }
 
 .stream-card__griptext { letter-spacing: 3px; opacity: 0.55; }
 

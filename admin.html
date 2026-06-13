@@ -53,6 +53,7 @@
                     <button type="button" class="lang-btn" data-lang="en">EN</button>
                     <button type="button" class="lang-btn" data-lang="ar">ع</button>
                 </div>
+                <button type="button" id="save-snapshot-btn" class="btn admin-save" data-i18n="history.save">Save</button>
                 <a href="index.html" class="ghost-btn admin-back" data-i18n="admin.backHome">← Home</a>
                 <button type="button" id="logout-btn" class="ghost-btn" data-i18n="admin.lock">Lock</button>
             </div>
@@ -126,6 +127,20 @@
                                 </div>
                                 <div class="sec-divider"></div>
                                 <button type="button" id="reset-btn" class="row-remove" data-i18n="security.reset">Restore Seed Data</button>
+                            </div>
+                        </div>
+                        <div class="sec-card">
+                            <h3 class="sec-card__title" data-i18n="history.title">Saved Versions</h3>
+                            <p class="sec-card__sub" data-i18n="history.sub">Press Save in the top bar to store a restore point. The last 3 of each are kept.</p>
+                            <div class="history-cols">
+                                <div class="history-col">
+                                    <span class="history-col__head" data-i18n="history.streamers">Streamers</span>
+                                    <ul class="history-list" id="history-streamers"></ul>
+                                </div>
+                                <div class="history-col">
+                                    <span class="history-col__head" data-i18n="history.book">Book</span>
+                                    <ul class="history-list" id="history-book"></ul>
+                                </div>
                             </div>
                         </div>
                     </div>

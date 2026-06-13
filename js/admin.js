@@ -100,6 +100,7 @@
         switchTab(state.tab);
         renderStreamers();
         renderBook();
+        renderHistory();
         loadStreamerStatus();
         if (!statusTimer) { statusTimer = root.setInterval(loadStreamerStatus, 60000); }
         if (lockTimer) { root.clearInterval(lockTimer); lockTimer = null; }
@@ -505,6 +506,79 @@
         ui().toast(t("pdf.removed"), "ok");
     }
 
+    function fmtTime(iso) {
+        try { return new Date(iso).toLocaleString(); }
+        catch (e) { return String(iso || ""); }
+    }
+
+    function renderHistory() {
+        var sync = root.OLRD.sync;
+        if (!(sync && sync.available && sync.available() && sync.listHistory)) { return; }
+        [["streamers", "#history-streamers"], ["book", "#history-book"]].forEach(function (pair) {
+            var kind = pair[0];
+            var listEl = $(pair[1]);
+            if (!listEl) { return; }
+            sync.listHistory(kind).then(function (rows) {
+                listEl._rows = rows;
+                if (!rows.length) {
+                    listEl.innerHTML = '<li class="history-empty">' + esc(t("history.empty")) + '</li>';
+                    return;
+                }
+                listEl.innerHTML = rows.map(function (row) {
+                    return '<li class="history-row">' +
+                        '<span class="history-row__when">' + esc(fmtTime(row.created_at)) + '</span>' +
+                        '<button type="button" class="ghost-btn history-row__restore" data-restore="' + kind + '" data-restore-id="' + esc(String(row.id)) + '">' + esc(t("history.restore")) + '</button>' +
+                        '</li>';
+                }).join("");
+            });
+        });
+    }
+
+    function restoreSnapshot(kind, id, listEl) {
+        var rows = listEl && listEl._rows;
+        if (!rows) { return; }
+        var row = null;
+        for (var i = 0; i < rows.length; i++) { if (String(rows[i].id) === String(id)) { row = rows[i]; break; } }
+        if (!row) { return; }
+        if (!root.confirm(t("history.confirmRestore"))) { return; }
+        if (kind === "streamers" && Array.isArray(row.data)) { store().setStreamers(row.data); }
+        else if (kind === "book" && row.data) { store().setBook(row.data); }
+        renderStreamers();
+        renderBook();
+        ui().toast(t("history.restored"), "ok");
+    }
+
+    function saveSnapshot() {
+        var sync = root.OLRD.sync;
+        if (!(sync && sync.available && sync.available())) { ui().toast(t("msg.publishNotSet"), "warn"); return; }
+        var key = publishKeyValue();
+        if (!key) { ui().toast(t("msg.loginForPublish"), "warn"); return; }
+        var btn = $("#save-snapshot-btn");
+        if (btn) { btn.disabled = true; }
+        Promise.all([
+            sync.saveHistory(key, "streamers", store().getStreamers(), null),
+            sync.saveHistory(key, "book", store().getBook(), null)
+        ]).then(function (res) {
+            if (btn) { btn.disabled = false; }
+            if (res[0] && res[1]) { ui().toast(t("history.saved"), "ok"); renderHistory(); }
+            else { ui().toast(t("history.saveFail"), "err"); }
+        });
+    }
+
+    function bindHistory() {
+        var saveBtn = $("#save-snapshot-btn");
+        if (saveBtn) { saveBtn.addEventListener("click", saveSnapshot); }
+        ["#history-streamers", "#history-book"].forEach(function (sel) {
+            var listEl = $(sel);
+            if (!listEl) { return; }
+            listEl.addEventListener("click", function (e) {
+                var btn = e.target.closest ? e.target.closest("[data-restore]") : null;
+                if (!btn) { return; }
+                restoreSnapshot(btn.getAttribute("data-restore"), btn.getAttribute("data-restore-id"), listEl);
+            });
+        });
+    }
+
     function dashVisible() {
         var dash = $("#admin-dash");
         return dash && !dash.classList.contains("is-hidden");
@@ -517,6 +591,7 @@
         bindStreamers();
         bindSecurity();
         bindPublish();
+        bindHistory();
         store().subscribe(function () {
             if (dashVisible()) { renderStreamers(); renderBook(); }
             autoPublish();

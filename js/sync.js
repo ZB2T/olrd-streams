@@ -110,6 +110,28 @@
             .catch(function () { return null; });
     }
 
+    function saveHistory(key, kind, data, label) {
+        if (!available() || !root.fetch || !key) { return Promise.resolve(false); }
+        var url = base() + "/rest/v1/rpc/save_history";
+        return root.fetch(url, {
+            method: "POST",
+            headers: headers(),
+            body: JSON.stringify({ p_key: key, p_kind: kind, p_data: data, p_label: label || null })
+        }).then(function (r) {
+            return r && r.ok ? r.json() : false;
+        }).then(function (v) { return v === true; })
+            .catch(function () { return false; });
+    }
+
+    function listHistory(kind) {
+        if (!available() || !root.fetch) { return Promise.resolve([]); }
+        var url = base() + "/rest/v1/site_history?kind=eq." + encodeURIComponent(kind) + "&order=created_at.desc&limit=3&select=id,data,label,created_at";
+        return root.fetch(url, { headers: headers(), cache: "no-store" })
+            .then(function (r) { return r && r.ok ? r.json() : []; })
+            .then(function (rows) { return Array.isArray(rows) ? rows : []; })
+            .catch(function () { return []; });
+    }
+
     root.OLRD = root.OLRD || {};
     root.OLRD.sync = {
         available: available,
@@ -119,7 +141,9 @@
         setPassword: setPassword,
         saveBookFile: saveBookFile,
         deleteBookFile: deleteBookFile,
-        fetchBookFile: fetchBookFile
+        fetchBookFile: fetchBookFile,
+        saveHistory: saveHistory,
+        listHistory: listHistory
     };
 
 })(typeof self !== "undefined" ? self : this);
