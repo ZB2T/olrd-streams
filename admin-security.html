@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>OLRD — Control · Security</title>
+    <link rel="icon" type="image/x-icon" href="assets/logo.ico">
+    <link rel="shortcut icon" href="assets/logo.ico">
+    <link rel="apple-touch-icon" href="assets/logo.png">
+    <link rel="preconnect" href="https://edbabpxwtxkllakfnnhu.supabase.co" crossorigin>
+    <link rel="preload" href="css/fonts.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="css/fonts.css"></noscript>
+    <link rel="stylesheet" href="css/core.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <script src="js/i18n.js"></script>
+</head>
+<body class="admin-page" data-admin="security">
+    <div class="fog"></div>
+    <div class="grain"></div>
+
+    <div id="admin-root">
+        <section class="admin-shell">
+            <div class="admin-top">
+                <div class="admin-top__brand">
+                    <img src="assets/logo.png" alt="OLRD">
+                    <span>OLRD <i>Control</i></span>
+                </div>
+                <nav class="admin-tabs">
+                    <a class="admin-tab" href="admin-streamers" data-i18n="tab.streamers">Streamers</a>
+                    <a class="admin-tab" href="admin-book" data-i18n="tab.story">Story Book</a>
+                    <a class="admin-tab is-active" href="admin-security" data-i18n="tab.security">Security</a>
+                </nav>
+                <div class="lang-switch">
+                    <button type="button" class="lang-btn" data-lang="en">EN</button>
+                    <button type="button" class="lang-btn" data-lang="ar">ع</button>
+                </div>
+                <span id="save-hint" class="save-hint is-hidden" data-i18n="admin.saveHint">Unsaved changes — press Save to keep them.</span>
+                <button type="button" id="save-snapshot-btn" class="btn admin-save" data-i18n="history.save">Save</button>
+                <a href="home" class="ghost-btn admin-back" data-i18n="admin.backHome">← Home</a>
+                <button type="button" id="logout-btn" class="ghost-btn" data-i18n="admin.lock">Lock</button>
+            </div>
+
+            <div class="admin-body">
+                <section id="tab-security">
+                    <div class="panel-head">
+                        <div>
+                            <span class="panel-head__eyebrow" data-i18n="panel.security.eyebrow">Vault</span>
+                            <h2 class="panel-head__title" data-i18n="security.title">Security</h2>
+                        </div>
+                    </div>
+                    <div class="security-grid">
+                        <div class="sec-card">
+                            <h3 class="sec-card__title" data-i18n="security.changeTitle">Change Access Key</h3>
+                            <p class="sec-card__sub" data-i18n="security.changeSub">The key is never stored in readable form — only an irreversible salted fingerprint is kept. Choose something only you know.</p>
+                            <form id="pass-form" autocomplete="off">
+                                <label class="field-label"><span data-i18n="field.currentKey">Current Key</span><input type="password" id="pass-old" class="field" autocomplete="off" spellcheck="false"></label>
+                                <label class="field-label"><span data-i18n="field.newKey">New Key</span><input type="password" id="pass-new" class="field" autocomplete="off" spellcheck="false"></label>
+                                <label class="field-label"><span data-i18n="field.confirmKey">Confirm New Key</span><input type="password" id="pass-confirm" class="field" autocomplete="off" spellcheck="false"></label>
+                                <button type="submit" id="pass-submit" class="btn" data-i18n="security.update">Update Key</button>
+                            </form>
+                            <div id="pass-msg" class="form-msg"></div>
+                        </div>
+
+                        <div class="sec-card">
+                            <h3 class="sec-card__title" data-i18n="security.publishTitle">Publish To Site</h3>
+                            <p class="sec-card__sub" data-i18n="security.publishSub">Push your changes live for everyone.</p>
+                            <form id="publish-form" autocomplete="off">
+                                <label class="field-label"><span data-i18n="field.publishKey">Publish Key</span><input type="password" id="publish-key" class="field" autocomplete="off" spellcheck="false"></label>
+                                <button type="submit" id="publish-btn" class="btn" data-i18n="security.publishBtn">Publish Now</button>
+                            </form>
+                            <div id="publish-msg" class="form-msg"></div>
+                        </div>
+
+                        <div class="sec-card">
+                            <h3 class="sec-card__title" data-i18n="security.toolsTitle">Archive Tools</h3>
+                            <p class="sec-card__sub" data-i18n="security.toolsSub">Export the full roster and library to a file you can back up or move to another machine. Import replaces everything currently stored.</p>
+                            <div class="sec-tools">
+                                <div class="sec-tools__row">
+                                    <button type="button" id="export-btn" class="ghost-btn" data-i18n="security.export">Export Archive</button>
+                                    <label class="file-btn"><span data-i18n="security.import">Import Archive</span><input type="file" id="import-input" accept="application/json,.json" hidden></label>
+                                </div>
+                                <div class="sec-divider"></div>
+                                <button type="button" id="reset-btn" class="row-remove" data-i18n="security.reset">Restore Seed Data</button>
+                            </div>
+                        </div>
+                        <div class="sec-card">
+                            <h3 class="sec-card__title" data-i18n="history.title">Saved Versions</h3>
+                            <p class="sec-card__sub" data-i18n="history.sub">Press Save in the top bar to store a restore point. The last 3 of each are kept.</p>
+                            <div class="history-cols">
+                                <div class="history-col">
+                                    <span class="history-col__head" data-i18n="history.streamers">Streamers</span>
+                                    <ul class="history-list" id="history-streamers"></ul>
+                                </div>
+                                <div class="history-col">
+                                    <span class="history-col__head" data-i18n="history.book">Book</span>
+                                    <ul class="history-list" id="history-book"></ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </section>
+    </div>
+
+    <script src="js/atmosphere.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/sync.js"></script>
+    <script src="js/crypto.js"></script>
+    <script src="js/seed.js"></script>
+    <script src="js/store.js"></script>
+    <script src="js/security.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/admin.js"></script>
+    <script src="js/brand.js"></script>
+</body>
+</html>

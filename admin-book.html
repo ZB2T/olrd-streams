@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>OLRD — Control · Story Book</title>
+    <link rel="icon" type="image/x-icon" href="assets/logo.ico">
+    <link rel="shortcut icon" href="assets/logo.ico">
+    <link rel="apple-touch-icon" href="assets/logo.png">
+    <link rel="preconnect" href="https://edbabpxwtxkllakfnnhu.supabase.co" crossorigin>
+    <link rel="preload" href="css/fonts.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="css/fonts.css"></noscript>
+    <link rel="stylesheet" href="css/core.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <script src="js/i18n.js"></script>
+</head>
+<body class="admin-page" data-admin="book">
+    <div class="fog"></div>
+    <div class="grain"></div>
+
+    <div id="admin-root">
+        <section class="admin-shell">
+            <div class="admin-top">
+                <div class="admin-top__brand">
+                    <img src="assets/logo.png" alt="OLRD">
+                    <span>OLRD <i>Control</i></span>
+                </div>
+                <nav class="admin-tabs">
+                    <a class="admin-tab" href="admin-streamers" data-i18n="tab.streamers">Streamers</a>
+                    <a class="admin-tab is-active" href="admin-book" data-i18n="tab.story">Story Book</a>
+                    <a class="admin-tab" href="admin-security" data-i18n="tab.security">Security</a>
+                </nav>
+                <div class="lang-switch">
+                    <button type="button" class="lang-btn" data-lang="en">EN</button>
+                    <button type="button" class="lang-btn" data-lang="ar">ع</button>
+                </div>
+                <span id="save-hint" class="save-hint is-hidden" data-i18n="admin.saveHint">Unsaved changes — press Save to keep them.</span>
+                <button type="button" id="save-snapshot-btn" class="btn admin-save" data-i18n="history.save">Save</button>
+                <a href="home" class="ghost-btn admin-back" data-i18n="admin.backHome">← Home</a>
+                <button type="button" id="logout-btn" class="ghost-btn" data-i18n="admin.lock">Lock</button>
+            </div>
+
+            <div class="admin-body">
+                <section id="tab-story">
+                    <div class="panel-head">
+                        <div>
+                            <span class="panel-head__eyebrow" data-i18n="panel.story.eyebrow">The Archive</span>
+                            <h2 class="panel-head__title" data-i18n="tab.story">Story Book</h2>
+                        </div>
+                        <span class="panel-head__count" data-page-total>00</span>
+                    </div>
+                    <div id="book-manager"></div>
+                </section>
+            </div>
+        </section>
+    </div>
+
+    <script src="js/atmosphere.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/sync.js"></script>
+    <script src="js/crypto.js"></script>
+    <script src="js/seed.js"></script>
+    <script src="js/store.js"></script>
+    <script src="js/security.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/admin.js"></script>
+    <script src="js/brand.js"></script>
+</body>
+</html>

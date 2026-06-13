@@ -2,7 +2,6 @@
     "use strict";
 
     var doc = root.document;
-    var state = { tab: "streamers" };
     var lockTimer = null;
     var publishTimer = null;
     var dirtyArmed = false;
@@ -53,7 +52,7 @@
                 input.value = "";
                 if (res.ok) {
                     setMsg(msg, "", "muted");
-                    enterDash();
+                    root.location.href = "admin-streamers";
                 } else if (res.locked) {
                     refreshLockUi();
                 } else {
@@ -103,56 +102,17 @@
         if (kind) { node.classList.add("form-msg--" + kind); }
     }
 
-    function enterDash() {
-        show($("#admin-login"), false);
-        show($("#admin-dash"), true);
-        var pk = $("#publish-key");
-        if (pk && !pk.value.trim()) {
-            try {
-                var saved = root.localStorage.getItem("olrd.pubkey") || "";
-                if (saved) { pk.value = saved; }
-            } catch (e) {}
-        }
-        switchTab(state.tab);
-        renderStreamers();
-        renderBook();
-        renderHistory();
-        loadStreamerStatus();
-        if (!statusTimer) { statusTimer = root.setInterval(loadStreamerStatus, 60000); }
-        if (lockTimer) { root.clearInterval(lockTimer); lockTimer = null; }
-        clearDirty();
-        dirtyArmed = false;
-        root.setTimeout(function () { dirtyArmed = true; }, 500);
-    }
-
-    function leaveDash() {
-        auth().endSession();
-        dirtyArmed = false;
-        clearDirty();
-        if (statusTimer) { root.clearInterval(statusTimer); statusTimer = null; }
-        show($("#admin-dash"), false);
-        show($("#admin-login"), true);
-        var input = $("#login-pass");
-        if (input) { input.value = ""; input.focus(); }
-        refreshLockUi();
-    }
-
-    function bindTabs() {
-        $all("[data-tab]").forEach(function (btn) {
-            btn.addEventListener("click", function () { switchTab(btn.getAttribute("data-tab")); });
-        });
+    function bindSharedChrome() {
         var logout = $("#logout-btn");
-        if (logout) { logout.addEventListener("click", leaveDash); }
-    }
-
-    function switchTab(name) {
-        state.tab = name;
-        $all("[data-tab]").forEach(function (btn) {
-            btn.classList.toggle("is-active", btn.getAttribute("data-tab") === name);
-        });
-        ["streamers", "story", "security"].forEach(function (key) {
-            show($("#tab-" + key), key === name);
-        });
+        if (logout) {
+            logout.addEventListener("click", function () {
+                if (statusTimer) { root.clearInterval(statusTimer); statusTimer = null; }
+                auth().endSession();
+                root.location.href = "admin";
+            });
+        }
+        var saveBtn = $("#save-snapshot-btn");
+        if (saveBtn) { saveBtn.addEventListener("click", saveSnapshot); }
     }
 
     var statusCache = {};
@@ -237,7 +197,7 @@
         Promise.all(streamers.map(function (s) {
             return fetchStatus(s.username).then(function (st) { statusCache[s.username] = st; });
         })).then(function () {
-            if (dashVisible() && !doc.querySelector(".is-dragging")) { renderStreamers(); }
+            if (!doc.querySelector(".is-dragging")) { renderStreamers(); }
         });
     }
 
@@ -618,8 +578,6 @@
     }
 
     function bindHistory() {
-        var saveBtn = $("#save-snapshot-btn");
-        if (saveBtn) { saveBtn.addEventListener("click", saveSnapshot); }
         ["#history-streamers", "#history-book"].forEach(function (sel) {
             var listEl = $(sel);
             if (!listEl) { return; }
@@ -631,41 +589,62 @@
         });
     }
 
-    function dashVisible() {
-        var dash = $("#admin-dash");
-        return dash && !dash.classList.contains("is-hidden");
+    function pageMode() {
+        return (doc.body && doc.body.getAttribute("data-admin")) || "login";
     }
 
-    function boot() {
-        if (!$("#admin-root")) { return; }
+    /* ---- /admin : the login gate. Already signed in -> straight to the dash. ---- */
+    function bootLogin() {
+        if (!$("#admin-login")) { return; }
         bindLogin();
-        bindTabs();
-        bindStreamers();
-        bindSecurity();
-        bindPublish();
-        bindHistory();
+        store().init().then(function () {
+            store().dropStaleDraft();
+            if (auth().hasSession()) { root.location.replace("admin-streamers"); }
+        });
+    }
+
+    /* ---- /admin-streamers | /admin-book | /admin-security : guarded section pages ---- */
+    function bootSection(section) {
+        if (!$("#admin-root")) { return; }
+        if (!auth().hasSession()) { root.location.replace("admin"); return; }
+
+        bindSharedChrome();
+        if (section === "streamers") { bindStreamers(); }
+        else if (section === "security") { bindSecurity(); bindPublish(); bindHistory(); }
+        /* the book section wires itself up inside renderBook() */
+
         store().subscribe(function () {
-            if (dashVisible()) { renderStreamers(); renderBook(); }
+            renderStreamers();   // each render no-ops if its section isn't on this page
+            renderBook();
             autoPublish();
             markDirty();
         });
         root.OLRD.i18n.subscribe(function () {
-            if (dashVisible()) { renderStreamers(); renderBook(); }
+            renderStreamers();
+            renderBook();
         });
+
         store().init().then(function () {
             store().dropStaleDraft();
-            var cloudOn = !!(root.OLRD.sync && root.OLRD.sync.available());
-            var keyReady = !!publishKeyValue();
-            if (auth().hasSession() && (keyReady || !cloudOn)) {
-                enterDash();
-            } else {
-                show($("#admin-dash"), false);
-                show($("#admin-login"), true);
-                if (auth().hasSession() && cloudOn && !keyReady) {
-                    setMsg($("#login-msg"), t("msg.loginForPublish"), "muted");
-                }
+            if (!auth().hasSession()) { root.location.replace("admin"); return; }
+            renderStreamers();
+            renderBook();
+            if (section === "streamers") {
+                loadStreamerStatus();
+                if (!statusTimer) { statusTimer = root.setInterval(loadStreamerStatus, 60000); }
+            } else if (section === "security") {
+                renderHistory();
             }
+            clearDirty();
+            dirtyArmed = false;
+            root.setTimeout(function () { dirtyArmed = true; }, 500);
         });
+    }
+
+    function boot() {
+        var mode = pageMode();
+        if (mode === "login") { bootLogin(); }
+        else { bootSection(mode); }
     }
 
     if (doc.readyState === "loading") {
