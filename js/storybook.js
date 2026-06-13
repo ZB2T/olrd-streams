@@ -81,10 +81,24 @@
             '</div>';
         ui().mountReveal();
         var open = stage.querySelector("[data-open-book]");
-        if (open) { open.addEventListener("click", openBook); }
+        if (open) {
+            open.addEventListener("click", openBook);
+            if (b.pdf) {
+                open.addEventListener("pointerenter", prefetchPdf);
+                open.addEventListener("focus", prefetchPdf);
+                open.addEventListener("touchstart", prefetchPdf, { passive: true });
+            }
+        }
     }
 
-    var pdfBook = { doc: null, page: 1, total: 0, turning: false, cache: {}, loading: null };
+    /* ============================================================
+       Real paper flip-book reader (single PDF, two-page spread)
+       ============================================================ */
+    var pdfBook = {
+        doc: null, total: 0, left: 1, per: 2, turning: false,
+        img: {}, pend: {}, aspect: 0.707, loading: null, pdfId: null,
+        resize: null, rt: null
+    };
 
     function ensurePdfJs() {
         if (root.pdfjsLib) { return Promise.resolve(root.pdfjsLib); }
@@ -111,83 +125,236 @@
         return bytes;
     }
 
-    function pageHost() { return stage.querySelector("[data-page]"); }
+    function perSpread() { return (root.innerWidth || 1024) < 760 ? 1 : 2; }
 
-    function getPageCanvas(num) {
-        if (pdfBook.cache[num]) { return Promise.resolve(pdfBook.cache[num]); }
-        return pdfBook.doc.getPage(num).then(function (page) {
-            var scale = (root.devicePixelRatio && root.devicePixelRatio > 1) ? 2 : 1.7;
+    function pageSrc(num) {
+        if (!pdfBook.doc || num < 1 || num > pdfBook.total) { return Promise.resolve(null); }
+        if (pdfBook.img[num]) { return Promise.resolve(pdfBook.img[num]); }
+        if (pdfBook.pend[num]) { return pdfBook.pend[num]; }
+        var p = pdfBook.doc.getPage(num).then(function (page) {
+            var base = page.getViewport({ scale: 1 });
+            if (base.width > 0) { pdfBook.aspect = base.width / base.height; }
+            var scale = Math.max(1, Math.min(3, 1180 / base.width));
             var vp = page.getViewport({ scale: scale });
             var canvas = doc.createElement("canvas");
-            canvas.className = "book-pdf-canvas";
             canvas.width = Math.floor(vp.width);
             canvas.height = Math.floor(vp.height);
-            return page.render({ canvasContext: canvas.getContext("2d"), viewport: vp }).promise.then(function () {
-                pdfBook.cache[num] = canvas;
-                return canvas;
+            return page.render({ canvasContext: canvas.getContext("2d", { alpha: false }), viewport: vp }).promise.then(function () {
+                var url = canvas.toDataURL("image/jpeg", 0.92);
+                pdfBook.img[num] = url;
+                canvas.width = 1; canvas.height = 1;
+                return url;
             });
+        }).catch(function () { return null; });
+        pdfBook.pend[num] = p;
+        return p;
+    }
+
+    function leaf(side) { return stage ? stage.querySelector('[data-leaf="' + side + '"]') : null; }
+
+    function fillLeaf(el, num) {
+        if (!el) { return; }
+        el.setAttribute("data-want", num ? String(num) : "");
+        if (!num || num < 1 || num > pdfBook.total) {
+            el.classList.add("is-blank");
+            el.innerHTML = '<span class="book-leaf__sheen" aria-hidden="true"></span>';
+            return;
+        }
+        el.classList.remove("is-blank");
+        pageSrc(num).then(function (url) {
+            if (el.getAttribute("data-want") !== String(num)) { return; }
+            if (url) {
+                el.innerHTML = '<img class="book-leaf__img" src="' + url + '" alt="" draggable="false">' +
+                               '<span class="book-leaf__sheen" aria-hidden="true"></span>';
+            }
         });
     }
 
-    function placeCanvas(canvas, num) {
-        var host = pageHost();
-        if (!host) { return; }
-        host.innerHTML = "";
-        var sheet = doc.createElement("div");
-        sheet.className = "book-page__sheet book-page__sheet--flip";
-        sheet.appendChild(canvas);
-        var folio = doc.createElement("span");
-        folio.className = "book-page__folio";
-        folio.textContent = num + " / " + pdfBook.total;
-        sheet.appendChild(folio);
-        host.appendChild(sheet);
+    function buildFace(num, cls) {
+        var face = doc.createElement("div");
+        face.className = "book-face " + cls;
+        pageSrc(num).then(function (url) {
+            if (url) {
+                face.innerHTML = '<img class="book-leaf__img" src="' + url + '" alt="" draggable="false">' +
+                                 '<span class="book-face__shade" aria-hidden="true"></span>';
+            } else {
+                face.classList.add("is-blank");
+                face.innerHTML = '<span class="book-face__shade" aria-hidden="true"></span>';
+            }
+        });
+        return face;
     }
 
-    function preloadAround() {
-        [pdfBook.page + 1, pdfBook.page - 1].forEach(function (n) {
-            if (n >= 1 && n <= pdfBook.total && !pdfBook.cache[n]) { getPageCanvas(n).catch(function () {}); }
+    function sizeBook() {
+        var wrap = stage.querySelector(".book-viewport");
+        var b3 = stage.querySelector("[data-book3d]");
+        if (!wrap || !b3) { return; }
+        var per = pdfBook.per;
+        var availW = Math.max(220, wrap.clientWidth - 6);
+        var availH = Math.min((root.innerHeight || 800) * 0.78, 780);
+        var pageH = availH;
+        var pageW = pageH * pdfBook.aspect;
+        var totalW = pageW * per;
+        if (totalW > availW) {
+            var k = availW / totalW;
+            pageW = pageW * k; pageH = pageH * k; totalW = availW;
+        }
+        b3.style.width = Math.round(totalW) + "px";
+        b3.style.height = Math.round(pageH) + "px";
+        b3.style.setProperty("--pw", Math.round(pageW) + "px");
+        b3.style.setProperty("--ph", Math.round(pageH) + "px");
+    }
+
+    function canFlip(dir) {
+        if (!pdfBook.doc) { return false; }
+        var per = pdfBook.per, L = pdfBook.left;
+        if (dir > 0) { return (L + per) <= pdfBook.total; }
+        return (L - per) >= 1;
+    }
+
+    function updateEdges() {
+        var el = stage.querySelector(".book-edge--left");
+        var er = stage.querySelector(".book-edge--right");
+        if (!el || !er) { return; }
+        var total = pdfBook.total || 1;
+        var before = pdfBook.left - 1;
+        var after = total - (pdfBook.left + (pdfBook.per === 2 ? 1 : 0));
+        el.style.width = Math.max(0, Math.min(26, before / total * 32)) + "px";
+        er.style.width = Math.max(0, Math.min(26, after / total * 32)) + "px";
+        el.style.opacity = before > 0 ? "1" : "0";
+        er.style.opacity = after > 0 ? "1" : "0";
+    }
+
+    function updatePager() {
+        var c = stage.querySelector("[data-count]");
+        if (c) {
+            var L = pdfBook.left;
+            var label = (pdfBook.per === 2 && (L + 1) <= pdfBook.total) ? (L + "–" + (L + 1)) : String(L);
+            c.textContent = label + " / " + pdfBook.total;
+        }
+        ui().$all("[data-flip]", stage).forEach(function (el) {
+            el.disabled = !canFlip(parseInt(el.getAttribute("data-flip"), 10));
         });
     }
 
-    function updatePdfPager() {
-        var countEl = stage.querySelector("[data-count]");
-        if (countEl) { countEl.textContent = pdfBook.page + " / " + pdfBook.total; }
-        ui().$all('[data-flip]', stage).forEach(function (el) {
-            var dir = parseInt(el.getAttribute("data-flip"), 10);
-            el.disabled = (dir > 0) ? (pdfBook.page >= pdfBook.total) : (pdfBook.page <= 1);
+    function preload() {
+        [pdfBook.left - 2, pdfBook.left - 1, pdfBook.left, pdfBook.left + 1, pdfBook.left + 2, pdfBook.left + 3].forEach(function (n) {
+            if (n >= 1 && n <= pdfBook.total && !pdfBook.img[n] && !pdfBook.pend[n]) { pageSrc(n).catch(function () {}); }
         });
     }
 
-    function flipPdf(dir) {
-        if (pdfBook.turning || !pdfBook.doc) { return; }
-        var next = pdfBook.page + dir;
-        if (next < 1 || next > pdfBook.total) { return; }
-        var pageEl = pageHost();
-        if (!pageEl) { return; }
-        pdfBook.turning = true;
-        getPageCanvas(next).then(function (canvas) {
-            pageEl.classList.add(dir > 0 ? "is-turn-next" : "is-turn-prev");
-            root.setTimeout(function () {
-                pdfBook.page = next;
-                placeCanvas(canvas, next);
-                pageEl.classList.remove("is-turn-next", "is-turn-prev");
-                pageEl.classList.add(dir > 0 ? "is-enter-next" : "is-enter-prev");
-                updatePdfPager();
-                preloadAround();
+    function paintSpread() {
+        var b3 = stage.querySelector("[data-book3d]");
+        if (b3) { b3.classList.toggle("is-single", pdfBook.per === 1); }
+        fillLeaf(leaf("left"), pdfBook.left);
+        fillLeaf(leaf("right"), pdfBook.per === 2 ? (pdfBook.left + 1) : null);
+        updateEdges();
+        updatePager();
+    }
+
+    function flip(dir) {
+        if (pdfBook.turning || !pdfBook.doc || !canFlip(dir)) { return; }
+        var per = pdfBook.per;
+        var L = pdfBook.left;
+        var leftEl = leaf("left"), rightEl = leaf("right");
+
+        /* ---- single page (mobile): rotate the leaf around its spine ---- */
+        if (per === 1) {
+            var nL = L + dir;
+            pdfBook.turning = true;
+            pageSrc(nL).then(function () {
+                leftEl.classList.add(dir > 0 ? "is-out-fwd" : "is-out-back");
                 root.setTimeout(function () {
-                    pageEl.classList.remove("is-enter-next", "is-enter-prev");
-                    pdfBook.turning = false;
-                }, 260);
-            }, 230);
-        }).catch(function () { pdfBook.turning = false; });
+                    pdfBook.left = nL;
+                    fillLeaf(leftEl, nL);
+                    leftEl.classList.remove("is-out-fwd", "is-out-back");
+                    leftEl.classList.add(dir > 0 ? "is-in-fwd" : "is-in-back");
+                    updateEdges(); updatePager(); preload();
+                    root.setTimeout(function () {
+                        leftEl.classList.remove("is-in-fwd", "is-in-back");
+                        pdfBook.turning = false;
+                    }, 300);
+                }, 250);
+            });
+            return;
+        }
+
+        /* ---- two-page spread: 3D sheet turn around the centre spine ---- */
+        var flips = stage.querySelector("[data-flips]");
+        if (!flips) { return; }
+        pdfBook.turning = true;
+
+        var frontN, backN, newL;
+        var sheet = doc.createElement("div");
+        sheet.className = "book-sheet";
+
+        if (dir > 0) {
+            frontN = L + 1;            // old right page (sheet front)
+            backN = L + 2;             // new left page (sheet back)
+            newL = L + 2;
+            fillLeaf(rightEl, L + 3);  // reveal the next right page underneath
+            sheet.classList.add("book-sheet--right");
+        } else {
+            frontN = L;                // old left page (sheet front)
+            backN = L - 1;             // new right page (sheet back)
+            newL = L - 2;
+            fillLeaf(leftEl, L - 2);   // reveal the new left page underneath
+            sheet.classList.add("book-sheet--left");
+        }
+
+        sheet.appendChild(buildFace(frontN, "book-face--front"));
+        sheet.appendChild(buildFace(backN, "book-face--back"));
+        flips.appendChild(sheet);
+        void sheet.offsetWidth; // commit start state before animating
+        sheet.classList.add(dir > 0 ? "is-turning-fwd" : "is-turning-back");
+
+        root.setTimeout(function () {
+            pdfBook.left = newL < 1 ? 1 : newL;
+            if (sheet.parentNode) { sheet.parentNode.removeChild(sheet); }
+            paintSpread();
+            preload();
+            pdfBook.turning = false;
+        }, 720);
+    }
+
+    function bindResize() {
+        if (pdfBook.resize) { root.removeEventListener("resize", pdfBook.resize); }
+        pdfBook.resize = function () {
+            if (pdfBook.rt) { root.clearTimeout(pdfBook.rt); }
+            pdfBook.rt = root.setTimeout(function () {
+                if (!stage || !stage.querySelector("[data-book3d]")) { return; }
+                var np = perSpread();
+                if (np !== pdfBook.per) {
+                    if (np === 2 && pdfBook.left % 2 === 0) { pdfBook.left -= 1; }
+                    if (pdfBook.left < 1) { pdfBook.left = 1; }
+                    pdfBook.per = np;
+                }
+                sizeBook();
+                paintSpread();
+            }, 180);
+        };
+        root.addEventListener("resize", pdfBook.resize);
     }
 
     function startPdf(id) {
         var sync = root.OLRD.sync;
         function fail() {
-            var h = pageHost();
-            if (h) { h.innerHTML = '<div class="book-page__sheet book-page__sheet--flip"><div class="book-pdf-status">' + ui().escapeHtml(t("book.pdfMissing")) + '</div></div>'; }
+            var vp = stage.querySelector(".book-viewport");
+            if (vp) { vp.innerHTML = '<div class="book-pdf-status">' + ui().escapeHtml(t("book.pdfMissing")) + '</div>'; }
         }
+        function ready() {
+            pdfBook.per = perSpread();
+            if (pdfBook.left < 1) { pdfBook.left = 1; }
+            if (pdfBook.per === 2 && pdfBook.left % 2 === 0) { pdfBook.left -= 1; }
+            if (pdfBook.left > pdfBook.total) { pdfBook.left = 1; }
+            pageSrc(pdfBook.left).then(function () {
+                sizeBook();
+                paintSpread();
+                preload();
+                pdfBook.turning = false;
+            });
+        }
+        if (pdfBook.doc && pdfBook.pdfId === id) { ready(); return; }
         if (!(sync && sync.available && sync.available() && sync.fetchBookFile)) { fail(); return; }
         Promise.all([ensurePdfJs(), sync.fetchBookFile(id)]).then(function (res) {
             var lib = res[0];
@@ -196,15 +363,32 @@
             return lib.getDocument({ data: base64ToBytes(row.data) }).promise;
         }).then(function (pdf) {
             pdfBook.doc = pdf;
+            pdfBook.pdfId = id;
             pdfBook.total = pdf.numPages;
-            pdfBook.cache = {};
-            if (pdfBook.page > pdfBook.total || pdfBook.page < 1) { pdfBook.page = 1; }
-            return getPageCanvas(pdfBook.page);
-        }).then(function (canvas) {
-            placeCanvas(canvas, pdfBook.page);
-            updatePdfPager();
-            preloadAround();
+            pdfBook.img = {};
+            pdfBook.pend = {};
+            ready();
         }).catch(fail);
+    }
+
+    function prefetchPdf() {
+        var b = book();
+        if (!b.pdf || pdfBook.prefetching) { return; }
+        if (pdfBook.doc && pdfBook.pdfId === b.pdf) { return; }
+        var sync = root.OLRD.sync;
+        if (!(sync && sync.available && sync.available() && sync.fetchBookFile)) { return; }
+        pdfBook.prefetching = true;
+        Promise.all([ensurePdfJs(), sync.fetchBookFile(b.pdf)]).then(function (res) {
+            if (!res[1] || !res[1].data) { throw new Error("no data"); }
+            return res[0].getDocument({ data: base64ToBytes(res[1].data) }).promise;
+        }).then(function (pdf) {
+            pdfBook.doc = pdf;
+            pdfBook.pdfId = b.pdf;
+            pdfBook.total = pdf.numPages;
+            pdfBook.prefetching = false;
+            pageSrc(1).catch(function () {});
+            pageSrc(2).catch(function () {});
+        }).catch(function () { pdfBook.prefetching = false; });
     }
 
     function renderPdfBook() {
@@ -216,14 +400,19 @@
                     '<span class="book-open__title">' + ui().escapeHtml(b.title) + '</span>' +
                     '<span class="book-open__bar-spacer" aria-hidden="true"></span>' +
                 '</div>' +
-                '<div class="book-flip">' +
-                    '<button type="button" class="book-flip__edge book-flip__edge--prev" data-flip="-1" aria-label="' + ui().escapeHtml(t("book.prev")) + '"><span>‹</span></button>' +
-                    '<div class="book-spread book-spread--single">' +
-                        '<article class="book-page book-page--pdf" data-page>' +
-                            '<div class="book-page__sheet book-page__sheet--flip"><div class="book-pdf-status">' + ui().escapeHtml(t("book.pdfLoading")) + '</div></div>' +
-                        '</article>' +
+                '<div class="book-reader">' +
+                    '<button type="button" class="book-nav book-nav--prev" data-flip="-1" aria-label="' + ui().escapeHtml(t("book.prev")) + '"><span>‹</span></button>' +
+                    '<div class="book-viewport">' +
+                        '<div class="book-3d" data-book3d>' +
+                            '<div class="book-edge book-edge--left" aria-hidden="true"></div>' +
+                            '<div class="book-edge book-edge--right" aria-hidden="true"></div>' +
+                            '<div class="book-leaf book-leaf--left" data-leaf="left"></div>' +
+                            '<div class="book-leaf book-leaf--right" data-leaf="right"></div>' +
+                            '<div class="book-spine" aria-hidden="true"></div>' +
+                            '<div class="book-flips" data-flips aria-hidden="true"></div>' +
+                        '</div>' +
                     '</div>' +
-                    '<button type="button" class="book-flip__edge book-flip__edge--next" data-flip="1" aria-label="' + ui().escapeHtml(t("book.next")) + '"><span>›</span></button>' +
+                    '<button type="button" class="book-nav book-nav--next" data-flip="1" aria-label="' + ui().escapeHtml(t("book.next")) + '"><span>›</span></button>' +
                 '</div>' +
                 '<div class="book-pager">' +
                     '<button type="button" class="book-pager__btn" data-flip="-1">' + turnLabel(-1) + '</button>' +
@@ -234,8 +423,12 @@
         var close = stage.querySelector("[data-close-book]");
         if (close) { close.addEventListener("click", closeBook); }
         ui().$all('[data-flip]', stage).forEach(function (el) {
-            el.addEventListener("click", function () { flipPdf(parseInt(el.getAttribute("data-flip"), 10)); });
+            el.addEventListener("click", function () { flip(parseInt(el.getAttribute("data-flip"), 10)); });
         });
+        var lEl = leaf("left"), rEl = leaf("right");
+        if (rEl) { rEl.addEventListener("click", function () { flip(1); }); }
+        if (lEl) { lEl.addEventListener("click", function () { flip(pdfBook.per === 1 ? 1 : -1); }); }
+        bindResize();
         startPdf(b.pdf);
     }
 
@@ -368,7 +561,13 @@
         state.open = true;
         state.index = 0;
         if (book().pdf) {
-            renderPdfBook();
+            var cover = stage.querySelector(".book-cover");
+            if (cover) {
+                cover.classList.add("is-opening");
+                root.setTimeout(renderPdfBook, 600);
+            } else {
+                renderPdfBook();
+            }
             try { root.history.replaceState(null, "", "#read"); } catch (e) {}
             return;
         }
@@ -380,6 +579,7 @@
 
     function closeBook() {
         state.open = false;
+        if (pdfBook.resize) { root.removeEventListener("resize", pdfBook.resize); pdfBook.resize = null; }
         renderCover();
         try { root.history.replaceState(null, "", root.location.pathname); } catch (e) {}
     }
@@ -399,8 +599,8 @@
             if (!state.open) { return; }
             if (e.key === "Escape") { closeBook(); return; }
             var isPdf = !!book().pdf;
-            if (e.key === "ArrowRight") { if (isPdf) { flipPdf(1); } else { turn(1); } }
-            else if (e.key === "ArrowLeft") { if (isPdf) { flipPdf(-1); } else { turn(-1); } }
+            if (e.key === "ArrowRight") { if (isPdf) { flip(1); } else { turn(1); } }
+            else if (e.key === "ArrowLeft") { if (isPdf) { flip(-1); } else { turn(-1); } }
         });
         root.OLRD.store.subscribe(refresh);
         root.OLRD.i18n.subscribe(refresh);

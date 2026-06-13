@@ -415,77 +415,157 @@
 
 .book-open__bar-spacer { width: 88px; flex-shrink: 0; }
 
-.book-flip {
+/* ===== Real paper flip-book reader ===== */
+.book-open--flip { max-width: 1200px; }
+
+.book-reader {
     display: flex;
-    align-items: stretch;
-    position: relative;
-    min-height: 62vh;
-    background: rgba(10, 8, 9, 0.32);
+    align-items: center;
+    gap: 4px;
+    padding: clamp(18px, 3vw, 44px) clamp(4px, 1.4vw, 16px);
+    background:
+        radial-gradient(120% 78% at 50% 10%, rgba(74, 26, 18, 0.2), transparent 62%),
+        rgba(8, 6, 7, 0.34);
 }
 
-.book-flip__edge {
-    flex: 0 0 9%;
-    min-width: 46px;
+.book-nav {
+    flex: 0 0 auto;
+    width: clamp(40px, 5vw, 60px);
+    align-self: stretch;
     background: transparent;
     border: 0;
     cursor: pointer;
     color: var(--ash-2);
-    font-size: 2.4rem;
+    font-size: clamp(2rem, 3.4vw, 3rem);
     line-height: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background 0.25s var(--ease), color 0.25s var(--ease);
+    transition: color 0.25s var(--ease), background 0.25s var(--ease);
 }
-.book-flip__edge:hover:not(:disabled) { background: rgba(178, 20, 32, 0.12); color: var(--crimson-2); }
-.book-flip__edge:disabled { opacity: 0.2; cursor: default; }
+.book-nav:hover:not(:disabled) { color: var(--crimson-2); background: rgba(178, 20, 32, 0.08); }
+.book-nav:disabled { opacity: 0.16; cursor: default; }
 
-.book-spread--single {
+.book-viewport {
     flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: clamp(14px, 2.5vw, 30px);
-    perspective: 2400px;
     min-width: 0;
-}
-
-.book-page--pdf {
     display: flex;
     align-items: center;
     justify-content: center;
-    transform-style: preserve-3d;
-    max-width: 100%;
 }
 
-.book-page__sheet--flip {
+.book-3d {
     position: relative;
-    display: inline-block;
-    min-height: 0;
-    padding: 0;
-    background: #efe7d4;
-    box-shadow: 0 26px 64px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(0, 0, 0, 0.25);
-    backface-visibility: hidden;
-}
-.book-page__sheet--flip::before, .book-page__sheet--flip::after { display: none; }
-
-.book-pdf-canvas {
-    display: block;
-    max-width: 100%;
-    max-height: 70vh;
-    width: auto;
-    height: auto;
+    margin: 0 auto;
+    perspective: 2800px;
+    transform-style: preserve-3d;
+    filter: drop-shadow(0 30px 50px rgba(0, 0, 0, 0.6));
 }
 
-.book-page--pdf .book-page__folio {
+.book-leaf {
     position: absolute;
-    bottom: 8px;
-    right: 12px;
-    font-family: var(--mono);
-    font-size: 11px;
-    color: rgba(40, 30, 20, 0.55);
-    z-index: 3;
+    top: 0;
+    height: 100%;
+    width: var(--pw, 50%);
+    overflow: hidden;
+    background: linear-gradient(180deg, #f6f0e2, #ece3cf);
+    cursor: pointer;
 }
+.book-leaf--left { left: 0; border-radius: 5px 0 0 5px; box-shadow: inset -22px 0 30px -20px rgba(58, 38, 16, 0.55); }
+.book-leaf--right { right: 0; border-radius: 0 5px 5px 0; box-shadow: inset 22px 0 30px -20px rgba(58, 38, 16, 0.55); }
+.book-3d.is-single .book-leaf--left { left: 0; width: 100%; border-radius: 5px; box-shadow: 0 0 0 1px rgba(58, 38, 16, 0.2); }
+.book-3d.is-single .book-leaf--right { display: none; }
+
+.book-leaf__img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    background: #fff;
+}
+.book-leaf__sheen { position: absolute; inset: 0; pointer-events: none; }
+.book-leaf--left .book-leaf__sheen { background: linear-gradient(90deg, transparent 80%, rgba(44, 28, 10, 0.16)); }
+.book-leaf--right .book-leaf__sheen { background: linear-gradient(270deg, transparent 80%, rgba(44, 28, 10, 0.16)); }
+.book-leaf.is-blank { background: linear-gradient(180deg, #ece3cf, #ddd0b4); }
+.book-leaf.is-blank .book-leaf__img { display: none; }
+
+.book-spine {
+    position: absolute;
+    top: -1%; bottom: -1%; left: 50%;
+    width: 30px;
+    transform: translateX(-50%);
+    pointer-events: none;
+    z-index: 4;
+    background: linear-gradient(90deg,
+        rgba(40, 24, 10, 0) 0%, rgba(40, 24, 10, 0.32) 40%,
+        rgba(16, 8, 3, 0.52) 50%, rgba(40, 24, 10, 0.32) 60%, rgba(40, 24, 10, 0) 100%);
+}
+.book-3d.is-single .book-spine { display: none; }
+
+.book-edge {
+    position: absolute;
+    top: 2.5%; bottom: 2.5%;
+    width: 14px;
+    z-index: 2;
+    pointer-events: none;
+    background: repeating-linear-gradient(180deg, #f1e8d4 0 1px, #cabd9c 1px 3px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.34);
+    transition: width 0.35s var(--ease), opacity 0.35s var(--ease);
+}
+.book-edge--left { left: -4px; border-radius: 3px 0 0 3px; transform: skewY(7deg); transform-origin: right center; }
+.book-edge--right { right: -4px; border-radius: 0 3px 3px 0; transform: skewY(-7deg); transform-origin: left center; }
+.book-3d.is-single .book-edge { display: none; }
+
+.book-flips { position: absolute; inset: 0; z-index: 6; pointer-events: none; transform-style: preserve-3d; }
+
+.book-sheet {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: var(--pw, 50%);
+    transform-style: preserve-3d;
+    will-change: transform;
+}
+.book-sheet--right { left: 50%; transform-origin: left center; }
+.book-sheet--left { left: 0; transform-origin: right center; }
+
+.book-face {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    background: linear-gradient(180deg, #f6f0e2, #ece3cf);
+}
+.book-face .book-leaf__img { width: 100%; height: 100%; object-fit: contain; background: #fff; }
+.book-face--front { transform: rotateY(0deg); border-radius: 0 5px 5px 0; box-shadow: inset 22px 0 30px -20px rgba(58, 38, 16, 0.5); }
+.book-face--back { transform: rotateY(180deg); border-radius: 0 5px 5px 0; box-shadow: inset 22px 0 30px -20px rgba(58, 38, 16, 0.5); }
+.book-sheet--left .book-face--front { border-radius: 5px 0 0 5px; box-shadow: inset -22px 0 30px -20px rgba(58, 38, 16, 0.5); }
+.book-sheet--left .book-face--back { border-radius: 5px 0 0 5px; box-shadow: inset -22px 0 30px -20px rgba(58, 38, 16, 0.5); }
+
+.book-face__shade { position: absolute; inset: 0; pointer-events: none; opacity: 0; }
+.book-face--front .book-face__shade { background: linear-gradient(90deg, rgba(18, 9, 3, 0.45), rgba(18, 9, 3, 0) 64%); }
+.book-face--back .book-face__shade { background: linear-gradient(270deg, rgba(18, 9, 3, 0.45), rgba(18, 9, 3, 0) 64%); }
+
+.book-sheet--right.is-turning-fwd { animation: sheetFwd 0.72s cubic-bezier(0.46, 0.03, 0.3, 1) forwards; }
+.book-sheet--left.is-turning-back { animation: sheetBack 0.72s cubic-bezier(0.46, 0.03, 0.3, 1) forwards; }
+.is-turning-fwd .book-face__shade,
+.is-turning-back .book-face__shade { animation: sheetShade 0.72s ease-in-out forwards; }
+
+@keyframes sheetFwd { from { transform: rotateY(0deg); } to { transform: rotateY(-180deg); } }
+@keyframes sheetBack { from { transform: rotateY(0deg); } to { transform: rotateY(180deg); } }
+@keyframes sheetShade { 0% { opacity: 0; } 50% { opacity: 1; } 100% { opacity: 0.12; } }
+
+/* single page (mobile): the leaf itself turns around its spine */
+.book-3d.is-single .book-leaf--left { transform-origin: left center; }
+.book-leaf--left.is-out-fwd { animation: leafOutFwd 0.25s var(--ease) forwards; }
+.book-leaf--left.is-in-fwd { animation: leafInFwd 0.3s var(--ease) both; }
+.book-leaf--left.is-out-back { animation: leafOutBack 0.25s var(--ease) forwards; }
+.book-leaf--left.is-in-back { animation: leafInBack 0.3s var(--ease) both; }
+@keyframes leafOutFwd { from { transform: rotateY(0); opacity: 1; } to { transform: rotateY(-96deg); opacity: 0.25; } }
+@keyframes leafInFwd { from { transform: rotateY(88deg); opacity: 0; } to { transform: rotateY(0); opacity: 1; } }
+@keyframes leafOutBack { from { transform: rotateY(0); opacity: 1; } to { transform: rotateY(96deg); opacity: 0.25; } }
+@keyframes leafInBack { from { transform: rotateY(-88deg); opacity: 0; } to { transform: rotateY(0); opacity: 1; } }
 
 .book-pdf-status {
     padding: 90px 30px;
@@ -495,17 +575,24 @@
     font-size: 1.05rem;
 }
 
-@media (max-width: 720px) {
-    .book-flip__edge { flex-basis: 12%; font-size: 1.8rem; }
-    .book-pdf-canvas { max-height: 60vh; }
+/* cover opening like a real hardcover */
+.book-cover.is-opening { pointer-events: none; animation: coverFade 0.6s var(--ease) forwards; }
+.book-cover.is-opening .book-vol { transform-origin: left center; animation: volOpen 0.6s cubic-bezier(0.5, 0.05, 0.3, 1) forwards; }
+@keyframes volOpen {
+    0% { transform: perspective(1700px) rotateY(-13deg); }
+    100% { transform: perspective(1700px) rotateY(-156deg); opacity: 0.2; }
+}
+@keyframes coverFade { 0% { opacity: 1; } 64% { opacity: 1; } 100% { opacity: 0; } }
+
+@media (max-width: 760px) {
+    .book-nav { width: 40px; font-size: 1.9rem; }
+    .book-reader { padding: 16px 2px; }
 }
 
-.book-page--pdf.is-turn-next .book-page__sheet { transform-origin: left center; animation: paperOutNext 0.23s var(--ease) forwards; }
-.book-page--pdf.is-enter-next .book-page__sheet { transform-origin: left center; animation: paperInNext 0.26s var(--ease) both; }
-.book-page--pdf.is-turn-prev .book-page__sheet { transform-origin: right center; animation: paperOutPrev 0.23s var(--ease) forwards; }
-.book-page--pdf.is-enter-prev .book-page__sheet { transform-origin: right center; animation: paperInPrev 0.26s var(--ease) both; }
-
-@keyframes paperOutNext { from { transform: rotateY(0); } to { transform: rotateY(-100deg); opacity: 0.3; } }
-@keyframes paperInNext { from { transform: rotateY(82deg); opacity: 0; } to { transform: rotateY(0); opacity: 1; } }
-@keyframes paperOutPrev { from { transform: rotateY(0); } to { transform: rotateY(100deg); opacity: 0.3; } }
-@keyframes paperInPrev { from { transform: rotateY(-82deg); opacity: 0; } to { transform: rotateY(0); opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+    .book-sheet--right.is-turning-fwd,
+    .book-sheet--left.is-turning-back,
+    .book-leaf--left.is-out-fwd, .book-leaf--left.is-in-fwd,
+    .book-leaf--left.is-out-back, .book-leaf--left.is-in-back,
+    .book-cover.is-opening .book-vol { animation-duration: 0.01s; }
+}
