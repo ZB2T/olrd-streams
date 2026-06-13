@@ -39,16 +39,6 @@
             iframe.setAttribute("title", label);
             player.innerHTML = "";
             player.appendChild(iframe);
-
-            // the embed is non-interactive (so the themed cursor shows over it);
-            // clicking the stream opens it on Kick for full controls.
-            var kickUrl = "https://kick.com/" + channel;
-            player.setAttribute("role", "link");
-            player.setAttribute("tabindex", "0");
-            player.setAttribute("aria-label", "Watch " + label + " on Kick");
-            function go() { try { root.open(kickUrl, "_blank", "noopener"); } catch (e) { root.location.href = kickUrl; } }
-            player.addEventListener("click", go);
-            player.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } });
         }
     }
 
