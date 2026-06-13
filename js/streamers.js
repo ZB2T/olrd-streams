@@ -33,6 +33,18 @@
     var ICON_MUTED = '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M11 4.5 6.2 8.5H3v7h3.2l4.8 4z"/><path d="M16.5 9.5l4 4m0-4l-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>';
     var ICON_SOUND = '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M11 4.5 6.2 8.5H3v7h3.2l4.8 4z"/><path d="M15.5 8.7a4.5 4.5 0 0 1 0 6.6M18 6a8 8 0 0 1 0 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>';
 
+    var EQ_BARS = '<i></i><i></i><i></i><i></i><i></i><i></i>';
+
+    function soundBar(name, on) {
+        var label = on ? t("card.soundOn") : t("card.soundOff");
+        return '<button type="button" class="stream-card__soundbar' + (on ? " is-on" : "") + '" data-sound="' + name + '"' +
+            ' aria-pressed="' + (on ? "true" : "false") + '" aria-label="' + ui().escapeHtml(t("card.sound")) + '" title="' + ui().escapeHtml(t("card.sound")) + '">' +
+                '<span class="stream-card__soundicon">' + (on ? ICON_SOUND : ICON_MUTED) + '</span>' +
+                '<span class="stream-card__eq" aria-hidden="true">' + EQ_BARS + '</span>' +
+                '<span class="stream-card__soundlabel">' + ui().escapeHtml(label) + '</span>' +
+            '</button>';
+    }
+
     function setCardSound(uname, on) {
         var card = grid ? grid.querySelector('.stream-card[data-name="' + uname + '"]') : null;
         if (!card) { return; }
@@ -40,7 +52,14 @@
         if (iframe) { iframe.src = "https://player.kick.com/" + uname + "?autoplay=true&muted=" + (on ? "false" : "true"); }
         card.classList.toggle("has-sound", on);
         var btn = card.querySelector("[data-sound]");
-        if (btn) { btn.classList.toggle("is-on", on); btn.innerHTML = on ? ICON_SOUND : ICON_MUTED; }
+        if (btn) {
+            btn.classList.toggle("is-on", on);
+            btn.setAttribute("aria-pressed", on ? "true" : "false");
+            var icon = btn.querySelector(".stream-card__soundicon");
+            if (icon) { icon.innerHTML = on ? ICON_SOUND : ICON_MUTED; }
+            var lbl = btn.querySelector(".stream-card__soundlabel");
+            if (lbl) { lbl.textContent = on ? t("card.soundOn") : t("card.soundOff"); }
+        }
     }
 
     function toggleSound(uname) {
@@ -69,7 +88,7 @@
                 '<div class="stream-card__frame">' +
                     frame +
                     '<span class="stream-card__guard"></span>' +
-                    '<button type="button" class="stream-card__sound' + (soundOn ? " is-on" : "") + '" data-sound="' + name + '" aria-label="' + ui().escapeHtml(t("card.sound")) + '" title="' + ui().escapeHtml(t("card.sound")) + '">' + (soundOn ? ICON_SOUND : ICON_MUTED) + '</button>' +
+                    soundBar(name, soundOn) +
                 '</div>' +
                 '<div class="stream-card__bar">' +
                     '<span class="stream-card__platform">KICK</span>' +
