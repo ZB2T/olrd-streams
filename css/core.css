@@ -172,11 +172,11 @@ body::after {
     z-index: 99990;
     min-width: 190px;
     padding: 7px;
-    background: rgba(14, 11, 12, 0.97);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    background: rgba(14, 11, 12, 0.62);
+    backdrop-filter: blur(16px) saturate(1.15);
+    -webkit-backdrop-filter: blur(16px) saturate(1.15);
     border: 1px solid var(--line-2);
-    box-shadow: 0 26px 60px rgba(0, 0, 0, 0.66), inset 0 0 0 1px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 26px 60px rgba(0, 0, 0, 0.6), inset 0 0 0 1px rgba(255, 255, 255, 0.04);
     opacity: 0;
     transform: scale(0.96) translateY(-4px);
     transform-origin: top left;
