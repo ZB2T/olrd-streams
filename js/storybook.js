@@ -67,7 +67,7 @@
         var b = book();
         stage.innerHTML = '' +
             '<div class="book-cover" data-reveal>' +
-                '<div class="book-vol">' +
+                '<div class="book-vol" data-open-book role="button" tabindex="0" aria-label="' + ui().escapeHtml(t("book.open")) + '">' +
                     '<div class="book-vol__face">' +
                         '<span class="book-vol__emblem"><img src="assets/logo.png" alt="" draggable="false"></span>' +
                         '<span class="book-vol__eyebrow">' + ui().escapeHtml(t("book.eyebrow")) + '</span>' +
@@ -76,13 +76,17 @@
                         '<span class="book-vol__rule"></span>' +
                         (b.author ? '<span class="book-vol__author">' + ui().escapeHtml(t("book.by")) + ' ' + ui().escapeHtml(b.author) + '</span>' : "") +
                     '</div>' +
+                    '<span class="book-vol__shine" aria-hidden="true"></span>' +
                 '</div>' +
-                '<button type="button" class="btn book-cover__open" data-open-book>' + ui().escapeHtml(t("book.open")) + '</button>' +
+                '<span class="book-cover__cue">' + ui().escapeHtml(t("book.openHint")) + '</span>' +
             '</div>';
         ui().mountReveal();
         var open = stage.querySelector("[data-open-book]");
         if (open) {
             open.addEventListener("click", openBook);
+            open.addEventListener("keydown", function (e) {
+                if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openBook(); }
+            });
             if (b.pdf) {
                 open.addEventListener("pointerenter", prefetchPdf);
                 open.addEventListener("focus", prefetchPdf);
@@ -212,19 +216,6 @@
         return (L - per) >= 1;
     }
 
-    function updateEdges() {
-        var el = stage.querySelector(".book-edge--left");
-        var er = stage.querySelector(".book-edge--right");
-        if (!el || !er) { return; }
-        var total = pdfBook.total || 1;
-        var before = pdfBook.left - 1;
-        var after = total - (pdfBook.left + (pdfBook.per === 2 ? 1 : 0));
-        el.style.width = Math.max(0, Math.min(26, before / total * 32)) + "px";
-        er.style.width = Math.max(0, Math.min(26, after / total * 32)) + "px";
-        el.style.opacity = before > 0 ? "1" : "0";
-        er.style.opacity = after > 0 ? "1" : "0";
-    }
-
     function updatePager() {
         var c = stage.querySelector("[data-count]");
         if (c) {
@@ -248,7 +239,6 @@
         if (b3) { b3.classList.toggle("is-single", pdfBook.per === 1); }
         fillLeaf(leaf("left"), pdfBook.left);
         fillLeaf(leaf("right"), pdfBook.per === 2 ? (pdfBook.left + 1) : null);
-        updateEdges();
         updatePager();
     }
 
@@ -269,7 +259,7 @@
                     fillLeaf(leftEl, nL);
                     leftEl.classList.remove("is-out-fwd", "is-out-back");
                     leftEl.classList.add(dir > 0 ? "is-in-fwd" : "is-in-back");
-                    updateEdges(); updatePager(); preload();
+                    updatePager(); preload();
                     root.setTimeout(function () {
                         leftEl.classList.remove("is-in-fwd", "is-in-back");
                         pdfBook.turning = false;
@@ -391,6 +381,33 @@
         }).catch(function () { pdfBook.prefetching = false; });
     }
 
+    function playCoverOpen() {
+        var b = book();
+        var reader = stage.querySelector(".book-reader");
+        if (!reader) { return; }
+        var b3 = stage.querySelector("[data-book3d]");
+        if (b3) { b3.classList.add("is-entering"); }
+        var ov = doc.createElement("div");
+        ov.className = "book-opening";
+        ov.innerHTML =
+            '<div class="book-opening__cover">' +
+                '<div class="book-opening__front">' +
+                    '<span class="book-vol__emblem"><img src="assets/logo.png" alt="" draggable="false"></span>' +
+                    '<span class="book-vol__eyebrow">' + ui().escapeHtml(t("book.eyebrow")) + '</span>' +
+                    '<h2 class="book-vol__title">' + ui().escapeHtml(b.title) + '</h2>' +
+                    (b.author ? '<span class="book-vol__author">' + ui().escapeHtml(t("book.by")) + ' ' + ui().escapeHtml(b.author) + '</span>' : "") +
+                '</div>' +
+                '<div class="book-opening__inside" aria-hidden="true"></div>' +
+            '</div>';
+        reader.appendChild(ov);
+        void ov.offsetWidth;
+        ov.classList.add("is-go");
+        root.setTimeout(function () {
+            if (ov.parentNode) { ov.parentNode.removeChild(ov); }
+            if (b3) { b3.classList.remove("is-entering"); }
+        }, 1150);
+    }
+
     function renderPdfBook() {
         var b = book();
         stage.innerHTML = '' +
@@ -401,23 +418,19 @@
                     '<span class="book-open__bar-spacer" aria-hidden="true"></span>' +
                 '</div>' +
                 '<div class="book-reader">' +
-                    '<button type="button" class="book-nav book-nav--prev" data-flip="-1" aria-label="' + ui().escapeHtml(t("book.prev")) + '"><span>‹</span></button>' +
                     '<div class="book-viewport">' +
                         '<div class="book-3d" data-book3d>' +
-                            '<div class="book-edge book-edge--left" aria-hidden="true"></div>' +
-                            '<div class="book-edge book-edge--right" aria-hidden="true"></div>' +
                             '<div class="book-leaf book-leaf--left" data-leaf="left"></div>' +
                             '<div class="book-leaf book-leaf--right" data-leaf="right"></div>' +
                             '<div class="book-spine" aria-hidden="true"></div>' +
                             '<div class="book-flips" data-flips aria-hidden="true"></div>' +
+                            '<button type="button" class="book-turn book-turn--prev" data-flip="-1" aria-label="' + ui().escapeHtml(t("book.prev")) + '"><span class="book-turn__corner" aria-hidden="true"></span></button>' +
+                            '<button type="button" class="book-turn book-turn--next" data-flip="1" aria-label="' + ui().escapeHtml(t("book.next")) + '"><span class="book-turn__corner" aria-hidden="true"></span></button>' +
                         '</div>' +
                     '</div>' +
-                    '<button type="button" class="book-nav book-nav--next" data-flip="1" aria-label="' + ui().escapeHtml(t("book.next")) + '"><span>›</span></button>' +
                 '</div>' +
                 '<div class="book-pager">' +
-                    '<button type="button" class="book-pager__btn" data-flip="-1">' + turnLabel(-1) + '</button>' +
                     '<span class="book-pager__count" data-count></span>' +
-                    '<button type="button" class="book-pager__btn" data-flip="1">' + turnLabel(1) + '</button>' +
                 '</div>' +
             '</div>';
         var close = stage.querySelector("[data-close-book]");
@@ -425,9 +438,6 @@
         ui().$all('[data-flip]', stage).forEach(function (el) {
             el.addEventListener("click", function () { flip(parseInt(el.getAttribute("data-flip"), 10)); });
         });
-        var lEl = leaf("left"), rEl = leaf("right");
-        if (rEl) { rEl.addEventListener("click", function () { flip(1); }); }
-        if (lEl) { lEl.addEventListener("click", function () { flip(pdfBook.per === 1 ? 1 : -1); }); }
         bindResize();
         startPdf(b.pdf);
     }
@@ -561,13 +571,8 @@
         state.open = true;
         state.index = 0;
         if (book().pdf) {
-            var cover = stage.querySelector(".book-cover");
-            if (cover) {
-                cover.classList.add("is-opening");
-                root.setTimeout(renderPdfBook, 600);
-            } else {
-                renderPdfBook();
-            }
+            renderPdfBook();
+            playCoverOpen();
             try { root.history.replaceState(null, "", "#read"); } catch (e) {}
             return;
         }
