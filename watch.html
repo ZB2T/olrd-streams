@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Watch — OLRD STREAMERS</title>
+    <meta name="description" content="Watch an OLRD broadcaster live on the official OLRD platform.">
+    <meta name="theme-color" content="#0a0a0a">
+    <link rel="icon" type="image/x-icon" href="assets/logo.ico">
+    <link rel="shortcut icon" href="assets/logo.ico">
+    <link rel="apple-touch-icon" href="assets/logo.png">
+    <link rel="preconnect" href="https://kick.com" crossorigin>
+    <link rel="preconnect" href="https://player.kick.com">
+    <meta property="og:title" content="OLRD STREAMERS — Live">
+    <meta property="og:image" content="https://zb2t.github.io/olrd-streams/assets/bg.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="preload" href="css/fonts.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="css/fonts.css"></noscript>
+    <link rel="stylesheet" href="css/core.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <script src="js/i18n.js"></script>
+</head>
+<body class="watch-page">
+    <div class="fog"></div>
+    <div class="grain"></div>
+
+    <header class="site-header">
+        <a class="brand" href="index.html">
+            <img class="brand__crest" src="assets/logo.png" alt="OLRD" data-admin-gate>
+            <span class="brand__text">OLRD <i>Streamers</i></span>
+        </a>
+        <nav class="site-nav">
+            <a class="nav-link" href="streamers.html" data-i18n="nav.streamers">Streamers</a>
+            <a class="nav-link" href="storybook.html" data-i18n="nav.story">Story Book</a>
+            <a class="nav-link" href="index.html" data-i18n="nav.home">Home</a>
+            <div class="lang-switch">
+                <button type="button" class="lang-btn" data-lang="en">EN</button>
+                <button type="button" class="lang-btn" data-lang="ar">ع</button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="watch-main">
+        <a class="watch-back" href="streamers.html" data-i18n="watch.back">← Back to wall</a>
+        <div class="watch-stage">
+            <div class="watch-player" id="watch-player">
+                <div class="watch-empty" data-i18n="watch.loading">Loading…</div>
+            </div>
+            <div class="watch-bar">
+                <div class="watch-id">
+                    <span class="watch-platform">KICK</span>
+                    <span class="watch-name" id="watch-name"></span>
+                </div>
+                <a class="btn watch-kick" id="watch-kick" href="https://kick.com" target="_blank" rel="noopener"><span data-i18n="watch.openKick">Watch on Kick</span> →</a>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/atmosphere.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/watch.js"></script>
+    <script src="js/brand.js"></script>
+</body>
+</html>

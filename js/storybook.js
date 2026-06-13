@@ -65,19 +65,19 @@
 
     function renderCover() {
         var b = book();
-        var count = b.pages.length;
-        var meta = b.pdf ? t("book.pdfEdition") : (count + " " + (count === 1 ? t("book.page") : t("book.pages")));
         stage.innerHTML = '' +
             '<div class="book-cover" data-reveal>' +
-                '<div class="book-cover__art"></div>' +
-                '<div class="book-cover__plate">' +
-                    '<span class="book-cover__eyebrow">' + ui().escapeHtml(t("book.eyebrow")) + '</span>' +
-                    '<h2 class="book-cover__title">' + ui().escapeHtml(b.title) + '</h2>' +
-                    (b.subtitle ? '<p class="book-cover__sub">' + ui().escapeHtml(b.subtitle) + '</p>' : "") +
-                    (b.author ? '<span class="book-cover__author">' + ui().escapeHtml(t("book.by")) + ' ' + ui().escapeHtml(b.author) + '</span>' : "") +
-                    '<button type="button" class="btn book-cover__open" data-open-book>' + ui().escapeHtml(t("book.open")) + '</button>' +
-                    '<span class="book-cover__meta">' + meta + '</span>' +
+                '<div class="book-vol">' +
+                    '<div class="book-vol__face">' +
+                        '<span class="book-vol__emblem"><img src="assets/logo.png" alt="" draggable="false"></span>' +
+                        '<span class="book-vol__eyebrow">' + ui().escapeHtml(t("book.eyebrow")) + '</span>' +
+                        '<h2 class="book-vol__title">' + ui().escapeHtml(b.title) + '</h2>' +
+                        (b.subtitle ? '<p class="book-vol__sub">' + ui().escapeHtml(b.subtitle) + '</p>' : "") +
+                        '<span class="book-vol__rule"></span>' +
+                        (b.author ? '<span class="book-vol__author">' + ui().escapeHtml(t("book.by")) + ' ' + ui().escapeHtml(b.author) + '</span>' : "") +
+                    '</div>' +
                 '</div>' +
+                '<button type="button" class="btn book-cover__open" data-open-book>' + ui().escapeHtml(t("book.open")) + '</button>' +
             '</div>';
         ui().mountReveal();
         var open = stage.querySelector("[data-open-book]");
