@@ -321,7 +321,7 @@ p { color: rgba(231, 224, 212, 0.76); }
 .lang-btn.is-active { color: #fff; background: var(--crimson); border-color: var(--crimson); }
 
 [lang="ar"] {
-    --display: "Aref Ruqaa", "Lalezar", "Changa", "Segoe UI", sans-serif;
+    --display: "Aref Ruqaa", "Changa", "Segoe UI", sans-serif;
     --serif: "Aref Ruqaa", "Changa", "Segoe UI", "Tahoma", sans-serif;
     --sans: "Aref Ruqaa", "Changa", "Segoe UI", "Tahoma", sans-serif;
     --mono: "Changa", "Segoe UI", "Tahoma", sans-serif;
