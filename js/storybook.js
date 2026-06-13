@@ -383,29 +383,24 @@
 
     function playCoverOpen() {
         var b = book();
-        var reader = stage.querySelector(".book-reader");
-        if (!reader) { return; }
         var b3 = stage.querySelector("[data-book3d]");
-        if (b3) { b3.classList.add("is-entering"); }
+        if (!b3) { return; }
         var ov = doc.createElement("div");
-        ov.className = "book-opening";
+        ov.className = "book-cover3d";
         ov.innerHTML =
-            '<div class="book-opening__cover">' +
-                '<div class="book-opening__front">' +
-                    '<span class="book-vol__emblem"><img src="assets/logo.png" alt="" draggable="false"></span>' +
-                    '<span class="book-vol__eyebrow">' + ui().escapeHtml(t("book.eyebrow")) + '</span>' +
-                    '<h2 class="book-vol__title">' + ui().escapeHtml(b.title) + '</h2>' +
-                    (b.author ? '<span class="book-vol__author">' + ui().escapeHtml(t("book.by")) + ' ' + ui().escapeHtml(b.author) + '</span>' : "") +
-                '</div>' +
-                '<div class="book-opening__inside" aria-hidden="true"></div>' +
-            '</div>';
-        reader.appendChild(ov);
+            '<div class="book-cover3d__front">' +
+                '<span class="book-vol__emblem"><img src="assets/logo.png" alt="" draggable="false"></span>' +
+                '<span class="book-vol__eyebrow">' + ui().escapeHtml(t("book.eyebrow")) + '</span>' +
+                '<h2 class="book-vol__title">' + ui().escapeHtml(b.title) + '</h2>' +
+                (b.author ? '<span class="book-vol__author">' + ui().escapeHtml(t("book.by")) + ' ' + ui().escapeHtml(b.author) + '</span>' : "") +
+            '</div>' +
+            '<div class="book-cover3d__inside" aria-hidden="true"></div>';
+        b3.appendChild(ov);
         void ov.offsetWidth;
         ov.classList.add("is-go");
         root.setTimeout(function () {
             if (ov.parentNode) { ov.parentNode.removeChild(ov); }
-            if (b3) { b3.classList.remove("is-entering"); }
-        }, 1150);
+        }, 960);
     }
 
     function renderPdfBook() {
@@ -438,6 +433,7 @@
         ui().$all('[data-flip]', stage).forEach(function (el) {
             el.addEventListener("click", function () { flip(parseInt(el.getAttribute("data-flip"), 10)); });
         });
+        sizeBook();
         bindResize();
         startPdf(b.pdf);
     }
