@@ -8,7 +8,8 @@
     <link rel="icon" type="image/x-icon" href="assets/logo.ico">
     <link rel="shortcut icon" href="assets/logo.ico">
     <link rel="apple-touch-icon" href="assets/logo.png">
-    <link rel="stylesheet" href="css/fonts.css">
+    <link rel="preload" href="css/fonts.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="css/fonts.css"></noscript>
     <link rel="stylesheet" href="css/core.css">
     <link rel="stylesheet" href="css/components.css">
     <link rel="stylesheet" href="css/admin.css">
@@ -31,6 +32,7 @@
                 </form>
                 <div id="login-msg" class="form-msg gate-card__msg"></div>
                 <div class="gate-hint" data-i18n="admin.hint">Authorised Personnel Only · Sessions End When This Tab Closes</div>
+                <a href="index.html" class="gate-back" data-i18n="admin.backHome">← Home</a>
             </div>
         </section>
 
@@ -49,6 +51,7 @@
                     <button type="button" class="lang-btn" data-lang="en">EN</button>
                     <button type="button" class="lang-btn" data-lang="ar">ع</button>
                 </div>
+                <a href="index.html" class="ghost-btn admin-back" data-i18n="admin.backHome">← Home</a>
                 <button type="button" id="logout-btn" class="ghost-btn" data-i18n="admin.lock">Lock</button>
             </div>
 
@@ -140,5 +143,6 @@
     <script src="js/security.js"></script>
     <script src="js/ui.js"></script>
     <script src="js/admin.js"></script>
+    <script src="js/brand.js"></script>
 </body>
 </html>

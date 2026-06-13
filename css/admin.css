@@ -418,6 +418,21 @@
 .stream-card__remove:hover { background: var(--crimson); border-color: var(--crimson); color: #fff; }
 .stream-card--admin.is-live .stream-card__remove { top: 46px; }
 
+.gate-back {
+    display: inline-block;
+    margin-top: 18px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--ash);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: color 0.2s var(--ease), border-color 0.2s var(--ease);
+}
+.gate-back:hover { color: var(--bone); border-color: var(--line-2); }
+.admin-back { text-decoration: none; }
+
 .stream-card__griptext { letter-spacing: 3px; opacity: 0.55; }
 
 .streamer-grid.is-sorting .stream-card { transition: none; }
