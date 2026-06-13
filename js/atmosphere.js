@@ -103,7 +103,6 @@
                     var flicker = m.alpha + Math.sin(m.phase * 6) * m.pulse;
                     if (flicker < 0) { flicker = 0; }
                     if (m.y < -10) { motes[i] = spawn(false); continue; }
-                    if (flicker < 0) { flicker = 0; }
                     var sprite = m.ember ? emberSprite : dustSprite;
                     var size = m.r * 8;
                     ctx.globalAlpha = m.ember ? flicker : flicker * 0.8;

@@ -82,8 +82,6 @@
 .book-vol__rule { width: 56px; height: 2px; background: linear-gradient(90deg, transparent, rgba(231, 224, 212, 0.55), transparent); }
 .book-vol__author { font-family: var(--mono); font-size: 11px; letter-spacing: 2px; color: rgba(231, 224, 212, 0.72); text-transform: uppercase; }
 
-.book-cover__open { margin-top: 4px; }
-
 .book-open {
     max-width: 1080px;
     margin: 0 auto;

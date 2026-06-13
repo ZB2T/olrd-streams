@@ -20,24 +20,6 @@
             .replace(/'/g, "&#39;");
     }
 
-    function initials(text) {
-        var parts = String(text || "").trim().split(/\s+/).slice(0, 2);
-        var out = "";
-        for (var i = 0; i < parts.length; i++) {
-            if (parts[i]) { out += parts[i].charAt(0).toUpperCase(); }
-        }
-        return out || "·";
-    }
-
-    function formatDate(iso) {
-        if (!iso) { return "—"; }
-        var d = new Date(iso);
-        if (isNaN(d.getTime())) { return "—"; }
-        var months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
-        var day = d.getDate();
-        return months[d.getMonth()] + " " + (day < 10 ? "0" + day : day) + " · " + d.getFullYear();
-    }
-
     function mountReveal() {
         var nodes = $all("[data-reveal]");
         if (!nodes.length) { return; }
@@ -194,8 +176,6 @@
         $: $,
         $all: $all,
         escapeHtml: escapeHtml,
-        initials: initials,
-        formatDate: formatDate,
         toast: toast,
         makeSortable: makeSortable,
         readFileAsDataURL: readFileAsDataURL,

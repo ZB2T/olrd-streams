@@ -277,6 +277,7 @@
             var nL = L + dir;
             pdfBook.turning = true;
             pageSrc(nL).then(function () {
+                if (!leftEl || !leftEl.isConnected) { pdfBook.turning = false; return; }
                 leftEl.classList.add(dir > 0 ? "is-out-fwd" : "is-out-back");
                 root.setTimeout(function () {
                     pdfBook.left = nL;

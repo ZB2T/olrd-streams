@@ -56,6 +56,13 @@
 
     function normalise(parsed) {
         if (!Array.isArray(parsed.streamers)) { parsed.streamers = []; }
+        // Defence-in-depth: usernames can only ever be [a-z0-9_-]; drop malformed/empty entries.
+        parsed.streamers = parsed.streamers.filter(function (s) {
+            return s && typeof s === "object";
+        }).map(function (s) {
+            s.username = sanitizeUsername(s.username);
+            return s;
+        }).filter(function (s) { return s.username; });
         parsed = migrateLegacy(parsed);
         parsed.book = normaliseBook(parsed.book);
         return parsed;
@@ -90,8 +97,11 @@
         return initPromise;
     }
 
+    var liveSyncStarted = false;
     function startLiveSync() {
+        if (liveSyncStarted) { return; }
         if (!(root.OLRD.sync && root.OLRD.sync.available())) { return; }
+        liveSyncStarted = true;
         var last = published ? JSON.stringify(published) : "";
         var pull = function () {
             root.OLRD.sync.fetchContent().then(function (data) {

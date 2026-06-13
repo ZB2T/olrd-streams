@@ -89,8 +89,6 @@
     text-align: center;
 }
 
-.page-hero--tight { padding-bottom: clamp(22px, 3vw, 40px); }
-
 .page-hero__eyebrow {
     display: inline-block;
     margin-bottom: 20px;

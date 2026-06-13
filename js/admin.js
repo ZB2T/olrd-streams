@@ -37,7 +37,7 @@
         var input = $("#login-pass");
         var submit = $("#login-submit");
         var msg = $("#login-msg");
-        if (!form) { return; }
+        if (!form || !input || !submit) { return; }
         refreshLockUi();
         form.addEventListener("submit", function (e) {
             e.preventDefault();
@@ -52,7 +52,7 @@
                 input.value = "";
                 if (res.ok) {
                     setMsg(msg, "", "muted");
-                    root.location.href = "admin-streamers";
+                    root.location.replace("admin-streamers");
                 } else if (res.locked) {
                     refreshLockUi();
                 } else {
@@ -125,15 +125,20 @@
     }
 
     function fetchStatus(username) {
-        if (!root.fetch) { return Promise.resolve({ online: false, viewers: 0 }); }
-        return root.fetch("https://kick.com/api/v2/channels/" + encodeURIComponent(username), { headers: { "Accept": "application/json" } })
+        var offline = { online: false, viewers: 0 };
+        if (!root.fetch) { return Promise.resolve(offline); }
+        var req = root.fetch("https://kick.com/api/v2/channels/" + encodeURIComponent(username), { headers: { "Accept": "application/json" } })
             .then(function (r) { return r && r.ok ? r.json() : null; })
             .then(function (j) {
-                if (!j) { return { online: false, viewers: 0 }; }
+                if (!j) { return offline; }
                 var ls = j.livestream;
                 return { online: !!ls, viewers: ls ? (ls.viewer_count || ls.viewers || 0) : 0 };
             })
-            .catch(function () { return { online: false, viewers: 0 }; });
+            .catch(function () { return offline; });
+        var timeout = new Promise(function (resolve) {
+            root.setTimeout(function () { resolve(offline); }, 8000);
+        });
+        return Promise.race([req, timeout]);
     }
 
     function sortedForAdmin() {
@@ -307,7 +312,7 @@
         var confirmField = $("#pass-confirm");
         var msg = $("#pass-msg");
 
-        if (form) {
+        if (form && oldField && newField && confirmField) {
             form.addEventListener("submit", function (e) {
                 e.preventDefault();
                 if (newField.value !== confirmField.value) {
