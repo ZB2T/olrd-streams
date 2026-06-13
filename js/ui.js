@@ -171,7 +171,7 @@
             timer = root.setTimeout(function () { clicks = 0; }, 650);
             if (clicks >= 3) {
                 clicks = 0;
-                root.location.href = "admin.html";
+                root.location.href = "admin";
             }
         });
     }

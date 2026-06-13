@@ -63,7 +63,7 @@
         var frame = '<iframe src="https://player.kick.com/' + name +
             '?autoplay=true&muted=' + (soundOn ? "false" : "true") + '" allowfullscreen scrolling="no" loading="lazy" title="' + label + '"></iframe>';
         return '' +
-            '<a class="stream-card is-live' + (soundOn ? " has-sound" : "") + '" href="watch.html?c=' + name + '" data-reveal data-name="' + name + '">' +
+            '<a class="stream-card is-live' + (soundOn ? " has-sound" : "") + '" href="watch?c=' + name + '" data-reveal data-name="' + name + '">' +
                 '<span class="stream-card__index">' + ordinal + '</span>' +
                 '<span class="stream-card__live"><i></i>' + ui().escapeHtml(t("card.live")) + '</span>' +
                 '<div class="stream-card__frame">' +
@@ -84,7 +84,7 @@
         var label = name.toUpperCase();
         var ordinal = (index + 1 < 10 ? "0" : "") + (index + 1);
         return '' +
-            '<a class="stream-card is-offline" href="watch.html?c=' + name + '" data-reveal data-name="' + name + '">' +
+            '<a class="stream-card is-offline" href="watch?c=' + name + '" data-reveal data-name="' + name + '">' +
                 '<span class="stream-card__index">' + ordinal + '</span>' +
                 '<div class="stream-card__frame">' +
                     '<div class="stream-card__offline">' +
