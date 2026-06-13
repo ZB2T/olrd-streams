@@ -64,9 +64,10 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
-a, button, [role="button"], summary, select, label.file-btn, [data-hover],
+a, button, [role="button"], summary, select, label, [data-hover],
 .lang-btn, .admin-tab, .hub-tile, .stream-card, .stream-card__sound, .book-vol,
-.book-turn, .book-pager__btn, .nav-link, .btn, .ghost-btn,
+.book-cover, .book-turn, .book-pager__btn, .nav-link, .btn, .ghost-btn,
+.pdf-upload, .watch-player,
 [data-flip], [data-open-book], [data-sound], [data-goto], [data-turn], [data-tab] {
     cursor: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNiIgaGVpZ2h0PSIyNiI+PHBhdGggZD0iTTQgM0w0IDIwTDguNiAxNS42TDExLjggMjJMMTQuNCAyMC43TDExLjIgMTQuNEwxNyAxNC40WiIgZmlsbD0iI2Q0MjIyZSIgc3Ryb2tlPSIjMTkxMDBhIiBzdHJva2Utd2lkdGg9IjEuMyIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjwvc3ZnPg==') 4 3, pointer !important;
 }
