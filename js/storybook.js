@@ -388,19 +388,16 @@
         var ov = doc.createElement("div");
         ov.className = "book-cover3d";
         ov.innerHTML =
-            '<div class="book-cover3d__front">' +
-                '<span class="book-vol__emblem"><img src="assets/logo.png" alt="" draggable="false"></span>' +
-                '<span class="book-vol__eyebrow">' + ui().escapeHtml(t("book.eyebrow")) + '</span>' +
-                '<h2 class="book-vol__title">' + ui().escapeHtml(b.title) + '</h2>' +
-                (b.author ? '<span class="book-vol__author">' + ui().escapeHtml(t("book.by")) + ' ' + ui().escapeHtml(b.author) + '</span>' : "") +
-            '</div>' +
-            '<div class="book-cover3d__inside" aria-hidden="true"></div>';
+            '<span class="book-vol__emblem"><img src="assets/logo.png" alt="" draggable="false"></span>' +
+            '<span class="book-vol__eyebrow">' + ui().escapeHtml(t("book.eyebrow")) + '</span>' +
+            '<h2 class="book-vol__title">' + ui().escapeHtml(b.title) + '</h2>' +
+            (b.author ? '<span class="book-vol__author">' + ui().escapeHtml(t("book.by")) + ' ' + ui().escapeHtml(b.author) + '</span>' : "");
         b3.appendChild(ov);
         void ov.offsetWidth;
         ov.classList.add("is-go");
         root.setTimeout(function () {
             if (ov.parentNode) { ov.parentNode.removeChild(ov); }
-        }, 960);
+        }, 760);
     }
 
     function renderPdfBook() {

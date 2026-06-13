@@ -141,11 +141,83 @@
         raf = root.requestAnimationFrame(frame);
     }
 
+    function bootMenu() {
+        var menu = null;
+        var openFlag = false;
+
+        function lbl(key, fb) {
+            try { var v = root.OLRD.i18n.t(key); return (v && v !== key) ? v : fb; } catch (e) { return fb; }
+        }
+        function esc(s) {
+            return String(s).replace(/[&<>"]/g, function (c) {
+                return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+            });
+        }
+        function build() {
+            var m = doc.createElement("nav");
+            m.className = "rd-menu";
+            m.setAttribute("role", "menu");
+            m.setAttribute("aria-hidden", "true");
+            m.innerHTML =
+                '<div class="rd-menu__head">OLRD <span>STREAMERS</span></div>' +
+                '<a class="rd-menu__item" href="./" role="menuitem">' + esc(lbl("nav.home", "Home")) + '</a>' +
+                '<a class="rd-menu__item" href="streamers" role="menuitem">' + esc(lbl("nav.streamers", "Streamers")) + '</a>' +
+                '<a class="rd-menu__item" href="storybook" role="menuitem">' + esc(lbl("nav.story", "Story Book")) + '</a>' +
+                '<div class="rd-menu__sep" aria-hidden="true"></div>' +
+                '<a class="rd-menu__item" href="https://discord.gg/wSGWmzDu" target="_blank" rel="noopener noreferrer" role="menuitem">Discord</a>' +
+                '<a class="rd-menu__item" href="https://x.com/outlawrd" target="_blank" rel="noopener noreferrer" role="menuitem">X</a>';
+            m.addEventListener("click", function (e) {
+                if (e.target && e.target.closest && e.target.closest(".rd-menu__item")) { hide(); }
+            });
+            doc.body.appendChild(m);
+            return m;
+        }
+        function show(x, y) {
+            if (!menu) { menu = build(); }
+            menu.style.left = "-9999px";
+            menu.style.top = "-9999px";
+            menu.classList.add("is-open");
+            menu.setAttribute("aria-hidden", "false");
+            openFlag = true;
+            var r = menu.getBoundingClientRect();
+            var nx = Math.min(x, (root.innerWidth || 0) - r.width - 8);
+            var ny = Math.min(y, (root.innerHeight || 0) - r.height - 8);
+            menu.style.left = (nx < 6 ? 6 : nx) + "px";
+            menu.style.top = (ny < 6 ? 6 : ny) + "px";
+        }
+        function hide() {
+            if (menu && openFlag) {
+                menu.classList.remove("is-open");
+                menu.setAttribute("aria-hidden", "true");
+                openFlag = false;
+            }
+        }
+        doc.addEventListener("contextmenu", function (e) {
+            var tg = e.target;
+            if (tg && tg.closest && tg.closest("input, textarea, [contenteditable=''], [contenteditable='true']")) { return; }
+            e.preventDefault();
+            show(e.clientX, e.clientY);
+        });
+        doc.addEventListener("mousedown", function (e) {
+            if (!openFlag || e.button === 2) { return; }
+            if (!(e.target && e.target.closest && e.target.closest(".rd-menu"))) { hide(); }
+        });
+        doc.addEventListener("keydown", function (e) { if (e.key === "Escape") { hide(); } });
+        root.addEventListener("scroll", hide, true);
+        root.addEventListener("resize", hide);
+        root.addEventListener("blur", hide);
+    }
+
+    function run() {
+        boot();
+        try { bootMenu(); } catch (e) {}
+    }
+
     if (doc) {
         if (doc.readyState === "loading") {
-            doc.addEventListener("DOMContentLoaded", boot);
+            doc.addEventListener("DOMContentLoaded", run);
         } else {
-            boot();
+            run();
         }
     }
 

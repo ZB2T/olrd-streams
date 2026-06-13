@@ -47,7 +47,7 @@ button { background: none; border: none; }
 
 html {
     background: var(--void);
-    cursor: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyOCIgaGVpZ2h0PSIyOCIgdmlld0JveD0iMCAwIDI4IDI4Ij48cGF0aCBkPSJNMyAyIEwzIDIxIEw4LjQgMTUuOCBMMTEuOCAyMyBMMTUuMiAyMS40IEwxMS44IDE0LjQgTDE5LjQgMTQuNCBaIiBmaWxsPSJub25lIiBzdHJva2U9IiNkMTFmMzAiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVqb2luPSJtaXRlciIvPjwvc3ZnPg==') 3 2, auto;
+    cursor: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNiIgaGVpZ2h0PSIyNiI+PHBhdGggZD0iTTQgM0w0IDIwTDguNiAxNS42TDExLjggMjJMMTQuNCAyMC43TDExLjIgMTQuNEwxNyAxNC40WiIgZmlsbD0iI2VjZTVkOCIgc3Ryb2tlPSIjMTkxMDBhIiBzdHJva2Utd2lkdGg9IjEuMyIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjwvc3ZnPg==') 4 3, auto;
     -webkit-text-size-adjust: 100%;
 }
 
@@ -64,9 +64,19 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
-a, button, label.file-btn, [data-hover],
-input, textarea, select, summary {
-    cursor: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyOCIgaGVpZ2h0PSIyOCIgdmlld0JveD0iMCAwIDI4IDI4Ij48cGF0aCBkPSJNMyAyIEwzIDIxIEw4LjQgMTUuOCBMMTEuOCAyMyBMMTUuMiAyMS40IEwxMS44IDE0LjQgTDE5LjQgMTQuNCBaIiBmaWxsPSJub25lIiBzdHJva2U9IiNkMTFmMzAiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVqb2luPSJtaXRlciIvPjwvc3ZnPg==') 3 2, pointer;
+a, button, [role="button"], summary, select, label.file-btn, [data-hover],
+.lang-btn, .admin-tab, .hub-tile, .stream-card, .stream-card__sound, .book-vol,
+.book-turn, .book-pager__btn, .nav-link, .btn, .ghost-btn,
+[data-flip], [data-open-book], [data-sound], [data-goto], [data-turn], [data-tab] {
+    cursor: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNiIgaGVpZ2h0PSIyNiI+PHBhdGggZD0iTTQgM0w0IDIwTDguNiAxNS42TDExLjggMjJMMTQuNCAyMC43TDExLjIgMTQuNEwxNyAxNC40WiIgZmlsbD0iI2Q0MjIyZSIgc3Ryb2tlPSIjMTkxMDBhIiBzdHJva2Utd2lkdGg9IjEuMyIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjwvc3ZnPg==') 4 3, pointer !important;
+}
+
+input:not([type="button"]):not([type="submit"]):not([type="checkbox"]):not([type="radio"]):not([type="color"]):not([type="range"]), textarea {
+    cursor: text;
+}
+
+:disabled, [disabled], [aria-disabled="true"] {
+    cursor: not-allowed !important;
 }
 
 body::before {
@@ -152,7 +162,49 @@ body::after {
     100% { transform: translate(2%, -2%); }
 }
 
-::selection { background: var(--crimson); color: #fff; }
+::selection { background: rgba(178, 20, 32, 0.85); color: #fff7f0; text-shadow: none; }
+::-moz-selection { background: rgba(178, 20, 32, 0.85); color: #fff7f0; text-shadow: none; }
+
+/* custom right-click menu */
+.rd-menu {
+    position: fixed;
+    z-index: 99990;
+    min-width: 190px;
+    padding: 7px;
+    background: rgba(14, 11, 12, 0.97);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--line-2);
+    box-shadow: 0 26px 60px rgba(0, 0, 0, 0.66), inset 0 0 0 1px rgba(0, 0, 0, 0.4);
+    opacity: 0;
+    transform: scale(0.96) translateY(-4px);
+    transform-origin: top left;
+    pointer-events: none;
+    transition: opacity 0.16s var(--ease), transform 0.16s var(--ease);
+}
+.rd-menu.is-open { opacity: 1; transform: none; pointer-events: auto; }
+.rd-menu__head {
+    font-family: var(--display);
+    font-size: 12px;
+    letter-spacing: 2px;
+    color: var(--ash);
+    padding: 5px 12px 8px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 5px;
+}
+.rd-menu__head span { color: var(--crimson-2); }
+.rd-menu__item {
+    display: block;
+    padding: 9px 14px;
+    font-family: var(--sans);
+    font-size: 13px;
+    letter-spacing: 0.4px;
+    color: var(--bone);
+    text-decoration: none;
+    transition: background 0.18s var(--ease), color 0.18s var(--ease), padding-left 0.18s var(--ease);
+}
+.rd-menu__item:hover { background: rgba(178, 20, 32, 0.18); color: #fff; padding-left: 18px; }
+.rd-menu__sep { height: 1px; background: var(--line); margin: 5px 8px; }
 
 ::-webkit-scrollbar { width: 12px; height: 12px; }
 ::-webkit-scrollbar-track {
