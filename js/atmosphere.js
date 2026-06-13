@@ -160,7 +160,7 @@
             m.setAttribute("aria-hidden", "true");
             m.innerHTML =
                 '<div class="rd-menu__head">OLRD <span>STREAMERS</span></div>' +
-                '<a class="rd-menu__item" href="./" role="menuitem">' + esc(lbl("nav.home", "Home")) + '</a>' +
+                '<a class="rd-menu__item" href="home" role="menuitem">' + esc(lbl("nav.home", "Home")) + '</a>' +
                 '<a class="rd-menu__item" href="streamers" role="menuitem">' + esc(lbl("nav.streamers", "Streamers")) + '</a>' +
                 '<a class="rd-menu__item" href="storybook" role="menuitem">' + esc(lbl("nav.story", "Story Book")) + '</a>' +
                 '<div class="rd-menu__sep" aria-hidden="true"></div>' +

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OLRD STREAMERS — Official Broadcast Platform</title>
+    <meta name="description" content="OLRD STREAMERS — the official live broadcast platform and archive of the OLRD collective. Watch the roster live on Kick and read the record.">
+    <meta name="theme-color" content="#070709">
+    <link rel="icon" type="image/x-icon" href="assets/logo.ico">
+    <link rel="shortcut icon" href="assets/logo.ico">
+    <link rel="apple-touch-icon" href="assets/logo.png">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="OLRD STREAMERS">
+    <meta property="og:title" content="OLRD STREAMERS — Official Broadcast Platform">
+    <meta property="og:description" content="Watch the OLRD roster live on Kick and read the record. The official platform of the OLRD collective.">
+    <meta property="og:image" content="https://oldr-streams.live/assets/bg.jpg">
+    <meta property="og:image:width" content="1164">
+    <meta property="og:image:height" content="881">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="OLRD STREAMERS">
+    <meta name="twitter:description" content="The official live broadcast platform of the OLRD collective.">
+    <meta name="twitter:image" content="https://oldr-streams.live/assets/bg.jpg">
+    <link rel="preload" href="css/fonts.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="css/fonts.css"></noscript>
+    <link rel="stylesheet" href="css/core.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/intro.css">
+    <script src="js/i18n.js"></script>
+</head>
+<body class="start">
+    <div class="fog"></div>
+    <div class="grain"></div>
+
+    <div id="splash" class="splash">
+        <div class="splash__inner">
+            <img class="splash__crest" src="assets/logo.png" alt="OLRD" data-admin-gate>
+            <div class="splash__title">OLRD <span>STREAMERS</span></div>
+            <div class="splash__line"><span></span></div>
+            <div class="splash__tag" data-i18n="splash.tag">Official Broadcast Platform</div>
+        </div>
+    </div>
+
+    <main id="intro" class="hub">
+        <div class="hub__mark" data-admin-gate>
+            <img src="assets/logo.png" alt="OLRD">
+            <span>OLRD</span>
+        </div>
+
+        <div class="lang-switch hub__lang">
+            <button type="button" class="lang-btn" data-lang="en">EN</button>
+            <button type="button" class="lang-btn" data-lang="ar">ع</button>
+        </div>
+
+        <div class="hub__head">
+            <span class="hub__eyebrow" data-i18n="hub.eyebrow">The OLRD Collective</span>
+            <h1 class="hub__title" data-i18n-html="hub.title">Select A <span class="accent">Wing</span></h1>
+        </div>
+
+        <nav class="hub__tiles">
+            <a class="hub-tile" href="streamers">
+                <img class="hub-tile__art" src="assets/art-streamers.svg" alt="" draggable="false">
+                <span class="hub-tile__scrim"></span>
+                <span class="hub-tile__no">01</span>
+                <div class="hub-tile__plate">
+                    <span class="hub-tile__label" data-i18n="tile.streamers">Streamers</span>
+                    <span class="hub-tile__desc" data-i18n="tile.streamers.desc">Live Channels · Kick Roster</span>
+                    <span class="hub-tile__go"><span data-i18n="tile.enter">Enter</span> →</span>
+                </div>
+            </a>
+            <a class="hub-tile" href="storybook">
+                <img class="hub-tile__art" src="assets/art-book.svg" alt="" draggable="false">
+                <span class="hub-tile__scrim"></span>
+                <span class="hub-tile__no">02</span>
+                <div class="hub-tile__plate">
+                    <span class="hub-tile__label" data-i18n="tile.story">Story Book</span>
+                    <span class="hub-tile__desc" data-i18n="tile.story.desc">One Volume · Many Pages</span>
+                    <span class="hub-tile__go"><span data-i18n="tile.enter">Enter</span> →</span>
+                </div>
+            </a>
+        </nav>
+
+        <footer class="hub__footer">
+            <span class="footer-credit" data-i18n="footer.credit">Created By ZB2T</span>
+        </footer>
+    </main>
+
+    <script src="js/atmosphere.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/intro.js"></script>
+    <script src="js/brand.js"></script>
+</body>
+</html>
