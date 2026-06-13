@@ -167,7 +167,7 @@
             "nav.streamers": "الستريمرز",
             "nav.story": "الكتاب",
             "nav.home": "الرئيسية",
-            "footer.credit": "صُنع بواسطة ZB2T",
+            "footer.credit": "Created By ZB2T",
             "footer.note": "OLRD Streamers · المنصّة الرسمية",
             "splash.tag": "منصّة البث الرسمية",
             "hub.eyebrow": "تجمّع OLRD",

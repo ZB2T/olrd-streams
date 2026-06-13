@@ -305,6 +305,15 @@ p { color: rgba(231, 224, 212, 0.76); }
     gap: 18px;
 }
 
+html:not(.rd-ready) main,
+html:not(.rd-ready) .hub,
+html:not(.rd-ready) .admin-shell,
+html:not(.rd-ready) .watch-main,
+html:not(.rd-ready) #book-stage,
+html:not(.rd-ready) #stream-grid,
+html:not(.rd-ready) .page-section,
+html:not(.rd-ready) .book-main { opacity: 0 !important; pointer-events: none !important; }
+
 @media (prefers-reduced-motion: reduce) {
     .fog, .grain { animation: none; }
     body::before { transform: scale(1.07); }
