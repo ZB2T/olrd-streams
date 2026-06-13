@@ -514,3 +514,13 @@
     .book-flip__edge { flex-basis: 12%; font-size: 1.8rem; }
     .book-pdf-canvas { max-height: 60vh; }
 }
+
+.book-page--pdf.is-turn-next .book-page__sheet { transform-origin: left center; animation: paperOutNext 0.23s var(--ease) forwards; }
+.book-page--pdf.is-enter-next .book-page__sheet { transform-origin: left center; animation: paperInNext 0.26s var(--ease) both; }
+.book-page--pdf.is-turn-prev .book-page__sheet { transform-origin: right center; animation: paperOutPrev 0.23s var(--ease) forwards; }
+.book-page--pdf.is-enter-prev .book-page__sheet { transform-origin: right center; animation: paperInPrev 0.26s var(--ease) both; }
+
+@keyframes paperOutNext { from { transform: rotateY(0); } to { transform: rotateY(-100deg); opacity: 0.3; } }
+@keyframes paperInNext { from { transform: rotateY(82deg); opacity: 0; } to { transform: rotateY(0); opacity: 1; } }
+@keyframes paperOutPrev { from { transform: rotateY(0); } to { transform: rotateY(100deg); opacity: 0.3; } }
+@keyframes paperInPrev { from { transform: rotateY(-82deg); opacity: 0; } to { transform: rotateY(0); opacity: 1; } }

@@ -29,19 +29,47 @@
             .catch(function () { return { online: false, viewers: 0 }; });
     }
 
+    var unmutedName = null;
+    var ICON_MUTED = '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M11 4.5 6.2 8.5H3v7h3.2l4.8 4z"/><path d="M16.5 9.5l4 4m0-4l-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>';
+    var ICON_SOUND = '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M11 4.5 6.2 8.5H3v7h3.2l4.8 4z"/><path d="M15.5 8.7a4.5 4.5 0 0 1 0 6.6M18 6a8 8 0 0 1 0 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>';
+
+    function setCardSound(uname, on) {
+        var card = grid ? grid.querySelector('.stream-card[data-name="' + uname + '"]') : null;
+        if (!card) { return; }
+        var iframe = card.querySelector("iframe");
+        if (iframe) { iframe.src = "https://player.kick.com/" + uname + "?autoplay=true&muted=" + (on ? "false" : "true"); }
+        card.classList.toggle("has-sound", on);
+        var btn = card.querySelector("[data-sound]");
+        if (btn) { btn.classList.toggle("is-on", on); btn.innerHTML = on ? ICON_SOUND : ICON_MUTED; }
+    }
+
+    function toggleSound(uname) {
+        if (unmutedName === uname) {
+            setCardSound(uname, false);
+            unmutedName = null;
+        } else {
+            if (unmutedName) { setCardSound(unmutedName, false); }
+            setCardSound(uname, true);
+            unmutedName = uname;
+        }
+    }
+
     function liveCard(streamer, index) {
-        var name = ui().escapeHtml(streamer.username);
+        var uname = streamer.username;
+        var name = ui().escapeHtml(uname);
         var label = name.toUpperCase();
         var ordinal = (index + 1 < 10 ? "0" : "") + (index + 1);
+        var soundOn = (uname === unmutedName);
         var frame = '<iframe src="https://player.kick.com/' + name +
-            '?autoplay=true&muted=true" allowfullscreen scrolling="no" loading="lazy" title="' + label + '"></iframe>';
+            '?autoplay=true&muted=' + (soundOn ? "false" : "true") + '" allowfullscreen scrolling="no" loading="lazy" title="' + label + '"></iframe>';
         return '' +
-            '<a class="stream-card is-live" href="https://kick.com/' + name + '" target="_blank" rel="noopener" data-reveal>' +
+            '<a class="stream-card is-live' + (soundOn ? " has-sound" : "") + '" href="https://kick.com/' + name + '" target="_blank" rel="noopener" data-reveal data-name="' + name + '">' +
                 '<span class="stream-card__index">' + ordinal + '</span>' +
                 '<span class="stream-card__live"><i></i>' + ui().escapeHtml(t("card.live")) + '</span>' +
                 '<div class="stream-card__frame">' +
                     frame +
                     '<span class="stream-card__guard"></span>' +
+                    '<button type="button" class="stream-card__sound' + (soundOn ? " is-on" : "") + '" data-sound="' + name + '" aria-label="' + ui().escapeHtml(t("card.sound")) + '" title="' + ui().escapeHtml(t("card.sound")) + '">' + (soundOn ? ICON_SOUND : ICON_MUTED) + '</button>' +
                 '</div>' +
                 '<div class="stream-card__bar">' +
                     '<span class="stream-card__platform">KICK</span>' +
@@ -120,6 +148,13 @@
     function boot() {
         grid = ui().$("#stream-grid");
         if (!grid) { return; }
+        grid.addEventListener("click", function (e) {
+            var btn = e.target.closest ? e.target.closest("[data-sound]") : null;
+            if (!btn) { return; }
+            e.preventDefault();
+            e.stopPropagation();
+            toggleSound(btn.getAttribute("data-sound"));
+        });
         root.OLRD.store.init().then(function () {
             root.OLRD.store.dropStaleDraft();
             load();

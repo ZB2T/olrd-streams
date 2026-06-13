@@ -286,12 +286,13 @@ p { color: rgba(231, 224, 212, 0.76); }
     justify-content: center;
     width: 34px;
     height: 34px;
-    color: var(--ash);
-    border: 1px solid var(--line-2);
-    background: rgba(10, 8, 9, 0.4);
-    transition: color 0.2s var(--ease), border-color 0.2s var(--ease), background 0.2s var(--ease), transform 0.2s var(--ease);
+    color: rgba(231, 224, 212, 0.4);
+    border: 1px solid rgba(216, 208, 198, 0.1);
+    background: rgba(10, 8, 9, 0.22);
+    opacity: 0.85;
+    transition: color 0.2s var(--ease), border-color 0.2s var(--ease), background 0.2s var(--ease), opacity 0.2s var(--ease), transform 0.2s var(--ease);
 }
-.brand-social__link:hover { color: #fff; border-color: var(--crimson); background: rgba(178, 20, 32, 0.2); transform: translateY(-2px); }
+.brand-social__link:hover { color: #fff; border-color: var(--crimson); background: rgba(178, 20, 32, 0.2); opacity: 1; transform: translateY(-2px); }
 
 .brand-footer {
     margin-top: 48px;
