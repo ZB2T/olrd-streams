@@ -21,6 +21,21 @@
         doc.body.appendChild(canvas);
         var ctx = canvas.getContext("2d");
 
+        function makeGlow(rgb) {
+            var s = 48;
+            var c = doc.createElement("canvas");
+            c.width = s; c.height = s;
+            var g = c.getContext("2d");
+            var grad = g.createRadialGradient(s / 2, s / 2, 0, s / 2, s / 2, s / 2);
+            grad.addColorStop(0, "rgba(" + rgb + ",1)");
+            grad.addColorStop(1, "rgba(" + rgb + ",0)");
+            g.fillStyle = grad;
+            g.fillRect(0, 0, s, s);
+            return c;
+        }
+        var emberSprite = makeGlow("255,84,58");
+        var dustSprite = makeGlow("212,204,188");
+
         var dpr = Math.min(root.devicePixelRatio || 1, 2);
         var w = 0;
         var h = 0;
@@ -88,19 +103,13 @@
                     var flicker = m.alpha + Math.sin(m.phase * 6) * m.pulse;
                     if (flicker < 0) { flicker = 0; }
                     if (m.y < -10) { motes[i] = spawn(false); continue; }
-                    var glow = ctx.createRadialGradient(x, m.y, 0, x, m.y, m.r * 4);
-                    if (m.ember) {
-                        glow.addColorStop(0, "rgba(255, 84, 58, " + flicker + ")");
-                        glow.addColorStop(1, "rgba(178, 20, 32, 0)");
-                    } else {
-                        glow.addColorStop(0, "rgba(212, 204, 188, " + flicker * 0.8 + ")");
-                        glow.addColorStop(1, "rgba(212, 204, 188, 0)");
-                    }
-                    ctx.fillStyle = glow;
-                    ctx.beginPath();
-                    ctx.arc(x, m.y, m.r * 4, 0, Math.PI * 2);
-                    ctx.fill();
+                    if (flicker < 0) { flicker = 0; }
+                    var sprite = m.ember ? emberSprite : dustSprite;
+                    var size = m.r * 8;
+                    ctx.globalAlpha = m.ember ? flicker : flicker * 0.8;
+                    ctx.drawImage(sprite, x - size / 2, m.y - size / 2, size, size);
                 }
+                ctx.globalAlpha = 1;
             }
 
             raf = root.requestAnimationFrame(frame);

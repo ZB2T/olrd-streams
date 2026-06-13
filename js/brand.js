@@ -28,12 +28,18 @@
 
     function ensure() {
         if (!doc.body) { return; }
-        var f = findFooter();
-        if (f && !doc.querySelector("[data-brand-social]")) {
-            f.insertAdjacentHTML("afterbegin", socialBlock());
+        if (!doc.querySelector("[data-brand-social]")) {
+            var anchor = doc.querySelector(".lang-switch");
+            if (anchor) {
+                anchor.insertAdjacentHTML("beforebegin", socialBlock());
+            } else {
+                var top = doc.querySelector(".admin-top, .site-header, header");
+                if (top) { top.insertAdjacentHTML("beforeend", socialBlock()); }
+            }
         }
         var credit = doc.querySelector(".footer-credit");
         if (!credit) {
+            var f = findFooter();
             if (f) { f.insertAdjacentHTML("beforeend", '<span class="footer-credit">' + TXT + "</span>"); }
         } else if (credit.textContent.indexOf("ZB2T") === -1) {
             credit.textContent = TXT;

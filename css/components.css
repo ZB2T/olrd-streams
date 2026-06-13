@@ -4,6 +4,11 @@
     gap: 22px;
 }
 
+.stream-grid .stream-card {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 320px;
+}
+
 .stream-card {
     position: relative;
     display: block;

@@ -279,13 +279,13 @@ p { color: rgba(231, 224, 212, 0.76); }
 [lang="ar"] h1, [lang="ar"] h2, [lang="ar"] h3 { font-weight: 700; }
 [lang="ar"] .eyebrow, [lang="ar"] [class*="eyebrow"], [lang="ar"] [class*="__meta"], [lang="ar"] [class*="__no"] { font-family: var(--mono); }
 
-.brand-social { display: inline-flex; align-items: center; justify-content: center; gap: 12px; }
+.brand-social { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
 .brand-social__link {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 36px;
-    height: 36px;
+    width: 34px;
+    height: 34px;
     color: var(--ash);
     border: 1px solid var(--line-2);
     background: rgba(10, 8, 9, 0.4);
