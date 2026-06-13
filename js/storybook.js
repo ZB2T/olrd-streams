@@ -10,6 +10,29 @@
     function book() { return root.OLRD.store.getBook(); }
     function pad(n) { return (n < 10 ? "0" : "") + n; }
 
+    /* ---- page <-> URL (?page=N) deep-linking ---- */
+    function pageParam() {
+        try {
+            var m = (root.location.search || "").match(/[?&]page=(\d+)/);
+            if (m) { return parseInt(m[1], 10) || 0; }
+            var hp = (root.location.hash || "").match(/^#p(\d+)/);
+            if (hp) { return parseInt(hp[1], 10) || 0; }
+            if (/^#read/.test(root.location.hash || "")) { return 1; }
+        } catch (e) {}
+        return 0;
+    }
+    function setPageUrl(n, push) {
+        if (!(n >= 1)) { return; }
+        try {
+            root.history[push ? "pushState" : "replaceState"](null, "", root.location.pathname + "?page=" + n);
+        } catch (e) {}
+    }
+    function clearPageUrl(push) {
+        try {
+            root.history[push ? "pushState" : "replaceState"](null, "", root.location.pathname);
+        } catch (e) {}
+    }
+
     function paragraphs(text) {
         var blocks = String(text || "").split(/\n{1,}/).filter(function (p) { return p.trim().length; });
         if (!blocks.length) { return '<p class="book-page__empty">' + ui().escapeHtml(t("book.emptyPage")) + "</p>"; }
@@ -226,6 +249,7 @@
         ui().$all("[data-flip]", stage).forEach(function (el) {
             el.disabled = !canFlip(parseInt(el.getAttribute("data-flip"), 10));
         });
+        if (state.open) { setPageUrl(pdfBook.left, false); }
     }
 
     function preload() {
@@ -482,6 +506,7 @@
         }
         if (state.index >= b.pages.length) { state.index = b.pages.length - 1; }
         if (state.index < 0) { state.index = 0; }
+        if (state.open) { setPageUrl(state.index + 1, false); }
         var page = b.pages[state.index];
         var n = pad(state.index + 1);
         var total = pad(b.pages.length);
@@ -560,26 +585,27 @@
         });
     }
 
-    function openBook() {
+    function openBook(viaUrl) {
         state.open = true;
         state.index = 0;
+        var target = pageParam();
         if (book().pdf) {
+            if (target >= 1) { pdfBook.left = target; }   // ready() normalizes to the spread
             renderPdfBook();
             playCoverOpen();
-            try { root.history.replaceState(null, "", "#read"); } catch (e) {}
+            if (viaUrl !== true) { setPageUrl(pdfBook.left >= 1 ? pdfBook.left : 1, true); }
             return;
         }
-        var hash = parseInt((root.location.hash || "").replace("#p", ""), 10);
-        if (!isNaN(hash) && hash > 0) { state.index = hash - 1; }
+        if (target >= 1) { state.index = target - 1; }
         renderOpen();
-        try { root.history.replaceState(null, "", "#p" + (state.index + 1)); } catch (e) {}
+        if (viaUrl !== true) { setPageUrl(state.index + 1, true); }
     }
 
-    function closeBook() {
+    function closeBook(viaUrl) {
         state.open = false;
         if (pdfBook.resize) { root.removeEventListener("resize", pdfBook.resize); pdfBook.resize = null; }
         renderCover();
-        try { root.history.replaceState(null, "", root.location.pathname); } catch (e) {}
+        if (viaUrl !== true) { clearPageUrl(false); }
     }
 
     function refresh() {
@@ -600,12 +626,29 @@
             if (e.key === "ArrowRight") { if (isPdf) { flip(1); } else { turn(1); } }
             else if (e.key === "ArrowLeft") { if (isPdf) { flip(-1); } else { turn(-1); } }
         });
+        root.addEventListener("popstate", function () {
+            if (!stage) { return; }
+            var target = pageParam();
+            if (target >= 1) {
+                if (!state.open) { openBook(true); return; }
+                if (book().pdf) {
+                    pdfBook.left = (pdfBook.per === 2 && target % 2 === 0) ? target - 1 : target;
+                    if (pdfBook.left < 1) { pdfBook.left = 1; }
+                    if (pdfBook.doc) { paintSpread(); }
+                } else {
+                    state.index = target - 1;
+                    renderPage();
+                }
+            } else if (state.open) {
+                closeBook(true);
+            }
+        });
         root.OLRD.store.subscribe(refresh);
         root.OLRD.i18n.subscribe(refresh);
         root.OLRD.store.init().then(function () {
             root.OLRD.store.dropStaleDraft();
             renderCover();
-            if (/^#(p|read)/.test(root.location.hash || "")) { openBook(); }
+            if (pageParam() >= 1) { openBook(true); }
             root.OLRD.store.startLiveSync();
         });
     }
