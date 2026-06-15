@@ -7,3 +7,11 @@
   Strict-Transport-Security: max-age=31536000; includeSubDomains
   Cross-Origin-Opener-Policy: same-origin
   X-DNS-Prefetch-Control: off
+
+# Non-hashed code files change on every deploy — revalidate so updates land
+# immediately (304 when unchanged keeps it fast). Images/fonts keep the default cache.
+/js/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+/css/*
+  Cache-Control: public, max-age=0, must-revalidate
