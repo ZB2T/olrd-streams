@@ -12,7 +12,7 @@ const ROOT = __dirname;
 const OUT = path.join(ROOT, "dist");
 
 // files / folders at the repo root that must NOT be copied into dist
-var SKIP = ["dist", "js", ".git", "node_modules", ".claude", "build.js",
+var SKIP = ["dist", "js", ".git", ".github", "node_modules", ".claude", "build.js",
     "package.json", "package-lock.json", "src", ".gitignore", "README.md"];
 
 // brand.js is already obfuscated (the credit guard) — copy it untouched.
