@@ -1,5 +1,5 @@
 /*
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-hashes' 'sha256-1jAmyYXcRq6zFldLe/GCgIDJBiOONdXjTLgEFMDnDSM=' 'sha256-dNTtQn6Z8fnjWuLNRRlMnLKmBZGI0yAqfenXHt16hXo='; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://kick.com https://edbabpxwtxkllakfnnhu.supabase.co wss://edbabpxwtxkllakfnnhu.supabase.co; frame-src https://player.kick.com https://kick.com blob:; worker-src 'self' blob:; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-eval' 'wasm-unsafe-eval' 'unsafe-hashes' 'sha256-1jAmyYXcRq6zFldLe/GCgIDJBiOONdXjTLgEFMDnDSM=' 'sha256-dNTtQn6Z8fnjWuLNRRlMnLKmBZGI0yAqfenXHt16hXo='; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://kick.com https://edbabpxwtxkllakfnnhu.supabase.co wss://edbabpxwtxkllakfnnhu.supabase.co; frame-src https://player.kick.com https://kick.com blob:; worker-src 'self' blob:; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests
   X-Frame-Options: SAMEORIGIN
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
@@ -7,14 +7,6 @@
   Strict-Transport-Security: max-age=31536000; includeSubDomains
   Cross-Origin-Opener-Policy: same-origin
   X-DNS-Prefetch-Control: off
-
-# Storybook renders PDFs with pdf.js, which needs eval/Function to paint pages.
-# Scope that one relaxation to this page only; every other page stays eval-free.
-/storybook
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-eval' 'wasm-unsafe-eval' 'unsafe-hashes' 'sha256-1jAmyYXcRq6zFldLe/GCgIDJBiOONdXjTLgEFMDnDSM=' 'sha256-dNTtQn6Z8fnjWuLNRRlMnLKmBZGI0yAqfenXHt16hXo='; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://kick.com https://edbabpxwtxkllakfnnhu.supabase.co wss://edbabpxwtxkllakfnnhu.supabase.co; frame-src https://player.kick.com https://kick.com blob:; worker-src 'self' blob:; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests
-
-/storybook.html
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-eval' 'wasm-unsafe-eval' 'unsafe-hashes' 'sha256-1jAmyYXcRq6zFldLe/GCgIDJBiOONdXjTLgEFMDnDSM=' 'sha256-dNTtQn6Z8fnjWuLNRRlMnLKmBZGI0yAqfenXHt16hXo='; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://kick.com https://edbabpxwtxkllakfnnhu.supabase.co wss://edbabpxwtxkllakfnnhu.supabase.co; frame-src https://player.kick.com https://kick.com blob:; worker-src 'self' blob:; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests
 
 # Non-hashed code files change on every deploy — revalidate so updates land
 # immediately (304 when unchanged keeps it fast). Images/fonts keep the default cache.
