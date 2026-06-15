@@ -60,6 +60,34 @@
         pdfCache = {};
     }
 
+    function openFullPdf() {
+        var id = book().pdf;
+        var sync = root.OLRD.sync;
+        if (!id || !(sync && sync.available && sync.available() && sync.fetchBookFile)) { return; }
+        sync.fetchBookFile(id).then(function (row) {
+            if (!row || !row.data) { return; }
+            var url = base64ToBlobUrl(row.data, row.mime);
+            if (url) { try { root.open(url, "_blank", "noopener"); } catch (e) {} }
+        });
+    }
+
+    function gotoPdfPage(n) {
+        n = parseInt(n, 10);
+        if (!pdfBook.doc || isNaN(n) || pdfBook.turning) { return; }
+        if (n < 1) { n = 1; }
+        if (n > pdfBook.total) { n = pdfBook.total; }
+        pdfBook.left = (pdfBook.per === 2 && n % 2 === 0) ? n - 1 : n;
+        if (pdfBook.left < 1) { pdfBook.left = 1; }
+        paintSpread();
+        preload();
+    }
+
+    function pruneImg() {
+        var keep = {};
+        for (var n = pdfBook.left - 4; n <= pdfBook.left + 5; n++) { keep[n] = true; }
+        Object.keys(pdfBook.img).forEach(function (k) { if (!keep[k]) { delete pdfBook.img[k]; } });
+    }
+
     function findHost(id) {
         var hosts = ui().$all("[data-pdf-host]", stage);
         for (var i = 0; i < hosts.length; i++) {
@@ -271,6 +299,7 @@
         fillLeaf(leaf("left"), pdfBook.left);
         fillLeaf(leaf("right"), pdfBook.per === 2 ? (pdfBook.left + 1) : null);
         updatePager();
+        pruneImg();
     }
 
     function flip(dir) {
@@ -382,7 +411,7 @@
             var lib = res[0];
             var row = res[1];
             if (!row || !row.data) { throw new Error("no data"); }
-            return lib.getDocument({ data: base64ToBytes(row.data), isEvalSupported: false }).promise;
+            return lib.getDocument({ data: base64ToBytes(row.data) }).promise;
         }).then(function (pdf) {
             pdfBook.doc = pdf;
             pdfBook.pdfId = id;
@@ -402,7 +431,7 @@
         pdfBook.prefetching = true;
         Promise.all([ensurePdfJs(), sync.fetchBookFile(b.pdf)]).then(function (res) {
             if (!res[1] || !res[1].data) { throw new Error("no data"); }
-            return res[0].getDocument({ data: base64ToBytes(res[1].data), isEvalSupported: false }).promise;
+            return res[0].getDocument({ data: base64ToBytes(res[1].data) }).promise;
         }).then(function (pdf) {
             pdfBook.doc = pdf;
             pdfBook.pdfId = b.pdf;
@@ -455,6 +484,8 @@
                 '</div>' +
                 '<div class="book-pager">' +
                     '<span class="book-pager__count" data-count></span>' +
+                    '<input type="number" class="book-pager__jump" data-page-jump min="1" inputmode="numeric" aria-label="' + ui().escapeHtml(t("book.goto")) + '" title="' + ui().escapeHtml(t("book.goto")) + '">' +
+                    '<button type="button" class="book-pager__open" data-open-pdf>' + ui().escapeHtml(t("book.pdfOpen")) + '</button>' +
                 '</div>' +
             '</div>';
         var close = stage.querySelector("[data-close-book]");
@@ -462,6 +493,14 @@
         ui().$all('[data-flip]', stage).forEach(function (el) {
             el.addEventListener("click", function () { flip(parseInt(el.getAttribute("data-flip"), 10)); });
         });
+        var jump = stage.querySelector("[data-page-jump]");
+        if (jump) {
+            jump.setAttribute("max", String(pdfBook.total || 1));
+            jump.addEventListener("change", function () { gotoPdfPage(jump.value); jump.value = ""; });
+            jump.addEventListener("keydown", function (e) { if (e.key === "Enter") { gotoPdfPage(jump.value); jump.value = ""; jump.blur(); } });
+        }
+        var openBtn = stage.querySelector("[data-open-pdf]");
+        if (openBtn) { openBtn.addEventListener("click", openFullPdf); }
         sizeBook();
         bindResize();
         startPdf(b.pdf);

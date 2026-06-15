@@ -52,6 +52,15 @@
     .stream-sorts { justify-content: center; }
 }
 
+.stream-card--skeleton { pointer-events: none; }
+.stream-card--skeleton .stream-card__frame { aspect-ratio: 16 / 9; min-height: 150px; background: rgba(255, 255, 255, 0.025); }
+.stream-card--skeleton .sk-line { display: block; height: 10px; width: 60%; margin: 5px 0; background: rgba(231, 224, 212, 0.09); }
+.stream-card--skeleton .sk-line--sm { width: 34%; }
+.stream-card--skeleton, .stream-card--skeleton .sk-line { animation: sk-pulse 1.3s ease-in-out infinite; }
+@keyframes sk-pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 0.95; } }
+
+.watch-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+
 .stream-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));

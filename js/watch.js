@@ -19,6 +19,16 @@
         var kick = doc.getElementById("watch-kick");
         var t = root.OLRD && root.OLRD.i18n ? root.OLRD.i18n.t : function (k) { return k; };
 
+        var copyBtn = doc.getElementById("watch-copy");
+        if (copyBtn) {
+            copyBtn.addEventListener("click", function () {
+                var done = function () { try { root.OLRD.ui.toast(t("watch.copied"), "ok"); } catch (e) {} };
+                if (root.navigator && root.navigator.clipboard && root.navigator.clipboard.writeText) {
+                    root.navigator.clipboard.writeText(root.location.href).then(done, function () {});
+                } else { done(); }
+            });
+        }
+
         if (!channel) {
             if (player) { player.innerHTML = '<div class="watch-empty">' + t("watch.none") + "</div>"; }
             return;

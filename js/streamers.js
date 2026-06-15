@@ -177,12 +177,30 @@
         if (liveNode) { liveNode.textContent = live; }
     }
 
+    function skeletons(n) {
+        var card = '<div class="stream-card stream-card--skeleton" aria-hidden="true">' +
+            '<div class="stream-card__frame"></div>' +
+            '<div class="stream-card__bar"><span class="sk-line"></span><span class="sk-line sk-line--sm"></span></div>' +
+            '</div>';
+        var out = "";
+        for (var i = 0; i < n; i++) { out += card; }
+        return out;
+    }
+
     function load() {
         if (!grid) { return; }
         var streamers = root.OLRD.store.getStreamers();
-        if (!streamers.length) { rendered = []; paint(); return; }
+        if (!streamers.length) {
+            if (root.navigator && root.navigator.onLine === false) {
+                rendered = [];
+                grid.innerHTML = '<div class="grid-empty">' + ui().escapeHtml(t("streamers.offline")) + '</div>';
+                updateCount(0, 0);
+                return;
+            }
+            rendered = []; paint(); return;
+        }
         if (!rendered.length) {
-            grid.innerHTML = '<div class="grid-empty grid-empty--scan">' + ui().escapeHtml(t("card.scanning")) + '</div>';
+            grid.innerHTML = skeletons(Math.min(streamers.length, 8));
         }
         var seq = ++loadSeq;
         Promise.all(streamers.map(function (s) {
