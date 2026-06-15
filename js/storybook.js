@@ -53,6 +53,13 @@
         } catch (e) { return ""; }
     }
 
+    function revokePdfCache() {
+        for (var k in pdfCache) {
+            if (pdfCache.hasOwnProperty(k)) { try { root.URL.revokeObjectURL(pdfCache[k]); } catch (e) {} }
+        }
+        pdfCache = {};
+    }
+
     function findHost(id) {
         var hosts = ui().$all("[data-pdf-host]", stage);
         for (var i = 0; i < hosts.length; i++) {
@@ -604,7 +611,10 @@
 
     function closeBook(viaUrl) {
         state.open = false;
+        pdfBook.turning = false;
+        if (pdfBook.rt) { root.clearTimeout(pdfBook.rt); pdfBook.rt = null; }
         if (pdfBook.resize) { root.removeEventListener("resize", pdfBook.resize); pdfBook.resize = null; }
+        revokePdfCache();
         renderCover();
         if (viaUrl !== true) { clearPageUrl(false); }
     }
@@ -633,6 +643,7 @@
             if (target >= 1) {
                 if (!state.open) { openBook(true); return; }
                 if (book().pdf) {
+                    if (pdfBook.turning) { return; }
                     pdfBook.left = (pdfBook.per === 2 && target % 2 === 0) ? target - 1 : target;
                     if (pdfBook.left < 1) { pdfBook.left = 1; }
                     if (pdfBook.doc) { paintSpread(); }

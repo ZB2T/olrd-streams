@@ -58,6 +58,17 @@
         </section>
 
         <div class="container">
+            <div class="stream-tools" role="search">
+                <label class="stream-search">
+                    <svg class="stream-search__icon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                    <input type="search" id="stream-filter" autocomplete="off" spellcheck="false" placeholder="Search channels…">
+                </label>
+                <div class="stream-sorts">
+                    <button type="button" class="stream-sort is-active" data-sort="live" aria-pressed="true" data-i18n="streamers.sortLive">Live first</button>
+                    <button type="button" class="stream-sort" data-sort="az" aria-pressed="false" data-i18n="streamers.sortAZ">A–Z</button>
+                    <button type="button" class="stream-toggle" data-live-toggle aria-pressed="false" data-i18n="streamers.liveOnly">Live only</button>
+                </div>
+            </div>
             <div id="stream-grid" class="stream-grid"></div>
         </div>
     </main>

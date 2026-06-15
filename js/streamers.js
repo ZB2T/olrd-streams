@@ -4,6 +4,7 @@
     var doc = root.document;
     var grid = null;
     var rendered = [];
+    var loadSeq = 0;
 
     function ui() { return root.OLRD.ui; }
     function t(key, vars) { return root.OLRD.i18n.t(key, vars); }
@@ -125,6 +126,30 @@
             '</a>';
     }
 
+    var filterText = "";
+    var sortMode = "live";   // "live" (live-first) | "az"
+    var liveOnly = false;
+
+    function view() {
+        var list = rendered.slice();
+        var q = filterText.trim().toLowerCase();
+        if (q) { list = list.filter(function (s) { return s.username.toLowerCase().indexOf(q) !== -1; }); }
+        if (liveOnly) { list = list.filter(function (s) { return s.online; }); }
+        if (sortMode === "az") {
+            list.sort(function (a, b) {
+                var x = a.username.toLowerCase(), y = b.username.toLowerCase();
+                return x < y ? -1 : (x > y ? 1 : 0);
+            });
+        } else {
+            list.sort(function (a, b) {
+                if (a.online !== b.online) { return a.online ? -1 : 1; }
+                if (a.online && b.online) { return b.viewers - a.viewers; }
+                return a.order - b.order;
+            });
+        }
+        return list;
+    }
+
     function paint() {
         if (!grid) { return; }
         if (!rendered.length) {
@@ -132,9 +157,14 @@
             updateCount(0, 0);
             return;
         }
-        grid.innerHTML = rendered.map(function (s, i) {
-            return s.online ? liveCard(s, i) : offlineCard(s, i);
-        }).join("");
+        var list = view();
+        if (!list.length) {
+            grid.innerHTML = '<div class="grid-empty">' + ui().escapeHtml(t("streamers.noMatch")) + '</div>';
+        } else {
+            grid.innerHTML = list.map(function (s, i) {
+                return s.online ? liveCard(s, i) : offlineCard(s, i);
+            }).join("");
+        }
         var liveCount = rendered.filter(function (s) { return s.online; }).length;
         updateCount(rendered.length, liveCount);
         ui().mountReveal();
@@ -154,20 +184,45 @@
         if (!rendered.length) {
             grid.innerHTML = '<div class="grid-empty grid-empty--scan">' + ui().escapeHtml(t("card.scanning")) + '</div>';
         }
+        var seq = ++loadSeq;
         Promise.all(streamers.map(function (s) {
             return fetchStatus(s.username).then(function (st) {
                 return { id: s.id, username: s.username, online: st.online, viewers: st.viewers };
             });
         })).then(function (list) {
+            if (seq !== loadSeq) { return; }
             list.forEach(function (item, i) { item.order = i; });
-            list.sort(function (a, b) {
-                if (a.online !== b.online) { return a.online ? -1 : 1; }
-                if (a.online && b.online) { return b.viewers - a.viewers; }
-                return a.order - b.order;
-            });
             rendered = list;
             paint();
         });
+    }
+
+    function bindTools() {
+        var search = ui().$("#stream-filter");
+        if (search) {
+            search.placeholder = t("streamers.search");
+            search.addEventListener("input", function () { filterText = search.value; paint(); });
+        }
+        ui().$all(".stream-sort").forEach(function (b) {
+            b.addEventListener("click", function () {
+                sortMode = b.getAttribute("data-sort");
+                ui().$all(".stream-sort").forEach(function (x) {
+                    var on = x === b;
+                    x.classList.toggle("is-active", on);
+                    x.setAttribute("aria-pressed", on ? "true" : "false");
+                });
+                paint();
+            });
+        });
+        var toggle = ui().$("[data-live-toggle]");
+        if (toggle) {
+            toggle.addEventListener("click", function () {
+                liveOnly = !liveOnly;
+                toggle.classList.toggle("is-active", liveOnly);
+                toggle.setAttribute("aria-pressed", liveOnly ? "true" : "false");
+                paint();
+            });
+        }
     }
 
     function boot() {
@@ -180,13 +235,18 @@
             e.stopPropagation();
             toggleSound(btn.getAttribute("data-sound"));
         });
+        bindTools();
         root.OLRD.store.init().then(function () {
             root.OLRD.store.dropStaleDraft();
             load();
             root.OLRD.store.startLiveSync();
         });
         root.OLRD.store.subscribe(load);
-        root.OLRD.i18n.subscribe(paint);
+        root.OLRD.i18n.subscribe(function () {
+            var s = ui().$("#stream-filter");
+            if (s) { s.placeholder = t("streamers.search"); }
+            paint();
+        });
         root.setInterval(load, 60000);
     }
 
