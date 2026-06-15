@@ -47,7 +47,7 @@ button { background: none; border: none; }
 
 html {
     background: var(--void);
-    cursor: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNiIgaGVpZ2h0PSIyNiI+PHBhdGggZD0iTTQgM0w0IDIwTDguNiAxNS42TDExLjggMjJMMTQuNCAyMC43TDExLjIgMTQuNEwxNyAxNC40WiIgZmlsbD0iI2IyMTQyMCIgc3Ryb2tlPSIjZWZlN2Q0IiBzdHJva2Utd2lkdGg9IjEuNiIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjwvc3ZnPg==') 4 3, auto;
+    cursor: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyOCIgaGVpZ2h0PSIyOCIgdmlld0JveD0iMCAwIDI4IDI4Ij48cGF0aCBkPSJNNCAzTDQgMjBMOC42IDE1LjZMMTEuOCAyMkwxNC40IDIwLjdMMTEuMiAxNC40TDE3IDE0LjRaIiBmaWxsPSIjMGIwYjBkIiBzdHJva2U9IiNlZTIyMzMiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PC9zdmc+') 4 3, auto;
     -webkit-text-size-adjust: 100%;
 }
 
@@ -69,7 +69,7 @@ a, button, [role="button"], summary, select, label, [data-hover],
 .book-cover, .book-turn, .book-pager__btn, .nav-link, .btn, .ghost-btn,
 .pdf-upload, .watch-player,
 [data-flip], [data-open-book], [data-sound], [data-goto], [data-turn] {
-    cursor: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNyIgaGVpZ2h0PSIyNyI+PHBhdGggZD0iTTQgM0w0IDIwLjhMOC45IDE2LjJMMTIuMiAyMi44TDE0LjkgMjEuNUwxMS42IDE0LjlMMTcuNyAxNC45WiIgZmlsbD0iI2VmMmEzNiIgc3Ryb2tlPSIjZmZmM2VhIiBzdHJva2Utd2lkdGg9IjEuNyIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjwvc3ZnPg==') 4 3, pointer !important;
+    cursor: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyOCIgaGVpZ2h0PSIyOCIgdmlld0JveD0iMCAwIDI4IDI4Ij48cGF0aCBkPSJNOCA0UTggMi41IDkuNSAyLjVRMTEgMi41IDExIDRMMTEgMTNMMTIuMiAxMi44UTEyLjQgMTEuNiAxMy42IDExLjhRMTMuOSAxMC44IDE1IDExUTE1LjMgMTAuMSAxNi40IDEwLjRRMTcuNiAxMC43IDE3LjYgMTJMMTcuNiAxNlExNy42IDE3IDE3LjMgMThMMTYuNCAyMVExNS45IDIyLjYgMTQuMiAyMi42TDEwLjIgMjIuNlE4LjkgMjIuNiA4LjEgMjEuNkw0LjggMTcuMlE0IDE2LjEgNSAxNS4yUTUuOSAxNC41IDYuNyAxNS40TDggMTYuOFoiIGZpbGw9IiMwYjBiMGQiIHN0cm9rZT0iI2VlMjIzMyIgc3Ryb2tlLXdpZHRoPSIxLjgiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjwvc3ZnPg==') 9 3, pointer !important;
 }
 
 input:not([type="button"]):not([type="submit"]):not([type="checkbox"]):not([type="radio"]):not([type="color"]):not([type="range"]), textarea {
@@ -113,11 +113,17 @@ body.page-streamers::before {
 
 .spotlight {
     position: fixed;
-    inset: 0;
+    top: 0;
+    left: 0;
+    width: 640px;
+    height: 640px;
+    margin: -320px 0 0 -320px;
     z-index: -2;
     pointer-events: none;
     mix-blend-mode: screen;
-    background: radial-gradient(460px circle at var(--spot-x, 50%) var(--spot-y, 38%), rgba(206, 32, 44, 0.22), rgba(150, 18, 28, 0.07) 40%, transparent 64%);
+    background: radial-gradient(460px circle at center, rgba(206, 32, 44, 0.22), rgba(150, 18, 28, 0.07) 40%, transparent 64%);
+    transform: translate3d(50vw, 38vh, 0);
+    will-change: transform;
 }
 
 .atmosphere {
@@ -140,12 +146,13 @@ body::after {
 
 .grain {
     position: fixed;
-    inset: -120%;
+    inset: -20%;
     z-index: 9998;
-    width: 340%;
-    height: 340%;
+    width: 140%;
+    height: 140%;
     pointer-events: none;
     opacity: 0.045;
+    will-change: transform;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     animation: grainshift 0.9s steps(4) infinite;
 }

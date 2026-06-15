@@ -43,16 +43,23 @@
         var raf = 0;
         var running = true;
 
-        var spotX = 50;
-        var spotY = 38;
-        var curSpotX = 50;
-        var curSpotY = 38;
+        var spotX = 0;
+        var spotY = 0;
+        var curSpotX = 0;
+        var curSpotY = 0;
+        var userMoved = false;
+        var lastTX = -1;
+        var lastTY = -1;
 
         function rand(min, max) { return min + Math.random() * (max - min); }
 
         function resize() {
             w = root.innerWidth;
             h = root.innerHeight;
+            if (!userMoved) {
+                spotX = curSpotX = w * 0.5;
+                spotY = curSpotY = h * 0.38;
+            }
             if (ctx) {
                 canvas.width = Math.floor(w * dpr);
                 canvas.height = Math.floor(h * dpr);
@@ -90,8 +97,13 @@
 
             curSpotX += (spotX - curSpotX) * 0.12;
             curSpotY += (spotY - curSpotY) * 0.12;
-            spot.style.setProperty("--spot-x", curSpotX.toFixed(2) + "%");
-            spot.style.setProperty("--spot-y", curSpotY.toFixed(2) + "%");
+            var tx = Math.round(curSpotX);
+            var ty = Math.round(curSpotY);
+            if (tx !== lastTX || ty !== lastTY) {
+                spot.style.transform = "translate3d(" + tx + "px," + ty + "px,0)";
+                lastTX = tx;
+                lastTY = ty;
+            }
 
             if (ctx) {
                 ctx.clearRect(0, 0, w, h);
@@ -115,8 +127,9 @@
         }
 
         function onMove(e) {
-            spotX = (e.clientX / w) * 100;
-            spotY = (e.clientY / h) * 100;
+            userMoved = true;
+            spotX = e.clientX;
+            spotY = e.clientY;
         }
 
         function start() {
