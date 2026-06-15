@@ -375,7 +375,7 @@
             var lib = res[0];
             var row = res[1];
             if (!row || !row.data) { throw new Error("no data"); }
-            return lib.getDocument({ data: base64ToBytes(row.data) }).promise;
+            return lib.getDocument({ data: base64ToBytes(row.data), isEvalSupported: false }).promise;
         }).then(function (pdf) {
             pdfBook.doc = pdf;
             pdfBook.pdfId = id;
@@ -395,7 +395,7 @@
         pdfBook.prefetching = true;
         Promise.all([ensurePdfJs(), sync.fetchBookFile(b.pdf)]).then(function (res) {
             if (!res[1] || !res[1].data) { throw new Error("no data"); }
-            return res[0].getDocument({ data: base64ToBytes(res[1].data) }).promise;
+            return res[0].getDocument({ data: base64ToBytes(res[1].data), isEvalSupported: false }).promise;
         }).then(function (pdf) {
             pdfBook.doc = pdf;
             pdfBook.pdfId = b.pdf;
