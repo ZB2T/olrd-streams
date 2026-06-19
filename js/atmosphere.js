@@ -176,7 +176,7 @@
                 '<a class="rd-menu__item" href="streamers" role="menuitem">' + esc(lbl("nav.streamers", "Streamers")) + '</a>' +
                 '<a class="rd-menu__item" href="storybook" role="menuitem">' + esc(lbl("nav.story", "Story Book")) + '</a>' +
                 '<div class="rd-menu__sep" aria-hidden="true"></div>' +
-                '<a class="rd-menu__item" href="https://discord.gg/wSGWmzDu" target="_blank" rel="noopener noreferrer" role="menuitem">Discord</a>' +
+                '<a class="rd-menu__item" href="https://discord.gg/PU7H3bkKch" target="_blank" rel="noopener noreferrer" role="menuitem">Discord</a>' +
                 '<a class="rd-menu__item" href="https://x.com/outlawrd" target="_blank" rel="noopener noreferrer" role="menuitem">X</a>';
             m.addEventListener("click", function (e) {
                 if (e.target && e.target.closest && e.target.closest(".rd-menu__item")) { hide(); }
